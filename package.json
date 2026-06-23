@@ -1,0 +1,55 @@
+{
+  "name": "@przeslijmi/real-fake-data-playwright",
+  "version": "1.0.0",
+  "description": "Playwright fixtures for Real Fake Data — 70 seeded, realistic test-data generators: person & company names across 27 EU countries plus the full Polish national set (PESEL, NIP, REGON, IBAN, KRS, addresses, ID cards, passports, driving licences, vehicle plates), emails, and lorem ipsum.",
+  "keywords": [
+    "playwright",
+    "playwright-fixtures",
+    "fake-data",
+    "test-data",
+    "seed-data",
+    "europe",
+    "person-name",
+    "company-name",
+    "pesel",
+    "nip",
+    "regon",
+    "iban",
+    "poland"
+  ],
+  "homepage": "https://github.com/przeslijmi/real-fake-data-playwright#readme",
+  "bugs": "https://github.com/przeslijmi/real-fake-data-playwright/issues",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/przeslijmi/real-fake-data-playwright.git"
+  },
+  "license": "MIT",
+  "type": "module",
+  "main": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.js"
+    }
+  },
+  "files": [
+    "dist"
+  ],
+  "publishConfig": {
+    "access": "public"
+  },
+  "scripts": {
+    "build": "tsc -p tsconfig.json",
+    "typecheck": "tsc -p tsconfig.json --noEmit",
+    "clean": "rm -rf dist *.tsbuildinfo"
+  },
+  "peerDependencies": {
+    "@playwright/test": ">=1.40.0"
+  },
+  "devDependencies": {
+    "@playwright/test": "^1.40.0",
+    "@types/node": "^22.0.0",
+    "typescript": "^5.6.0"
+  }
+}
