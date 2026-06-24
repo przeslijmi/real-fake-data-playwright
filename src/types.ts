@@ -416,3 +416,905 @@ export interface AnyCompanyNameData extends LocaleCompanyNameData {
   /** ISO 3166 alpha-2 code of the country this name was drawn from. */
   readonly country: string;
 }
+
+/* ------------------------------------------------------------------ *
+ * EU national-identifier generators.                                 *
+ *                                                                    *
+ * One Options/Data pair per generator, mirroring its API route's     *
+ * query params (minus seed/count) and response `data` shape. Numbers *
+ * that encode a birth date and/or sex carry the shared person        *
+ * constraints (`sex`, age, `bornOn/Before/After`); the rest expose    *
+ * only their own knobs (`format`, `standard`, `invalid`, `edge`, …).   *
+ * ------------------------------------------------------------------ */
+
+export interface FrSirenOptions extends RequestOptions {
+  readonly format?: 'siren' | 'siret' | 'vat';
+  readonly invalid?: boolean;
+  readonly edge?: boolean;
+}
+
+export interface FrSirenData {
+  readonly value: string;
+  readonly digits: string;
+}
+
+export interface FrNirOptions extends RequestOptions {
+  readonly sex?: Sex;
+  readonly olderThan?: number;
+  readonly youngerThan?: number;
+  readonly atAge?: number;
+  readonly bornOn?: string;
+  readonly bornBefore?: string;
+  readonly bornAfter?: string;
+  readonly invalid?: boolean;
+  readonly edge?: boolean;
+}
+
+export interface FrNirData {
+  readonly value: string;
+  readonly digits: string;
+  readonly sex: Sex;
+  readonly birthYear: number;
+  readonly birthMonth: number;
+}
+
+export interface AtSvnrOptions extends RequestOptions {
+  readonly olderThan?: number;
+  readonly youngerThan?: number;
+  readonly atAge?: number;
+  readonly bornOn?: string;
+  readonly bornBefore?: string;
+  readonly bornAfter?: string;
+  readonly invalid?: boolean;
+  readonly edge?: boolean;
+}
+
+export interface AtSvnrData {
+  readonly value: string;
+  readonly digits: string;
+  readonly birthDate: string;
+}
+
+export interface AtUidOptions extends RequestOptions {
+  readonly format?: 'national' | 'vat';
+  readonly invalid?: boolean;
+  readonly edge?: boolean;
+}
+
+export interface AtUidData {
+  readonly value: string;
+  readonly digits: string;
+}
+
+export interface AtFirmenbuchnummerOptions extends RequestOptions {
+  readonly invalid?: boolean;
+  readonly edge?: boolean;
+}
+
+export interface AtFirmenbuchnummerData {
+  readonly value: string;
+  readonly number: number;
+  readonly letter: string;
+}
+
+export interface AtSteuernummerOptions extends RequestOptions {
+  readonly edge?: boolean;
+}
+
+export interface AtSteuernummerData {
+  readonly value: string;
+  readonly digits: string;
+}
+
+export interface BeRijksregisternummerOptions extends RequestOptions {
+  readonly sex?: Sex;
+  readonly olderThan?: number;
+  readonly youngerThan?: number;
+  readonly atAge?: number;
+  readonly bornOn?: string;
+  readonly bornBefore?: string;
+  readonly bornAfter?: string;
+  readonly kind?: 'national' | 'bis';
+  readonly invalid?: boolean;
+  readonly edge?: boolean;
+}
+
+export interface BeRijksregisternummerData {
+  readonly value: string;
+  readonly digits: string;
+  readonly birthDate: string;
+  readonly sex: Sex;
+}
+
+export interface BeOndernemingsnummerOptions extends RequestOptions {
+  readonly format?: 'national' | 'vat';
+  readonly invalid?: boolean;
+  readonly edge?: boolean;
+}
+
+export interface BeOndernemingsnummerData {
+  readonly value: string;
+  readonly digits: string;
+}
+
+export interface BgEgnOptions extends RequestOptions {
+  readonly sex?: Sex;
+  readonly olderThan?: number;
+  readonly youngerThan?: number;
+  readonly atAge?: number;
+  readonly bornOn?: string;
+  readonly bornBefore?: string;
+  readonly bornAfter?: string;
+  readonly invalid?: boolean;
+  readonly edge?: boolean;
+}
+
+export interface BgEgnData {
+  readonly value: string;
+  readonly digits: string;
+  readonly birthDate: string;
+  readonly sex: Sex;
+}
+
+export interface BgEikOptions extends RequestOptions {
+  readonly format?: 'national' | 'vat';
+  readonly invalid?: boolean;
+  readonly edge?: boolean;
+}
+
+export interface BgEikData {
+  readonly value: string;
+  readonly digits: string;
+}
+
+export interface HrOibOptions extends RequestOptions {
+  readonly format?: 'national' | 'vat';
+  readonly invalid?: boolean;
+  readonly edge?: boolean;
+}
+
+export interface HrOibData {
+  readonly value: string;
+  readonly digits: string;
+}
+
+export interface HrJmbgOptions extends RequestOptions {
+  readonly sex?: Sex;
+  readonly olderThan?: number;
+  readonly youngerThan?: number;
+  readonly atAge?: number;
+  readonly bornOn?: string;
+  readonly bornBefore?: string;
+  readonly bornAfter?: string;
+  readonly invalid?: boolean;
+  readonly edge?: boolean;
+}
+
+export interface HrJmbgData {
+  readonly value: string;
+  readonly digits: string;
+  readonly birthDate: string;
+  readonly sex: Sex;
+}
+
+export interface CyTicOptions extends RequestOptions {
+  readonly format?: 'national' | 'vat';
+  readonly invalid?: boolean;
+  readonly edge?: boolean;
+}
+
+export interface CyTicData {
+  readonly value: string;
+  readonly digits: string;
+  readonly letter: string;
+}
+
+export interface CzRodneCisloOptions extends RequestOptions {
+  readonly sex?: Sex;
+  readonly olderThan?: number;
+  readonly youngerThan?: number;
+  readonly atAge?: number;
+  readonly bornOn?: string;
+  readonly bornBefore?: string;
+  readonly bornAfter?: string;
+  readonly format?: 'plain' | 'with-slash';
+  readonly invalid?: boolean;
+  readonly edge?: boolean;
+}
+
+export interface CzRodneCisloData {
+  readonly value: string;
+  readonly digits: string;
+  readonly birthDate: string;
+  readonly sex: Sex;
+}
+
+export interface CzIcoOptions extends RequestOptions {
+  readonly format?: 'national' | 'vat';
+  readonly invalid?: boolean;
+  readonly edge?: boolean;
+}
+
+export interface CzIcoData {
+  readonly value: string;
+  readonly digits: string;
+}
+
+export interface DkCprOptions extends RequestOptions {
+  readonly sex?: Sex;
+  readonly olderThan?: number;
+  readonly youngerThan?: number;
+  readonly atAge?: number;
+  readonly bornOn?: string;
+  readonly bornBefore?: string;
+  readonly bornAfter?: string;
+  readonly checksum?: 'modulus-11' | 'none';
+  readonly format?: 'plain' | 'with-hyphen';
+  readonly invalid?: boolean;
+  readonly edge?: boolean;
+}
+
+export interface DkCprData {
+  readonly value: string;
+  readonly digits: string;
+  readonly birthDate: string;
+  readonly sex: Sex;
+}
+
+export interface DkCvrOptions extends RequestOptions {
+  readonly format?: 'national' | 'vat';
+  readonly invalid?: boolean;
+  readonly edge?: boolean;
+}
+
+export interface DkCvrData {
+  readonly value: string;
+  readonly digits: string;
+}
+
+export interface EeIsikukoodOptions extends RequestOptions {
+  readonly sex?: Sex;
+  readonly olderThan?: number;
+  readonly youngerThan?: number;
+  readonly atAge?: number;
+  readonly bornOn?: string;
+  readonly bornBefore?: string;
+  readonly bornAfter?: string;
+  readonly invalid?: boolean;
+  readonly edge?: boolean;
+}
+
+export interface EeIsikukoodData {
+  readonly value: string;
+  readonly digits: string;
+  readonly birthDate: string;
+  readonly sex: Sex;
+}
+
+export interface EeRegistrikoodOptions extends RequestOptions {
+  readonly invalid?: boolean;
+  readonly edge?: boolean;
+}
+
+export interface EeRegistrikoodData {
+  readonly value: string;
+  readonly digits: string;
+}
+
+export interface EeKmkrOptions extends RequestOptions {
+  readonly format?: 'national' | 'vat';
+  readonly invalid?: boolean;
+  readonly edge?: boolean;
+}
+
+export interface EeKmkrData {
+  readonly value: string;
+  readonly digits: string;
+}
+
+export interface FiHenkilotunnusOptions extends RequestOptions {
+  readonly sex?: Sex;
+  readonly olderThan?: number;
+  readonly youngerThan?: number;
+  readonly atAge?: number;
+  readonly bornOn?: string;
+  readonly bornBefore?: string;
+  readonly bornAfter?: string;
+  readonly invalid?: boolean;
+  readonly edge?: boolean;
+}
+
+export interface FiHenkilotunnusData {
+  readonly value: string;
+  readonly digits: string;
+  readonly birthDate: string;
+  readonly sex: Sex;
+}
+
+export interface FiYTunnusOptions extends RequestOptions {
+  readonly format?: 'national' | 'vat';
+  readonly invalid?: boolean;
+  readonly edge?: boolean;
+}
+
+export interface FiYTunnusData {
+  readonly value: string;
+  readonly digits: string;
+}
+
+export interface DeSteuerIdOptions extends RequestOptions {
+  readonly invalid?: boolean;
+  readonly edge?: boolean;
+}
+
+export interface DeSteuerIdData {
+  readonly value: string;
+  readonly digits: string;
+}
+
+export interface DeUstIdnrOptions extends RequestOptions {
+  readonly format?: 'national' | 'vat';
+  readonly invalid?: boolean;
+  readonly edge?: boolean;
+}
+
+export interface DeUstIdnrData {
+  readonly value: string;
+  readonly digits: string;
+}
+
+export interface DeHandelsregisternummerOptions extends RequestOptions {
+  readonly division?: 'HRA' | 'HRB';
+  readonly edge?: boolean;
+}
+
+export interface DeHandelsregisternummerData {
+  readonly value: string;
+  readonly division: 'HRA' | 'HRB';
+  readonly court: string;
+  readonly number: string;
+}
+
+export interface DeWirtschaftsIdnrOptions extends RequestOptions {
+  readonly suffix?: number;
+  readonly invalid?: boolean;
+  readonly edge?: boolean;
+}
+
+export interface DeWirtschaftsIdnrData {
+  readonly value: string;
+  readonly digits: string;
+  readonly suffix: string;
+}
+
+export interface DePersonalausweisOptions extends RequestOptions {
+  readonly invalid?: boolean;
+  readonly edge?: boolean;
+}
+
+export interface DePersonalausweisData {
+  readonly value: string;
+  readonly serial: string;
+  readonly checkDigit: number;
+}
+
+export interface GrAmkaOptions extends RequestOptions {
+  readonly sex?: Sex;
+  readonly olderThan?: number;
+  readonly youngerThan?: number;
+  readonly atAge?: number;
+  readonly bornOn?: string;
+  readonly bornBefore?: string;
+  readonly bornAfter?: string;
+  readonly invalid?: boolean;
+  readonly edge?: boolean;
+}
+
+export interface GrAmkaData {
+  readonly value: string;
+  readonly digits: string;
+  readonly birthDate: string;
+  readonly sex: Sex;
+}
+
+export interface GrAfmOptions extends RequestOptions {
+  readonly format?: 'national' | 'vat';
+  readonly invalid?: boolean;
+  readonly edge?: boolean;
+}
+
+export interface GrAfmData {
+  readonly value: string;
+  readonly digits: string;
+}
+
+export interface HuAdoazonositoJelOptions extends RequestOptions {
+  readonly olderThan?: number;
+  readonly youngerThan?: number;
+  readonly atAge?: number;
+  readonly bornOn?: string;
+  readonly bornBefore?: string;
+  readonly bornAfter?: string;
+  readonly invalid?: boolean;
+  readonly edge?: boolean;
+}
+
+export interface HuAdoazonositoJelData {
+  readonly value: string;
+  readonly digits: string;
+  readonly birthDate: string;
+}
+
+export interface HuTajOptions extends RequestOptions {
+  readonly invalid?: boolean;
+  readonly edge?: boolean;
+}
+
+export interface HuTajData {
+  readonly value: string;
+  readonly digits: string;
+}
+
+export interface HuSzemelyiAzonositoOptions extends RequestOptions {
+  readonly sex?: Sex;
+  readonly olderThan?: number;
+  readonly youngerThan?: number;
+  readonly atAge?: number;
+  readonly bornOn?: string;
+  readonly bornBefore?: string;
+  readonly bornAfter?: string;
+  readonly standard?: 'pre-1997' | 'modern';
+  readonly invalid?: boolean;
+  readonly edge?: boolean;
+}
+
+export interface HuSzemelyiAzonositoData {
+  readonly value: string;
+  readonly digits: string;
+  readonly birthDate: string;
+  readonly sex: Sex;
+  readonly standard: 'pre-1997' | 'modern';
+}
+
+export interface HuAdoszamOptions extends RequestOptions {
+  readonly format?: 'national' | 'vat';
+  readonly invalid?: boolean;
+  readonly edge?: boolean;
+}
+
+export interface HuAdoszamData {
+  readonly value: string;
+  readonly digits: string;
+}
+
+export interface HuCegjegyzekszamOptions extends RequestOptions {
+  readonly edge?: boolean;
+}
+
+export interface HuCegjegyzekszamData {
+  readonly value: string;
+  readonly court: number;
+  readonly form: number;
+  readonly serial: number;
+  readonly digits: string;
+}
+
+export interface IePpsnOptions extends RequestOptions {
+  readonly standard?: 'pre-2013' | 'modern';
+  readonly invalid?: boolean;
+  readonly edge?: boolean;
+}
+
+export interface IePpsnData {
+  readonly value: string;
+  readonly digits: string;
+  readonly checkLetter: string;
+  readonly secondLetter?: string;
+}
+
+export interface IeVatOptions extends RequestOptions {
+  readonly format?: 'national' | 'vat';
+  readonly standard?: 'pre-2013' | 'modern';
+  readonly invalid?: boolean;
+  readonly edge?: boolean;
+}
+
+export interface IeVatData {
+  readonly value: string;
+  readonly digits: string;
+}
+
+export interface IeCroOptions extends RequestOptions {
+  readonly edge?: boolean;
+}
+
+export interface IeCroData {
+  readonly value: string;
+  readonly digits: string;
+}
+
+export interface ItCodiceFiscaleOptions extends RequestOptions {
+  readonly sex?: Sex;
+  readonly olderThan?: number;
+  readonly youngerThan?: number;
+  readonly atAge?: number;
+  readonly bornOn?: string;
+  readonly bornBefore?: string;
+  readonly bornAfter?: string;
+  readonly surname?: string;
+  readonly name?: string;
+  readonly invalid?: boolean;
+  readonly edge?: boolean;
+}
+
+export interface ItCodiceFiscaleData {
+  readonly value: string;
+  readonly surnameCode: string;
+  readonly nameCode: string;
+  readonly birthDate: string;
+  readonly sex: Sex;
+}
+
+export interface ItPartitaIvaOptions extends RequestOptions {
+  readonly format?: 'national' | 'vat';
+  readonly invalid?: boolean;
+  readonly edge?: boolean;
+}
+
+export interface ItPartitaIvaData {
+  readonly value: string;
+  readonly digits: string;
+}
+
+export interface LvPersonasKodsOptions extends RequestOptions {
+  readonly olderThan?: number;
+  readonly youngerThan?: number;
+  readonly atAge?: number;
+  readonly bornOn?: string;
+  readonly bornBefore?: string;
+  readonly bornAfter?: string;
+  readonly standard?: 'legacy' | 'modern';
+  readonly format?: 'plain' | 'with-hyphen';
+  readonly invalid?: boolean;
+  readonly edge?: boolean;
+}
+
+export interface LvPersonasKodsData {
+  readonly value: string;
+  readonly digits: string;
+  readonly birthDate?: string;
+}
+
+export interface LvRegistracijasNumursOptions extends RequestOptions {
+  readonly format?: 'national' | 'vat';
+  readonly invalid?: boolean;
+  readonly edge?: boolean;
+}
+
+export interface LvRegistracijasNumursData {
+  readonly value: string;
+  readonly digits: string;
+}
+
+export interface LtAsmensKodasOptions extends RequestOptions {
+  readonly sex?: Sex;
+  readonly olderThan?: number;
+  readonly youngerThan?: number;
+  readonly atAge?: number;
+  readonly bornOn?: string;
+  readonly bornBefore?: string;
+  readonly bornAfter?: string;
+  readonly invalid?: boolean;
+  readonly edge?: boolean;
+}
+
+export interface LtAsmensKodasData {
+  readonly value: string;
+  readonly digits: string;
+  readonly birthDate: string;
+  readonly sex: Sex;
+}
+
+export interface LtImonesKodasOptions extends RequestOptions {
+  readonly invalid?: boolean;
+  readonly edge?: boolean;
+}
+
+export interface LtImonesKodasData {
+  readonly value: string;
+  readonly digits: string;
+}
+
+export interface LtPvmOptions extends RequestOptions {
+  readonly format?: 'national' | 'vat';
+  readonly invalid?: boolean;
+  readonly edge?: boolean;
+}
+
+export interface LtPvmData {
+  readonly value: string;
+  readonly digits: string;
+}
+
+export interface LuMatriculeOptions extends RequestOptions {
+  readonly olderThan?: number;
+  readonly youngerThan?: number;
+  readonly atAge?: number;
+  readonly bornOn?: string;
+  readonly bornBefore?: string;
+  readonly bornAfter?: string;
+  readonly invalid?: boolean;
+  readonly edge?: boolean;
+}
+
+export interface LuMatriculeData {
+  readonly value: string;
+  readonly digits: string;
+  readonly birthDate: string;
+}
+
+export interface LuTvaOptions extends RequestOptions {
+  readonly format?: 'national' | 'vat';
+  readonly invalid?: boolean;
+  readonly edge?: boolean;
+}
+
+export interface LuTvaData {
+  readonly value: string;
+  readonly digits: string;
+}
+
+export interface MtIdCardOptions extends RequestOptions {
+  readonly category?: 'M' | 'G' | 'A' | 'P' | 'L' | 'H' | 'B' | 'Z';
+  readonly edge?: boolean;
+}
+
+export interface MtIdCardData {
+  readonly value: string;
+  readonly digits: string;
+  readonly category: 'M' | 'G' | 'A' | 'P' | 'L' | 'H' | 'B' | 'Z';
+}
+
+export interface MtVatOptions extends RequestOptions {
+  readonly format?: 'national' | 'vat';
+  readonly invalid?: boolean;
+  readonly edge?: boolean;
+}
+
+export interface MtVatData {
+  readonly value: string;
+  readonly digits: string;
+}
+
+export interface NlBsnOptions extends RequestOptions {
+  readonly invalid?: boolean;
+  readonly edge?: boolean;
+}
+
+export interface NlBsnData {
+  readonly value: string;
+  readonly digits: string;
+}
+
+export interface NlRsinOptions extends RequestOptions {
+  readonly invalid?: boolean;
+  readonly edge?: boolean;
+}
+
+export interface NlRsinData {
+  readonly value: string;
+  readonly digits: string;
+}
+
+export interface NlBtwIdOptions extends RequestOptions {
+  readonly standard?: 'legacy' | 'modern';
+  readonly invalid?: boolean;
+  readonly edge?: boolean;
+}
+
+export interface NlBtwIdData {
+  readonly value: string;
+  readonly digits: string;
+  readonly standard: 'legacy' | 'modern';
+}
+
+export interface NlKvkOptions extends RequestOptions {
+  readonly edge?: boolean;
+}
+
+export interface NlKvkData {
+  readonly value: string;
+  readonly digits: string;
+}
+
+export interface PtNifOptions extends RequestOptions {
+  readonly entity?: 'person' | 'company';
+  readonly format?: 'national' | 'vat';
+  readonly invalid?: boolean;
+  readonly edge?: boolean;
+}
+
+export interface PtNifData {
+  readonly value: string;
+  readonly digits: string;
+  readonly entity: 'person' | 'company';
+}
+
+export interface PtCartaoCidadaoOptions extends RequestOptions {
+  readonly invalid?: boolean;
+  readonly edge?: boolean;
+}
+
+export interface PtCartaoCidadaoData {
+  readonly value: string;
+  readonly nic: string;
+  readonly version: string;
+}
+
+export interface RoCnpOptions extends RequestOptions {
+  readonly sex?: Sex;
+  readonly olderThan?: number;
+  readonly youngerThan?: number;
+  readonly atAge?: number;
+  readonly bornOn?: string;
+  readonly bornBefore?: string;
+  readonly bornAfter?: string;
+  readonly invalid?: boolean;
+  readonly edge?: boolean;
+}
+
+export interface RoCnpData {
+  readonly value: string;
+  readonly digits: string;
+  readonly birthDate: string;
+  readonly sex: Sex;
+  readonly county: string;
+}
+
+export interface RoCuiOptions extends RequestOptions {
+  readonly format?: 'national' | 'vat';
+  readonly invalid?: boolean;
+  readonly edge?: boolean;
+}
+
+export interface RoCuiData {
+  readonly value: string;
+  readonly digits: string;
+}
+
+export interface SkRodneCisloOptions extends RequestOptions {
+  readonly sex?: Sex;
+  readonly olderThan?: number;
+  readonly youngerThan?: number;
+  readonly atAge?: number;
+  readonly bornOn?: string;
+  readonly bornBefore?: string;
+  readonly bornAfter?: string;
+  readonly format?: 'plain' | 'with-slash';
+  readonly invalid?: boolean;
+  readonly edge?: boolean;
+}
+
+export interface SkRodneCisloData {
+  readonly value: string;
+  readonly digits: string;
+  readonly birthDate: string;
+  readonly sex: Sex;
+}
+
+export interface SkIcoOptions extends RequestOptions {
+  readonly invalid?: boolean;
+  readonly edge?: boolean;
+}
+
+export interface SkIcoData {
+  readonly value: string;
+  readonly digits: string;
+}
+
+export interface SkIcDphOptions extends RequestOptions {
+  readonly format?: 'national' | 'vat';
+  readonly invalid?: boolean;
+  readonly edge?: boolean;
+}
+
+export interface SkIcDphData {
+  readonly value: string;
+  readonly digits: string;
+}
+
+export interface SiEmsoOptions extends RequestOptions {
+  readonly sex?: Sex;
+  readonly olderThan?: number;
+  readonly youngerThan?: number;
+  readonly atAge?: number;
+  readonly bornOn?: string;
+  readonly bornBefore?: string;
+  readonly bornAfter?: string;
+  readonly invalid?: boolean;
+  readonly edge?: boolean;
+}
+
+export interface SiEmsoData {
+  readonly value: string;
+  readonly digits: string;
+  readonly birthDate: string;
+  readonly sex: Sex;
+}
+
+export interface SiDavcnaStevilkaOptions extends RequestOptions {
+  readonly format?: 'national' | 'vat';
+  readonly invalid?: boolean;
+  readonly edge?: boolean;
+}
+
+export interface SiDavcnaStevilkaData {
+  readonly value: string;
+  readonly digits: string;
+}
+
+export interface EsDniOptions extends RequestOptions {
+  readonly invalid?: boolean;
+  readonly edge?: boolean;
+}
+
+export interface EsDniData {
+  readonly value: string;
+  readonly digits: string;
+  readonly letter: string;
+}
+
+export interface EsNieOptions extends RequestOptions {
+  readonly invalid?: boolean;
+  readonly edge?: boolean;
+}
+
+export interface EsNieData {
+  readonly value: string;
+  readonly prefix: string;
+  readonly digits: string;
+  readonly letter: string;
+}
+
+export interface EsCifOptions extends RequestOptions {
+  readonly format?: 'national' | 'vat';
+  readonly invalid?: boolean;
+  readonly edge?: boolean;
+}
+
+export interface EsCifData {
+  readonly value: string;
+  readonly digits: string;
+}
+
+export interface SePersonnummerOptions extends RequestOptions {
+  readonly sex?: Sex;
+  readonly olderThan?: number;
+  readonly youngerThan?: number;
+  readonly atAge?: number;
+  readonly bornOn?: string;
+  readonly bornBefore?: string;
+  readonly bornAfter?: string;
+  readonly format?: 'short' | 'long';
+  readonly kind?: 'personnummer' | 'samordningsnummer';
+  readonly invalid?: boolean;
+  readonly edge?: boolean;
+}
+
+export interface SePersonnummerData {
+  readonly value: string;
+  readonly digits: string;
+  readonly birthDate: string;
+  readonly sex: Sex;
+}
+
+export interface SeOrganisationsnummerOptions extends RequestOptions {
+  readonly format?: 'national' | 'vat';
+  readonly invalid?: boolean;
+  readonly edge?: boolean;
+}
+
+export interface SeOrganisationsnummerData {
+  readonly value: string;
+  readonly digits: string;
+}

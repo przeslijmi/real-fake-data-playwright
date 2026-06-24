@@ -5,6 +5,19 @@ All notable changes to `@przeslijmi/real-fake-data-playwright` are documented he
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.1.0] - 2026-06-24
+
+Adds the EU national-identifier set: the fixture grows from 70 generators to **136**.
+
+### Added
+
+- **National ID and tax numbers for all 27 EU countries** — singular + plural method
+  pairs for every new generator (`frNir` / `frNirs`, `deSteuerId` / `deSteuerIds`,
+  `itCodiceFiscale`, `sePersonnummer`, `nlBtwId`, …; 66 pairs), each with its own typed
+  `Options` and `Data`. Personal numbers take `sex` and age/birth-date filters; company
+  and VAT numbers take `format`; versioned standards (DK `checksum`, NL/IE/HU `standard`,
+  …) are exposed where they exist.
+
 ## [1.0.0] - 2026-06-23
 
 First stable release. The fixture grows from 8 generators to **70**, and the method
