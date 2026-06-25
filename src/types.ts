@@ -55,7 +55,7 @@ export type PolishLegalForm =
 export type CompanyNameStrategy = 'morpheme' | 'surname' | 'descriptive' | 'modern';
 
 /** Kind of vehicle registration plate produced. */
-export type VehicleRegistrationType = 'standard' | 'custom' | 'police' | 'military';
+export type VehicleRegistrationType = 'standard' | 'custom' | 'police' | 'military' | 'historic';
 
 /** Local-part shape the email generator can produce. */
 export type EmailLocalPattern =
@@ -211,6 +211,21 @@ export interface LoremOptions extends RequestOptions {
   readonly startWithLorem?: boolean;
 }
 
+export interface CustomRegexOptions extends RequestOptions {
+  /**
+   * The regular expression (source form, no delimiters) to generate a matching
+   * string for, e.g. `"[A-Z]{2}-\\d{6}"`. Required. Back-references and
+   * look-around assertions are rejected, as are patterns with an over-large
+   * worst-case expansion. Requires the Pro plan or above.
+   */
+  readonly pattern: string;
+  /**
+   * How many times unbounded quantifiers (`*`, `+`, `{n,}`) may expand.
+   * Defaults to 32.
+   */
+  readonly maxRepetition?: number;
+}
+
 export interface PolishPeselData {
   readonly value: string;
   readonly birthDate: string;
@@ -332,6 +347,12 @@ export interface LoremData {
   readonly bytes: number;
   readonly paragraphs: number;
   readonly startedWithLorem: boolean;
+}
+
+export interface CustomRegexData {
+  readonly value: string;
+  /** The source pattern the value was generated from, echoed back. */
+  readonly pattern: string;
 }
 
 /**
@@ -661,6 +682,19 @@ export interface DkCprData {
   readonly sex: Sex;
 }
 
+export interface DkPersonOptions extends DkCprOptions {
+  /** Mangle the casing of `name`/`surname` for testing. Defaults to `true`. */
+  readonly caseStrict?: boolean;
+}
+
+export interface DkPersonData {
+  readonly name: string;
+  readonly surname: string;
+  readonly initials: string;
+  readonly birthDate: string;
+  readonly cpr: string;
+}
+
 export interface DkCvrOptions extends RequestOptions {
   readonly format?: 'national' | 'vat';
   readonly invalid?: boolean;
@@ -863,7 +897,7 @@ export interface HuSzemelyiAzonositoOptions extends RequestOptions {
   readonly bornOn?: string;
   readonly bornBefore?: string;
   readonly bornAfter?: string;
-  readonly standard?: 'pre-1997' | 'modern';
+  readonly standard?: 'pre-1997' | 'modern' | 'both';
   readonly invalid?: boolean;
   readonly edge?: boolean;
 }
@@ -900,7 +934,7 @@ export interface HuCegjegyzekszamData {
 }
 
 export interface IePpsnOptions extends RequestOptions {
-  readonly standard?: 'pre-2013' | 'modern';
+  readonly standard?: 'pre-2013' | 'modern' | 'both';
   readonly invalid?: boolean;
   readonly edge?: boolean;
 }
@@ -914,7 +948,7 @@ export interface IePpsnData {
 
 export interface IeVatOptions extends RequestOptions {
   readonly format?: 'national' | 'vat';
-  readonly standard?: 'pre-2013' | 'modern';
+  readonly standard?: 'pre-2013' | 'modern' | 'both';
   readonly invalid?: boolean;
   readonly edge?: boolean;
 }
@@ -973,7 +1007,7 @@ export interface LvPersonasKodsOptions extends RequestOptions {
   readonly bornOn?: string;
   readonly bornBefore?: string;
   readonly bornAfter?: string;
-  readonly standard?: 'legacy' | 'modern';
+  readonly standard?: 'legacy' | 'modern' | 'both';
   readonly format?: 'plain' | 'with-hyphen';
   readonly invalid?: boolean;
   readonly edge?: boolean;
@@ -1096,6 +1130,275 @@ export interface NlBsnData {
   readonly digits: string;
 }
 
+export interface NlPersonOptions extends PersonConstraintOptions {
+  /** Bias the BSN and name shape toward their rare corners. */
+  readonly edge?: boolean;
+  /** Mangle the casing of `name`/`surname` for testing. Defaults to `true`. */
+  readonly caseStrict?: boolean;
+}
+
+export interface NlPersonData {
+  readonly name: string;
+  readonly surname: string;
+  readonly initials: string;
+  readonly birthDate: string;
+  readonly bsn: string;
+}
+
+/**
+ * Options shared by every full-person generator (`bePerson`, `frPerson`,
+ * `itPerson`, …): the person constraints (`sex`, age/birth-date filters,
+ * `invalid`) plus `edge` and `caseStrict`. The matching national number is
+ * carried on each country's own `*PersonData` result.
+ */
+export interface FullPersonOptions extends PersonConstraintOptions {
+  /** Bias the number and name shape toward their rarely-exercised corners. */
+  readonly edge?: boolean;
+  /** Mangle the casing of `name`/`surname` for testing. Defaults to `true`. */
+  readonly caseStrict?: boolean;
+}
+
+export type BePersonOptions = FullPersonOptions;
+
+export interface BePersonData {
+  readonly name: string;
+  readonly surname: string;
+  readonly initials: string;
+  readonly birthDate: string;
+  readonly rijksregisternummer: string;
+}
+
+export type BgPersonOptions = FullPersonOptions;
+
+export interface BgPersonData {
+  readonly name: string;
+  readonly surname: string;
+  readonly initials: string;
+  readonly birthDate: string;
+  readonly egn: string;
+}
+
+export type CzPersonOptions = FullPersonOptions;
+
+export interface CzPersonData {
+  readonly name: string;
+  readonly surname: string;
+  readonly initials: string;
+  readonly birthDate: string;
+  readonly rodneCislo: string;
+}
+
+export type EePersonOptions = FullPersonOptions;
+
+export interface EePersonData {
+  readonly name: string;
+  readonly surname: string;
+  readonly initials: string;
+  readonly birthDate: string;
+  readonly isikukood: string;
+}
+
+export type FiPersonOptions = FullPersonOptions;
+
+export interface FiPersonData {
+  readonly name: string;
+  readonly surname: string;
+  readonly initials: string;
+  readonly birthDate: string;
+  readonly henkilotunnus: string;
+}
+
+export type GrPersonOptions = FullPersonOptions;
+
+export interface GrPersonData {
+  readonly name: string;
+  readonly surname: string;
+  readonly initials: string;
+  readonly birthDate: string;
+  readonly amka: string;
+}
+
+export type HrPersonOptions = FullPersonOptions;
+
+export interface HrPersonData {
+  readonly name: string;
+  readonly surname: string;
+  readonly initials: string;
+  readonly birthDate: string;
+  readonly jmbg: string;
+}
+
+export type HuPersonOptions = FullPersonOptions;
+
+export interface HuPersonData {
+  readonly name: string;
+  readonly surname: string;
+  readonly initials: string;
+  readonly birthDate: string;
+  readonly szemelyiAzonosito: string;
+}
+
+export type LtPersonOptions = FullPersonOptions;
+
+export interface LtPersonData {
+  readonly name: string;
+  readonly surname: string;
+  readonly initials: string;
+  readonly birthDate: string;
+  readonly asmensKodas: string;
+}
+
+export type RoPersonOptions = FullPersonOptions;
+
+export interface RoPersonData {
+  readonly name: string;
+  readonly surname: string;
+  readonly initials: string;
+  readonly birthDate: string;
+  readonly cnp: string;
+}
+
+export type SePersonOptions = FullPersonOptions;
+
+export interface SePersonData {
+  readonly name: string;
+  readonly surname: string;
+  readonly initials: string;
+  readonly birthDate: string;
+  readonly personnummer: string;
+}
+
+export type SiPersonOptions = FullPersonOptions;
+
+export interface SiPersonData {
+  readonly name: string;
+  readonly surname: string;
+  readonly initials: string;
+  readonly birthDate: string;
+  readonly emso: string;
+}
+
+export type SkPersonOptions = FullPersonOptions;
+
+export interface SkPersonData {
+  readonly name: string;
+  readonly surname: string;
+  readonly initials: string;
+  readonly birthDate: string;
+  readonly rodneCislo: string;
+}
+
+export type AtPersonOptions = FullPersonOptions;
+
+export interface AtPersonData {
+  readonly name: string;
+  readonly surname: string;
+  readonly initials: string;
+  readonly birthDate: string;
+  readonly svnr: string;
+}
+
+export type LuPersonOptions = FullPersonOptions;
+
+export interface LuPersonData {
+  readonly name: string;
+  readonly surname: string;
+  readonly initials: string;
+  readonly birthDate: string;
+  readonly matricule: string;
+}
+
+export type FrPersonOptions = FullPersonOptions;
+
+export interface FrPersonData {
+  readonly name: string;
+  readonly surname: string;
+  readonly initials: string;
+  readonly birthDate: string;
+  readonly nir: string;
+}
+
+export type ItPersonOptions = FullPersonOptions;
+
+export interface ItPersonData {
+  readonly name: string;
+  readonly surname: string;
+  readonly initials: string;
+  readonly birthDate: string;
+  readonly codiceFiscale: string;
+}
+
+export type CyPersonOptions = FullPersonOptions;
+
+export interface CyPersonData {
+  readonly name: string;
+  readonly surname: string;
+  readonly initials: string;
+  readonly birthDate: string;
+  readonly tic: string;
+}
+
+export type DePersonOptions = FullPersonOptions;
+
+export interface DePersonData {
+  readonly name: string;
+  readonly surname: string;
+  readonly initials: string;
+  readonly birthDate: string;
+  readonly steuerId: string;
+}
+
+export type EsPersonOptions = FullPersonOptions;
+
+export interface EsPersonData {
+  readonly name: string;
+  readonly surname: string;
+  readonly initials: string;
+  readonly birthDate: string;
+  readonly dni: string;
+}
+
+export type IePersonOptions = FullPersonOptions;
+
+export interface IePersonData {
+  readonly name: string;
+  readonly surname: string;
+  readonly initials: string;
+  readonly birthDate: string;
+  readonly ppsn: string;
+}
+
+export type MtPersonOptions = FullPersonOptions;
+
+export interface MtPersonData {
+  readonly name: string;
+  readonly surname: string;
+  readonly initials: string;
+  readonly birthDate: string;
+  readonly idCard: string;
+}
+
+export type PtPersonOptions = FullPersonOptions;
+
+export interface PtPersonData {
+  readonly name: string;
+  readonly surname: string;
+  readonly initials: string;
+  readonly birthDate: string;
+  readonly cartaoCidadao: string;
+}
+
+export type LvPersonOptions = FullPersonOptions;
+
+export interface LvPersonData {
+  readonly name: string;
+  readonly surname: string;
+  readonly initials: string;
+  readonly birthDate: string;
+  readonly personasKods: string;
+}
+
+
 export interface NlRsinOptions extends RequestOptions {
   readonly invalid?: boolean;
   readonly edge?: boolean;
@@ -1107,7 +1410,7 @@ export interface NlRsinData {
 }
 
 export interface NlBtwIdOptions extends RequestOptions {
-  readonly standard?: 'legacy' | 'modern';
+  readonly standard?: 'legacy' | 'modern' | 'both';
   readonly invalid?: boolean;
   readonly edge?: boolean;
 }

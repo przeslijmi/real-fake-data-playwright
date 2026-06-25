@@ -5,6 +5,50 @@ All notable changes to `@przeslijmi/real-fake-data-playwright` are documented he
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.4.0] - 2026-06-24
+
+Adds the custom-regex generator: the fixture grows from 163 generators to **164**.
+
+### Added
+
+- **Custom-regex generator** — `customRegex` / `customRegexes` produce a random string
+  matching a regular expression you supply (`pattern`), for seeding data whose format the
+  catalogue doesn't model (in-house serial numbers, SKUs, ticket ids). `maxRepetition`
+  caps how far unbounded quantifiers (`*`, `+`, `{n,}`) expand. Back-references,
+  look-around assertions, and patterns with an over-large worst-case expansion are
+  rejected (a `400`). New `CustomRegexOptions` / `CustomRegexData` types. **Requires the
+  Pro plan or above.**
+
+## [1.3.0] - 2026-06-24
+
+### Added
+
+- **Full-person fixtures for all 27 EU countries** — `<cc>Person` / `<cc>People` for every
+  member state (`dkPerson`, `frPerson`, `itPerson`, `sePerson`, `dePerson`, …) return a
+  mutually consistent person (name, surname, initials, birth date, and the matching national
+  number) in one call, like `plPerson`. Where the number encodes a birth date and sex (CPR,
+  EGN, isikukood, CNP, …) those facts drive the name; Italy’s `itPerson` derives the Codice
+  Fiscale from the generated name; non-semantic numbers (BSN, DNI, Steuer-ID, PPSN, …) draw
+  the birth date independently with `sex` shaping the name. Every method takes `sex`, the
+  age/birth filters, `invalid`, `edge`, and `caseStrict`; results carry the country’s own
+  field (`cpr`, `nir`, `codiceFiscale`, `personnummer`, `bsn`, …). The fixture grows to
+  **163** generators.
+
+## [1.2.0] - 2026-06-24
+
+### Added
+
+- **Historic (vintage) Polish plates** — `plVehicleRegistration` / `plVehicleRegistrations`
+  now accept `type: 'historic'`, producing a *tablica zabytkowa* (e.g. `BSI 12A`): a real
+  area code plus the short, five-character-total number used by registered vintage
+  vehicles. `voivodeship` and `county` apply as for `standard` plates. The
+  `VehicleRegistrationType` union grows the `'historic'` member.
+- **`standard: 'both'` for the time-versioned ID generators** — `iePpsn`, `ieVat`,
+  `nlBtwId`, `lvPersonasKods`, and `huSzemelyiAzonosito` now accept `'both'` on top of
+  their two single-standard choices, drawing one standard per record so a batch mixes the
+  old and new forms. The corresponding `Options` `standard` unions grow the `'both'`
+  member; result `standard` fields stay concrete (a value is always one resolved standard).
+
 ## [1.1.0] - 2026-06-24
 
 Adds the EU national-identifier set: the fixture grows from 70 generators to **136**.

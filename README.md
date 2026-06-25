@@ -1,11 +1,11 @@
 # @przeslijmi/real-fake-data-playwright
 
-Playwright fixtures for [Real Fake Data](https://github.com/przeslijmi/rfd) — **136 generators** of realistic, synthetic test data, one typed method per record:
+Playwright fixtures for [Real Fake Data](https://github.com/przeslijmi/rfd) — **164 generators** of realistic, synthetic test data, one typed method per record:
 
 - **Person and company names across 27 EU countries** — `dePersonName`, `itCompanyName`, `frPersonName`, … in the local script and inflection, plus multi-country `personName`/`companyName` that draw from any mix of countries.
 - **National identifiers and VAT / company numbers for every EU member state** — French `frNir`/`frSiren`, Italian `itCodiceFiscale`, Spanish `esDni`/`esNie`, Danish `dkCpr`, Swedish `sePersonnummer`, Dutch `nlBsn`, German `deSteuerId`/`deUstIdnr`, and 60+ more — each with correct checksums and the same `invalid`/`edge` triggers.
 - **The full Polish national set** — valid PESELs (correct checksums), NIPs, REGONs, IBANs, KRS and land-register numbers, ID cards, passports, driving licences, addresses drawn from real cities and streets, and vehicle plates.
-- **Locale-agnostic** — emails and lorem ipsum.
+- **Locale-agnostic** — emails, lorem ipsum, and `customRegex` (a random string matching any regex you supply; Pro plan and above).
 
 Output _looks_ real but is fake — safe for staging, demos, and seed data.
 
@@ -120,12 +120,14 @@ Every EU member state exposes its core national-person identifier and its busine
 | -------- | ------ | ------------------ | ------- |
 | `frSiren(opts?)` | `frSirens(count, opts?)` | `{ value, digits }` | `format`, `invalid`, `edge` |
 | `frNir(opts?)` | `frNirs(count, opts?)` | `{ value, digits, sex, birthYear, birthMonth }` | `sex`, age/birth filters, `invalid`, `edge` |
+| `frPerson(opts?)` | `frPeople(count, opts?)` | `{ name, surname, initials, birthDate, nir }` | `sex`, age/birth filters, `invalid`, `edge`, `caseStrict` |
 
 **Austria (`at`)**
 
 | Singular | Plural | Returns (singular) | Options |
 | -------- | ------ | ------------------ | ------- |
 | `atSvnr(opts?)` | `atSvnrs(count, opts?)` | `{ value, digits, birthDate }` | age/birth filters, `invalid`, `edge` |
+| `atPerson(opts?)` | `atPeople(count, opts?)` | `{ name, surname, initials, birthDate, svnr }` | `sex`, age/birth filters, `invalid`, `edge`, `caseStrict` |
 | `atUid(opts?)` | `atUids(count, opts?)` | `{ value, digits }` | `format`, `invalid`, `edge` |
 | `atFirmenbuchnummer(opts?)` | `atFirmenbuchnummers(count, opts?)` | `{ value, number, letter }` | `invalid`, `edge` |
 | `atSteuernummer(opts?)` | `atSteuernummers(count, opts?)` | `{ value, digits }` | `edge` |
@@ -135,6 +137,7 @@ Every EU member state exposes its core national-person identifier and its busine
 | Singular | Plural | Returns (singular) | Options |
 | -------- | ------ | ------------------ | ------- |
 | `beRijksregisternummer(opts?)` | `beRijksregisternummers(count, opts?)` | `{ value, digits, birthDate, sex }` | `sex`, age/birth filters, `kind`, `invalid`, `edge` |
+| `bePerson(opts?)` | `bePeople(count, opts?)` | `{ name, surname, initials, birthDate, rijksregisternummer }` | `sex`, age/birth filters, `invalid`, `edge`, `caseStrict` |
 | `beOndernemingsnummer(opts?)` | `beOndernemingsnummers(count, opts?)` | `{ value, digits }` | `format`, `invalid`, `edge` |
 
 **Bulgaria (`bg`)**
@@ -142,6 +145,7 @@ Every EU member state exposes its core national-person identifier and its busine
 | Singular | Plural | Returns (singular) | Options |
 | -------- | ------ | ------------------ | ------- |
 | `bgEgn(opts?)` | `bgEgns(count, opts?)` | `{ value, digits, birthDate, sex }` | `sex`, age/birth filters, `invalid`, `edge` |
+| `bgPerson(opts?)` | `bgPeople(count, opts?)` | `{ name, surname, initials, birthDate, egn }` | `sex`, age/birth filters, `invalid`, `edge`, `caseStrict` |
 | `bgEik(opts?)` | `bgEiks(count, opts?)` | `{ value, digits }` | `format`, `invalid`, `edge` |
 
 **Croatia (`hr`)**
@@ -150,18 +154,21 @@ Every EU member state exposes its core national-person identifier and its busine
 | -------- | ------ | ------------------ | ------- |
 | `hrOib(opts?)` | `hrOibs(count, opts?)` | `{ value, digits }` | `format`, `invalid`, `edge` |
 | `hrJmbg(opts?)` | `hrJmbgs(count, opts?)` | `{ value, digits, birthDate, sex }` | `sex`, age/birth filters, `invalid`, `edge` |
+| `hrPerson(opts?)` | `hrPeople(count, opts?)` | `{ name, surname, initials, birthDate, jmbg }` | `sex`, age/birth filters, `invalid`, `edge`, `caseStrict` |
 
 **Cyprus (`cy`)**
 
 | Singular | Plural | Returns (singular) | Options |
 | -------- | ------ | ------------------ | ------- |
 | `cyTic(opts?)` | `cyTics(count, opts?)` | `{ value, digits, letter }` | `format`, `invalid`, `edge` |
+| `cyPerson(opts?)` | `cyPeople(count, opts?)` | `{ name, surname, initials, birthDate, tic }` | `sex`, age/birth filters, `invalid`, `edge`, `caseStrict` |
 
 **Czechia (`cz`)**
 
 | Singular | Plural | Returns (singular) | Options |
 | -------- | ------ | ------------------ | ------- |
 | `czRodneCislo(opts?)` | `czRodneCislos(count, opts?)` | `{ value, digits, birthDate, sex }` | `sex`, age/birth filters, `format`, `invalid`, `edge` |
+| `czPerson(opts?)` | `czPeople(count, opts?)` | `{ name, surname, initials, birthDate, rodneCislo }` | `sex`, age/birth filters, `invalid`, `edge`, `caseStrict` |
 | `czIco(opts?)` | `czIcos(count, opts?)` | `{ value, digits }` | `format`, `invalid`, `edge` |
 
 **Denmark (`dk`)**
@@ -169,6 +176,7 @@ Every EU member state exposes its core national-person identifier and its busine
 | Singular | Plural | Returns (singular) | Options |
 | -------- | ------ | ------------------ | ------- |
 | `dkCpr(opts?)` | `dkCprs(count, opts?)` | `{ value, digits, birthDate, sex }` | `sex`, age/birth filters, `checksum`, `format`, `invalid`, `edge` |
+| `dkPerson(opts?)` | `dkPeople(count, opts?)` | `{ name, surname, initials, birthDate, cpr }` | same as `dkCpr`, plus `caseStrict` |
 | `dkCvr(opts?)` | `dkCvrs(count, opts?)` | `{ value, digits }` | `format`, `invalid`, `edge` |
 
 **Estonia (`ee`)**
@@ -176,6 +184,7 @@ Every EU member state exposes its core national-person identifier and its busine
 | Singular | Plural | Returns (singular) | Options |
 | -------- | ------ | ------------------ | ------- |
 | `eeIsikukood(opts?)` | `eeIsikukoods(count, opts?)` | `{ value, digits, birthDate, sex }` | `sex`, age/birth filters, `invalid`, `edge` |
+| `eePerson(opts?)` | `eePeople(count, opts?)` | `{ name, surname, initials, birthDate, isikukood }` | `sex`, age/birth filters, `invalid`, `edge`, `caseStrict` |
 | `eeRegistrikood(opts?)` | `eeRegistrikoods(count, opts?)` | `{ value, digits }` | `invalid`, `edge` |
 | `eeKmkr(opts?)` | `eeKmkrs(count, opts?)` | `{ value, digits }` | `format`, `invalid`, `edge` |
 
@@ -184,6 +193,7 @@ Every EU member state exposes its core national-person identifier and its busine
 | Singular | Plural | Returns (singular) | Options |
 | -------- | ------ | ------------------ | ------- |
 | `fiHenkilotunnus(opts?)` | `fiHenkilotunnuss(count, opts?)` | `{ value, digits, birthDate, sex }` | `sex`, age/birth filters, `invalid`, `edge` |
+| `fiPerson(opts?)` | `fiPeople(count, opts?)` | `{ name, surname, initials, birthDate, henkilotunnus }` | `sex`, age/birth filters, `invalid`, `edge`, `caseStrict` |
 | `fiYTunnus(opts?)` | `fiYTunnuss(count, opts?)` | `{ value, digits }` | `format`, `invalid`, `edge` |
 
 **Germany (`de`)**
@@ -191,6 +201,7 @@ Every EU member state exposes its core national-person identifier and its busine
 | Singular | Plural | Returns (singular) | Options |
 | -------- | ------ | ------------------ | ------- |
 | `deSteuerId(opts?)` | `deSteuerIds(count, opts?)` | `{ value, digits }` | `invalid`, `edge` |
+| `dePerson(opts?)` | `dePeople(count, opts?)` | `{ name, surname, initials, birthDate, steuerId }` | `sex`, age/birth filters, `invalid`, `edge`, `caseStrict` |
 | `deUstIdnr(opts?)` | `deUstIdnrs(count, opts?)` | `{ value, digits }` | `format`, `invalid`, `edge` |
 | `deHandelsregisternummer(opts?)` | `deHandelsregisternummers(count, opts?)` | `{ value, division, court, number }` | `division`, `edge` |
 | `deWirtschaftsIdnr(opts?)` | `deWirtschaftsIdnrs(count, opts?)` | `{ value, digits, suffix }` | `suffix`, `invalid`, `edge` |
@@ -201,6 +212,7 @@ Every EU member state exposes its core national-person identifier and its busine
 | Singular | Plural | Returns (singular) | Options |
 | -------- | ------ | ------------------ | ------- |
 | `grAmka(opts?)` | `grAmkas(count, opts?)` | `{ value, digits, birthDate, sex }` | `sex`, age/birth filters, `invalid`, `edge` |
+| `grPerson(opts?)` | `grPeople(count, opts?)` | `{ name, surname, initials, birthDate, amka }` | `sex`, age/birth filters, `invalid`, `edge`, `caseStrict` |
 | `grAfm(opts?)` | `grAfms(count, opts?)` | `{ value, digits }` | `format`, `invalid`, `edge` |
 
 **Hungary (`hu`)**
@@ -210,6 +222,7 @@ Every EU member state exposes its core national-person identifier and its busine
 | `huAdoazonositoJel(opts?)` | `huAdoazonositoJels(count, opts?)` | `{ value, digits, birthDate }` | age/birth filters, `invalid`, `edge` |
 | `huTaj(opts?)` | `huTajs(count, opts?)` | `{ value, digits }` | `invalid`, `edge` |
 | `huSzemelyiAzonosito(opts?)` | `huSzemelyiAzonositos(count, opts?)` | `{ value, digits, birthDate, sex, standard }` | `sex`, age/birth filters, `standard`, `invalid`, `edge` |
+| `huPerson(opts?)` | `huPeople(count, opts?)` | `{ name, surname, initials, birthDate, szemelyiAzonosito }` | `sex`, age/birth filters, `invalid`, `edge`, `caseStrict` |
 | `huAdoszam(opts?)` | `huAdoszams(count, opts?)` | `{ value, digits }` | `format`, `invalid`, `edge` |
 | `huCegjegyzekszam(opts?)` | `huCegjegyzekszams(count, opts?)` | `{ value, court, form, serial, digits }` | `edge` |
 
@@ -218,6 +231,7 @@ Every EU member state exposes its core national-person identifier and its busine
 | Singular | Plural | Returns (singular) | Options |
 | -------- | ------ | ------------------ | ------- |
 | `iePpsn(opts?)` | `iePpsns(count, opts?)` | `{ value, digits, checkLetter, secondLetter? }` | `standard`, `invalid`, `edge` |
+| `iePerson(opts?)` | `iePeople(count, opts?)` | `{ name, surname, initials, birthDate, ppsn }` | `sex`, age/birth filters, `invalid`, `edge`, `caseStrict` |
 | `ieVat(opts?)` | `ieVats(count, opts?)` | `{ value, digits }` | `format`, `standard`, `invalid`, `edge` |
 | `ieCro(opts?)` | `ieCros(count, opts?)` | `{ value, digits }` | `edge` |
 
@@ -226,6 +240,7 @@ Every EU member state exposes its core national-person identifier and its busine
 | Singular | Plural | Returns (singular) | Options |
 | -------- | ------ | ------------------ | ------- |
 | `itCodiceFiscale(opts?)` | `itCodiceFiscales(count, opts?)` | `{ value, surnameCode, nameCode, birthDate, sex }` | `sex`, age/birth filters, `surname`, `name`, `invalid`, `edge` |
+| `itPerson(opts?)` | `itPeople(count, opts?)` | `{ name, surname, initials, birthDate, codiceFiscale }` | `sex`, age/birth filters, `invalid`, `edge`, `caseStrict` |
 | `itPartitaIva(opts?)` | `itPartitaIvas(count, opts?)` | `{ value, digits }` | `format`, `invalid`, `edge` |
 
 **Latvia (`lv`)**
@@ -233,6 +248,7 @@ Every EU member state exposes its core national-person identifier and its busine
 | Singular | Plural | Returns (singular) | Options |
 | -------- | ------ | ------------------ | ------- |
 | `lvPersonasKods(opts?)` | `lvPersonasKodss(count, opts?)` | `{ value, digits, birthDate? }` | age/birth filters, `standard`, `format`, `invalid`, `edge` |
+| `lvPerson(opts?)` | `lvPeople(count, opts?)` | `{ name, surname, initials, birthDate, personasKods }` | `sex`, age/birth filters, `invalid`, `edge`, `caseStrict` |
 | `lvRegistracijasNumurs(opts?)` | `lvRegistracijasNumurss(count, opts?)` | `{ value, digits }` | `format`, `invalid`, `edge` |
 
 **Lithuania (`lt`)**
@@ -240,6 +256,7 @@ Every EU member state exposes its core national-person identifier and its busine
 | Singular | Plural | Returns (singular) | Options |
 | -------- | ------ | ------------------ | ------- |
 | `ltAsmensKodas(opts?)` | `ltAsmensKodass(count, opts?)` | `{ value, digits, birthDate, sex }` | `sex`, age/birth filters, `invalid`, `edge` |
+| `ltPerson(opts?)` | `ltPeople(count, opts?)` | `{ name, surname, initials, birthDate, asmensKodas }` | `sex`, age/birth filters, `invalid`, `edge`, `caseStrict` |
 | `ltImonesKodas(opts?)` | `ltImonesKodass(count, opts?)` | `{ value, digits }` | `invalid`, `edge` |
 | `ltPvm(opts?)` | `ltPvms(count, opts?)` | `{ value, digits }` | `format`, `invalid`, `edge` |
 
@@ -248,6 +265,7 @@ Every EU member state exposes its core national-person identifier and its busine
 | Singular | Plural | Returns (singular) | Options |
 | -------- | ------ | ------------------ | ------- |
 | `luMatricule(opts?)` | `luMatricules(count, opts?)` | `{ value, digits, birthDate }` | age/birth filters, `invalid`, `edge` |
+| `luPerson(opts?)` | `luPeople(count, opts?)` | `{ name, surname, initials, birthDate, matricule }` | `sex`, age/birth filters, `invalid`, `edge`, `caseStrict` |
 | `luTva(opts?)` | `luTvas(count, opts?)` | `{ value, digits }` | `format`, `invalid`, `edge` |
 
 **Malta (`mt`)**
@@ -255,6 +273,7 @@ Every EU member state exposes its core national-person identifier and its busine
 | Singular | Plural | Returns (singular) | Options |
 | -------- | ------ | ------------------ | ------- |
 | `mtIdCard(opts?)` | `mtIdCards(count, opts?)` | `{ value, digits, category }` | `category`, `edge` |
+| `mtPerson(opts?)` | `mtPeople(count, opts?)` | `{ name, surname, initials, birthDate, idCard }` | `sex`, age/birth filters, `invalid`, `edge`, `caseStrict` |
 | `mtVat(opts?)` | `mtVats(count, opts?)` | `{ value, digits }` | `format`, `invalid`, `edge` |
 
 **Netherlands (`nl`)**
@@ -262,6 +281,7 @@ Every EU member state exposes its core national-person identifier and its busine
 | Singular | Plural | Returns (singular) | Options |
 | -------- | ------ | ------------------ | ------- |
 | `nlBsn(opts?)` | `nlBsns(count, opts?)` | `{ value, digits }` | `invalid`, `edge` |
+| `nlPerson(opts?)` | `nlPeople(count, opts?)` | `{ name, surname, initials, birthDate, bsn }` | `sex`, age/birth filters, `invalid`, `edge`, `caseStrict` |
 | `nlRsin(opts?)` | `nlRsins(count, opts?)` | `{ value, digits }` | `invalid`, `edge` |
 | `nlBtwId(opts?)` | `nlBtwIds(count, opts?)` | `{ value, digits, standard }` | `standard`, `invalid`, `edge` |
 | `nlKvk(opts?)` | `nlKvks(count, opts?)` | `{ value, digits }` | `edge` |
@@ -272,12 +292,14 @@ Every EU member state exposes its core national-person identifier and its busine
 | -------- | ------ | ------------------ | ------- |
 | `ptNif(opts?)` | `ptNifs(count, opts?)` | `{ value, digits, entity }` | `entity`, `format`, `invalid`, `edge` |
 | `ptCartaoCidadao(opts?)` | `ptCartaoCidadaos(count, opts?)` | `{ value, nic, version }` | `invalid`, `edge` |
+| `ptPerson(opts?)` | `ptPeople(count, opts?)` | `{ name, surname, initials, birthDate, cartaoCidadao }` | `sex`, age/birth filters, `invalid`, `edge`, `caseStrict` |
 
 **Romania (`ro`)**
 
 | Singular | Plural | Returns (singular) | Options |
 | -------- | ------ | ------------------ | ------- |
 | `roCnp(opts?)` | `roCnps(count, opts?)` | `{ value, digits, birthDate, sex, county }` | `sex`, age/birth filters, `invalid`, `edge` |
+| `roPerson(opts?)` | `roPeople(count, opts?)` | `{ name, surname, initials, birthDate, cnp }` | `sex`, age/birth filters, `invalid`, `edge`, `caseStrict` |
 | `roCui(opts?)` | `roCuis(count, opts?)` | `{ value, digits }` | `format`, `invalid`, `edge` |
 
 **Slovakia (`sk`)**
@@ -285,6 +307,7 @@ Every EU member state exposes its core national-person identifier and its busine
 | Singular | Plural | Returns (singular) | Options |
 | -------- | ------ | ------------------ | ------- |
 | `skRodneCislo(opts?)` | `skRodneCislos(count, opts?)` | `{ value, digits, birthDate, sex }` | `sex`, age/birth filters, `format`, `invalid`, `edge` |
+| `skPerson(opts?)` | `skPeople(count, opts?)` | `{ name, surname, initials, birthDate, rodneCislo }` | `sex`, age/birth filters, `invalid`, `edge`, `caseStrict` |
 | `skIco(opts?)` | `skIcos(count, opts?)` | `{ value, digits }` | `invalid`, `edge` |
 | `skIcDph(opts?)` | `skIcDphs(count, opts?)` | `{ value, digits }` | `format`, `invalid`, `edge` |
 
@@ -293,6 +316,7 @@ Every EU member state exposes its core national-person identifier and its busine
 | Singular | Plural | Returns (singular) | Options |
 | -------- | ------ | ------------------ | ------- |
 | `siEmso(opts?)` | `siEmsos(count, opts?)` | `{ value, digits, birthDate, sex }` | `sex`, age/birth filters, `invalid`, `edge` |
+| `siPerson(opts?)` | `siPeople(count, opts?)` | `{ name, surname, initials, birthDate, emso }` | `sex`, age/birth filters, `invalid`, `edge`, `caseStrict` |
 | `siDavcnaStevilka(opts?)` | `siDavcnaStevilkas(count, opts?)` | `{ value, digits }` | `format`, `invalid`, `edge` |
 
 **Spain (`es`)**
@@ -300,6 +324,7 @@ Every EU member state exposes its core national-person identifier and its busine
 | Singular | Plural | Returns (singular) | Options |
 | -------- | ------ | ------------------ | ------- |
 | `esDni(opts?)` | `esDnis(count, opts?)` | `{ value, digits, letter }` | `invalid`, `edge` |
+| `esPerson(opts?)` | `esPeople(count, opts?)` | `{ name, surname, initials, birthDate, dni }` | `sex`, age/birth filters, `invalid`, `edge`, `caseStrict` |
 | `esNie(opts?)` | `esNies(count, opts?)` | `{ value, prefix, digits, letter }` | `invalid`, `edge` |
 | `esCif(opts?)` | `esCifs(count, opts?)` | `{ value, digits }` | `format`, `invalid`, `edge` |
 
@@ -308,6 +333,7 @@ Every EU member state exposes its core national-person identifier and its busine
 | Singular | Plural | Returns (singular) | Options |
 | -------- | ------ | ------------------ | ------- |
 | `sePersonnummer(opts?)` | `sePersonnummers(count, opts?)` | `{ value, digits, birthDate, sex }` | `sex`, age/birth filters, `format`, `kind`, `invalid`, `edge` |
+| `sePerson(opts?)` | `sePeople(count, opts?)` | `{ name, surname, initials, birthDate, personnummer }` | `sex`, age/birth filters, `invalid`, `edge`, `caseStrict` |
 | `seOrganisationsnummer(opts?)` | `seOrganisationsnummers(count, opts?)` | `{ value, digits }` | `format`, `invalid`, `edge` |
 
 #### Locale-agnostic
@@ -316,6 +342,7 @@ Every EU member state exposes its core national-person identifier and its busine
 | ------------------------------ | -------------------------------------- | ---------------------------------------------------------- | --------------------------------------------------------------------- |
 | `email(opts?)`                 | `emails(count, opts?)`                 | `{ value, localPart, domain, pattern, plusTag }`          | `domain`, `domainCategory`, `pattern`, `plusTag`, `exotic`           |
 | `lorem(opts?)`                 | `lorems(count, opts?)`                 | `{ value, words, chars, bytes, paragraphs, startedWithLorem }` | `bytes`, `chars`, `words`, `paragraphs`, `startWithLorem`      |
+| `customRegex(opts)`            | `customRegexes(count, opts)`           | `{ value, pattern }`                                       | `pattern` (required), `maxRepetition` — Pro plan and above            |
 
 ### Generating many records at once
 

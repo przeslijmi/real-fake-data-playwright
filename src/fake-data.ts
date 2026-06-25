@@ -24,6 +24,8 @@ import type {
   CompanyNameOptions,
   CompanyOptions,
   CountryCode,
+  CustomRegexData,
+  CustomRegexOptions,
   CyTicData,
   CyTicOptions,
   CzIcoData,
@@ -42,6 +44,8 @@ import type {
   DeWirtschaftsIdnrOptions,
   DkCprData,
   DkCprOptions,
+  DkPersonData,
+  DkPersonOptions,
   DkCvrData,
   DkCvrOptions,
   DrivingLicenseOptions,
@@ -124,6 +128,8 @@ import type {
   NipOptions,
   NlBsnData,
   NlBsnOptions,
+  NlPersonData,
+  NlPersonOptions,
   NlBtwIdData,
   NlBtwIdOptions,
   NlKvkData,
@@ -146,6 +152,54 @@ import type {
   PolishNipData,
   PolishPassportData,
   PolishPersonData,
+  BePersonData,
+  BePersonOptions,
+  BgPersonData,
+  BgPersonOptions,
+  CzPersonData,
+  CzPersonOptions,
+  EePersonData,
+  EePersonOptions,
+  FiPersonData,
+  FiPersonOptions,
+  GrPersonData,
+  GrPersonOptions,
+  HrPersonData,
+  HrPersonOptions,
+  HuPersonData,
+  HuPersonOptions,
+  LtPersonData,
+  LtPersonOptions,
+  RoPersonData,
+  RoPersonOptions,
+  SePersonData,
+  SePersonOptions,
+  SiPersonData,
+  SiPersonOptions,
+  SkPersonData,
+  SkPersonOptions,
+  AtPersonData,
+  AtPersonOptions,
+  LuPersonData,
+  LuPersonOptions,
+  FrPersonData,
+  FrPersonOptions,
+  ItPersonData,
+  ItPersonOptions,
+  CyPersonData,
+  CyPersonOptions,
+  DePersonData,
+  DePersonOptions,
+  EsPersonData,
+  EsPersonOptions,
+  IePersonData,
+  IePersonOptions,
+  MtPersonData,
+  MtPersonOptions,
+  PtPersonData,
+  PtPersonOptions,
+  LvPersonData,
+  LvPersonOptions,
   PolishPeselData,
   PolishRegonData,
   PolishVehicleRegistrationData,
@@ -228,6 +282,54 @@ export type FakeData = PersonNameMethods &
     plPesel(options?: PeselOptions): Promise<PolishPeselData>;
     plPesels(count: number, options?: PeselOptions): Promise<PolishPeselData[]>;
     plPerson(options?: PersonOptions): Promise<PolishPersonData>;
+    bePerson(options?: BePersonOptions): Promise<BePersonData>;
+    bePeople(count: number, options?: BePersonOptions): Promise<BePersonData[]>;
+    bgPerson(options?: BgPersonOptions): Promise<BgPersonData>;
+    bgPeople(count: number, options?: BgPersonOptions): Promise<BgPersonData[]>;
+    czPerson(options?: CzPersonOptions): Promise<CzPersonData>;
+    czPeople(count: number, options?: CzPersonOptions): Promise<CzPersonData[]>;
+    eePerson(options?: EePersonOptions): Promise<EePersonData>;
+    eePeople(count: number, options?: EePersonOptions): Promise<EePersonData[]>;
+    fiPerson(options?: FiPersonOptions): Promise<FiPersonData>;
+    fiPeople(count: number, options?: FiPersonOptions): Promise<FiPersonData[]>;
+    grPerson(options?: GrPersonOptions): Promise<GrPersonData>;
+    grPeople(count: number, options?: GrPersonOptions): Promise<GrPersonData[]>;
+    hrPerson(options?: HrPersonOptions): Promise<HrPersonData>;
+    hrPeople(count: number, options?: HrPersonOptions): Promise<HrPersonData[]>;
+    huPerson(options?: HuPersonOptions): Promise<HuPersonData>;
+    huPeople(count: number, options?: HuPersonOptions): Promise<HuPersonData[]>;
+    ltPerson(options?: LtPersonOptions): Promise<LtPersonData>;
+    ltPeople(count: number, options?: LtPersonOptions): Promise<LtPersonData[]>;
+    roPerson(options?: RoPersonOptions): Promise<RoPersonData>;
+    roPeople(count: number, options?: RoPersonOptions): Promise<RoPersonData[]>;
+    sePerson(options?: SePersonOptions): Promise<SePersonData>;
+    sePeople(count: number, options?: SePersonOptions): Promise<SePersonData[]>;
+    siPerson(options?: SiPersonOptions): Promise<SiPersonData>;
+    siPeople(count: number, options?: SiPersonOptions): Promise<SiPersonData[]>;
+    skPerson(options?: SkPersonOptions): Promise<SkPersonData>;
+    skPeople(count: number, options?: SkPersonOptions): Promise<SkPersonData[]>;
+    atPerson(options?: AtPersonOptions): Promise<AtPersonData>;
+    atPeople(count: number, options?: AtPersonOptions): Promise<AtPersonData[]>;
+    luPerson(options?: LuPersonOptions): Promise<LuPersonData>;
+    luPeople(count: number, options?: LuPersonOptions): Promise<LuPersonData[]>;
+    frPerson(options?: FrPersonOptions): Promise<FrPersonData>;
+    frPeople(count: number, options?: FrPersonOptions): Promise<FrPersonData[]>;
+    itPerson(options?: ItPersonOptions): Promise<ItPersonData>;
+    itPeople(count: number, options?: ItPersonOptions): Promise<ItPersonData[]>;
+    cyPerson(options?: CyPersonOptions): Promise<CyPersonData>;
+    cyPeople(count: number, options?: CyPersonOptions): Promise<CyPersonData[]>;
+    dePerson(options?: DePersonOptions): Promise<DePersonData>;
+    dePeople(count: number, options?: DePersonOptions): Promise<DePersonData[]>;
+    esPerson(options?: EsPersonOptions): Promise<EsPersonData>;
+    esPeople(count: number, options?: EsPersonOptions): Promise<EsPersonData[]>;
+    iePerson(options?: IePersonOptions): Promise<IePersonData>;
+    iePeople(count: number, options?: IePersonOptions): Promise<IePersonData[]>;
+    mtPerson(options?: MtPersonOptions): Promise<MtPersonData>;
+    mtPeople(count: number, options?: MtPersonOptions): Promise<MtPersonData[]>;
+    ptPerson(options?: PtPersonOptions): Promise<PtPersonData>;
+    ptPeople(count: number, options?: PtPersonOptions): Promise<PtPersonData[]>;
+    lvPerson(options?: LvPersonOptions): Promise<LvPersonData>;
+    lvPeople(count: number, options?: LvPersonOptions): Promise<LvPersonData[]>;
     plPeople(count: number, options?: PersonOptions): Promise<PolishPersonData[]>;
     plAddress(options?: AddressOptions): Promise<PolishAddressData>;
     plAddresses(count: number, options?: AddressOptions): Promise<PolishAddressData[]>;
@@ -274,6 +376,9 @@ export type FakeData = PersonNameMethods &
     emails(count: number, options?: EmailOptions): Promise<EmailData[]>;
     lorem(options?: LoremOptions): Promise<LoremData>;
     lorems(count: number, options?: LoremOptions): Promise<LoremData[]>;
+    /** Random string matching a supplied regex `pattern`. Requires the Pro plan or above. */
+    customRegex(options: CustomRegexOptions): Promise<CustomRegexData>;
+    customRegexes(count: number, options: CustomRegexOptions): Promise<CustomRegexData[]>;
     /* EU national-identifier generators (see types.ts). One pair per number. */
     frSiren(options?: FrSirenOptions): Promise<FrSirenData>;
     frSirens(count: number, options?: FrSirenOptions): Promise<FrSirenData[]>;
@@ -307,6 +412,8 @@ export type FakeData = PersonNameMethods &
     czIcos(count: number, options?: CzIcoOptions): Promise<CzIcoData[]>;
     dkCpr(options?: DkCprOptions): Promise<DkCprData>;
     dkCprs(count: number, options?: DkCprOptions): Promise<DkCprData[]>;
+    dkPerson(options?: DkPersonOptions): Promise<DkPersonData>;
+    dkPeople(count: number, options?: DkPersonOptions): Promise<DkPersonData[]>;
     dkCvr(options?: DkCvrOptions): Promise<DkCvrData>;
     dkCvrs(count: number, options?: DkCvrOptions): Promise<DkCvrData[]>;
     eeIsikukood(options?: EeIsikukoodOptions): Promise<EeIsikukoodData>;
@@ -373,6 +480,8 @@ export type FakeData = PersonNameMethods &
     mtVats(count: number, options?: MtVatOptions): Promise<MtVatData[]>;
     nlBsn(options?: NlBsnOptions): Promise<NlBsnData>;
     nlBsns(count: number, options?: NlBsnOptions): Promise<NlBsnData[]>;
+    nlPerson(options?: NlPersonOptions): Promise<NlPersonData>;
+    nlPeople(count: number, options?: NlPersonOptions): Promise<NlPersonData[]>;
     nlRsin(options?: NlRsinOptions): Promise<NlRsinData>;
     nlRsins(count: number, options?: NlRsinOptions): Promise<NlRsinData[]>;
     nlBtwId(options?: NlBtwIdOptions): Promise<NlBtwIdData>;
@@ -522,6 +631,78 @@ export const createFakeData = (
     plPesels: async (count, peselOptions = {}) =>
       await runMany<PolishPeselData>('pl/pesel', count, peselOptions),
     plPerson: async (personOptions = {}) => await run<PolishPersonData>('pl/person', personOptions),
+    bePerson: async (personOptions = {}) => await run<BePersonData>('be/person', personOptions),
+    bePeople: async (count, personOptions = {}) =>
+      await runMany<BePersonData>('be/person', count, personOptions),
+    bgPerson: async (personOptions = {}) => await run<BgPersonData>('bg/person', personOptions),
+    bgPeople: async (count, personOptions = {}) =>
+      await runMany<BgPersonData>('bg/person', count, personOptions),
+    czPerson: async (personOptions = {}) => await run<CzPersonData>('cz/person', personOptions),
+    czPeople: async (count, personOptions = {}) =>
+      await runMany<CzPersonData>('cz/person', count, personOptions),
+    eePerson: async (personOptions = {}) => await run<EePersonData>('ee/person', personOptions),
+    eePeople: async (count, personOptions = {}) =>
+      await runMany<EePersonData>('ee/person', count, personOptions),
+    fiPerson: async (personOptions = {}) => await run<FiPersonData>('fi/person', personOptions),
+    fiPeople: async (count, personOptions = {}) =>
+      await runMany<FiPersonData>('fi/person', count, personOptions),
+    grPerson: async (personOptions = {}) => await run<GrPersonData>('gr/person', personOptions),
+    grPeople: async (count, personOptions = {}) =>
+      await runMany<GrPersonData>('gr/person', count, personOptions),
+    hrPerson: async (personOptions = {}) => await run<HrPersonData>('hr/person', personOptions),
+    hrPeople: async (count, personOptions = {}) =>
+      await runMany<HrPersonData>('hr/person', count, personOptions),
+    huPerson: async (personOptions = {}) => await run<HuPersonData>('hu/person', personOptions),
+    huPeople: async (count, personOptions = {}) =>
+      await runMany<HuPersonData>('hu/person', count, personOptions),
+    ltPerson: async (personOptions = {}) => await run<LtPersonData>('lt/person', personOptions),
+    ltPeople: async (count, personOptions = {}) =>
+      await runMany<LtPersonData>('lt/person', count, personOptions),
+    roPerson: async (personOptions = {}) => await run<RoPersonData>('ro/person', personOptions),
+    roPeople: async (count, personOptions = {}) =>
+      await runMany<RoPersonData>('ro/person', count, personOptions),
+    sePerson: async (personOptions = {}) => await run<SePersonData>('se/person', personOptions),
+    sePeople: async (count, personOptions = {}) =>
+      await runMany<SePersonData>('se/person', count, personOptions),
+    siPerson: async (personOptions = {}) => await run<SiPersonData>('si/person', personOptions),
+    siPeople: async (count, personOptions = {}) =>
+      await runMany<SiPersonData>('si/person', count, personOptions),
+    skPerson: async (personOptions = {}) => await run<SkPersonData>('sk/person', personOptions),
+    skPeople: async (count, personOptions = {}) =>
+      await runMany<SkPersonData>('sk/person', count, personOptions),
+    atPerson: async (personOptions = {}) => await run<AtPersonData>('at/person', personOptions),
+    atPeople: async (count, personOptions = {}) =>
+      await runMany<AtPersonData>('at/person', count, personOptions),
+    luPerson: async (personOptions = {}) => await run<LuPersonData>('lu/person', personOptions),
+    luPeople: async (count, personOptions = {}) =>
+      await runMany<LuPersonData>('lu/person', count, personOptions),
+    frPerson: async (personOptions = {}) => await run<FrPersonData>('fr/person', personOptions),
+    frPeople: async (count, personOptions = {}) =>
+      await runMany<FrPersonData>('fr/person', count, personOptions),
+    itPerson: async (personOptions = {}) => await run<ItPersonData>('it/person', personOptions),
+    itPeople: async (count, personOptions = {}) =>
+      await runMany<ItPersonData>('it/person', count, personOptions),
+    cyPerson: async (personOptions = {}) => await run<CyPersonData>('cy/person', personOptions),
+    cyPeople: async (count, personOptions = {}) =>
+      await runMany<CyPersonData>('cy/person', count, personOptions),
+    dePerson: async (personOptions = {}) => await run<DePersonData>('de/person', personOptions),
+    dePeople: async (count, personOptions = {}) =>
+      await runMany<DePersonData>('de/person', count, personOptions),
+    esPerson: async (personOptions = {}) => await run<EsPersonData>('es/person', personOptions),
+    esPeople: async (count, personOptions = {}) =>
+      await runMany<EsPersonData>('es/person', count, personOptions),
+    iePerson: async (personOptions = {}) => await run<IePersonData>('ie/person', personOptions),
+    iePeople: async (count, personOptions = {}) =>
+      await runMany<IePersonData>('ie/person', count, personOptions),
+    mtPerson: async (personOptions = {}) => await run<MtPersonData>('mt/person', personOptions),
+    mtPeople: async (count, personOptions = {}) =>
+      await runMany<MtPersonData>('mt/person', count, personOptions),
+    ptPerson: async (personOptions = {}) => await run<PtPersonData>('pt/person', personOptions),
+    ptPeople: async (count, personOptions = {}) =>
+      await runMany<PtPersonData>('pt/person', count, personOptions),
+    lvPerson: async (personOptions = {}) => await run<LvPersonData>('lv/person', personOptions),
+    lvPeople: async (count, personOptions = {}) =>
+      await runMany<LvPersonData>('lv/person', count, personOptions),
     plPeople: async (count, personOptions = {}) =>
       await runMany<PolishPersonData>('pl/person', count, personOptions),
     plAddress: async (addressOptions = {}) =>
@@ -585,6 +766,10 @@ export const createFakeData = (
     lorem: async (loremOptions = {}) => await run<LoremData>('lorem', loremOptions),
     lorems: async (count, loremOptions = {}) =>
       await runMany<LoremData>('lorem', count, loremOptions),
+    customRegex: async (customRegexOptions) =>
+      await run<CustomRegexData>('custom-regex', customRegexOptions),
+    customRegexes: async (count, customRegexOptions) =>
+      await runMany<CustomRegexData>('custom-regex', count, customRegexOptions),
     ...personNamePair('at'),
     ...personNamePair('be'),
     ...personNamePair('bg'),
@@ -686,6 +871,9 @@ export const createFakeData = (
     dkCpr: async (dkCprOptions = {}) => await run<DkCprData>('dk/cpr', dkCprOptions),
     dkCprs: async (count, dkCprOptions = {}) =>
       await runMany<DkCprData>('dk/cpr', count, dkCprOptions),
+    dkPerson: async (dkPersonOptions = {}) => await run<DkPersonData>('dk/person', dkPersonOptions),
+    dkPeople: async (count, dkPersonOptions = {}) =>
+      await runMany<DkPersonData>('dk/person', count, dkPersonOptions),
     dkCvr: async (dkCvrOptions = {}) => await run<DkCvrData>('dk/cvr', dkCvrOptions),
     dkCvrs: async (count, dkCvrOptions = {}) =>
       await runMany<DkCvrData>('dk/cvr', count, dkCvrOptions),
@@ -785,6 +973,9 @@ export const createFakeData = (
     nlBsn: async (nlBsnOptions = {}) => await run<NlBsnData>('nl/bsn', nlBsnOptions),
     nlBsns: async (count, nlBsnOptions = {}) =>
       await runMany<NlBsnData>('nl/bsn', count, nlBsnOptions),
+    nlPerson: async (nlPersonOptions = {}) => await run<NlPersonData>('nl/person', nlPersonOptions),
+    nlPeople: async (count, nlPersonOptions = {}) =>
+      await runMany<NlPersonData>('nl/person', count, nlPersonOptions),
     nlRsin: async (nlRsinOptions = {}) => await run<NlRsinData>('nl/rsin', nlRsinOptions),
     nlRsins: async (count, nlRsinOptions = {}) =>
       await runMany<NlRsinData>('nl/rsin', count, nlRsinOptions),
