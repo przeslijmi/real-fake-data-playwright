@@ -290,6 +290,214 @@ export interface PolishCompanyData {
   readonly krs: string | null;
 }
 
+/**
+ * Options for a country's one-call `company` generator — shared across every
+ * country (the data shape differs per country, but the inputs do not).
+ */
+export interface LocaleCompanyOptions extends RequestOptions {
+  readonly strategy?: CompanyNameStrategy | 'any';
+  /** Country-specific legal form, `'any'` for weighted-random, or `'none'` to omit. */
+  readonly legalForm?: string;
+  /** Corrupt the checksummed identifiers so they fail validation; name unaffected. */
+  readonly invalid?: boolean;
+  /** Restrict output to edge-case values from the rare corners. */
+  readonly edge?: boolean;
+}
+
+/** One AT company: the name, its legal form, and the matching national identifiers. */
+export interface AtCompanyData {
+  readonly name: string;
+  readonly legalForm: string | null;
+  readonly firmenbuchnummer: string;
+  readonly uid: string;
+  readonly steuernummer: string;
+}
+
+/** One BE company: the name, its legal form, and the matching national identifiers. */
+export interface BeCompanyData {
+  readonly name: string;
+  readonly legalForm: string | null;
+  readonly ondernemingsnummer: string;
+}
+
+/** One BG company: the name, its legal form, and the matching national identifiers. */
+export interface BgCompanyData {
+  readonly name: string;
+  readonly legalForm: string | null;
+  readonly eik: string;
+}
+
+/** One CY company: the name, its legal form, and the matching national identifiers. */
+export interface CyCompanyData {
+  readonly name: string;
+  readonly legalForm: string | null;
+  readonly tic: string;
+}
+
+/** One CZ company: the name, its legal form, and the matching national identifiers. */
+export interface CzCompanyData {
+  readonly name: string;
+  readonly legalForm: string | null;
+  readonly ico: string;
+}
+
+/** One DE company: the name, its legal form, and the matching national identifiers. */
+export interface DeCompanyData {
+  readonly name: string;
+  readonly legalForm: string | null;
+  readonly handelsregisternummer: string;
+  readonly ustIdnr: string;
+  readonly wirtschaftsIdnr: string;
+}
+
+/** One DK company: the name, its legal form, and the matching national identifiers. */
+export interface DkCompanyData {
+  readonly name: string;
+  readonly legalForm: string | null;
+  readonly cvr: string;
+}
+
+/** One EE company: the name, its legal form, and the matching national identifiers. */
+export interface EeCompanyData {
+  readonly name: string;
+  readonly legalForm: string | null;
+  readonly registrikood: string;
+  readonly kmkr: string;
+}
+
+/** One ES company: the name, its legal form, and the matching national identifiers. */
+export interface EsCompanyData {
+  readonly name: string;
+  readonly legalForm: string | null;
+  readonly cif: string;
+}
+
+/** One FI company: the name, its legal form, and the matching national identifiers. */
+export interface FiCompanyData {
+  readonly name: string;
+  readonly legalForm: string | null;
+  readonly yTunnus: string;
+}
+
+/** One FR company: the name, its legal form, and the matching national identifiers. */
+export interface FrCompanyData {
+  readonly name: string;
+  readonly legalForm: string | null;
+  readonly siren: string;
+}
+
+/** One GR company: the name, its legal form, and the matching national identifiers. */
+export interface GrCompanyData {
+  readonly name: string;
+  readonly legalForm: string | null;
+  readonly afm: string;
+}
+
+/** One HR company: the name, its legal form, and the matching national identifiers. */
+export interface HrCompanyData {
+  readonly name: string;
+  readonly legalForm: string | null;
+  readonly oib: string;
+}
+
+/** One HU company: the name, its legal form, and the matching national identifiers. */
+export interface HuCompanyData {
+  readonly name: string;
+  readonly legalForm: string | null;
+  readonly cegjegyzekszam: string;
+  readonly adoszam: string;
+}
+
+/** One IE company: the name, its legal form, and the matching national identifiers. */
+export interface IeCompanyData {
+  readonly name: string;
+  readonly legalForm: string | null;
+  readonly cro: string;
+  readonly vat: string;
+}
+
+/** One IT company: the name, its legal form, and the matching national identifiers. */
+export interface ItCompanyData {
+  readonly name: string;
+  readonly legalForm: string | null;
+  readonly partitaIva: string;
+}
+
+/** One LT company: the name, its legal form, and the matching national identifiers. */
+export interface LtCompanyData {
+  readonly name: string;
+  readonly legalForm: string | null;
+  readonly imonesKodas: string;
+  readonly pvm: string;
+}
+
+/** One LU company: the name, its legal form, and the matching national identifiers. */
+export interface LuCompanyData {
+  readonly name: string;
+  readonly legalForm: string | null;
+  readonly tva: string;
+}
+
+/** One LV company: the name, its legal form, and the matching national identifiers. */
+export interface LvCompanyData {
+  readonly name: string;
+  readonly legalForm: string | null;
+  readonly registracijasNumurs: string;
+}
+
+/** One MT company: the name, its legal form, and the matching national identifiers. */
+export interface MtCompanyData {
+  readonly name: string;
+  readonly legalForm: string | null;
+  readonly vat: string;
+}
+
+/** One NL company: the name, its legal form, and the matching national identifiers. */
+export interface NlCompanyData {
+  readonly name: string;
+  readonly legalForm: string | null;
+  readonly kvk: string;
+  readonly rsin: string;
+  readonly btwId: string;
+}
+
+/** One PT company: the name, its legal form, and the matching national identifiers. */
+export interface PtCompanyData {
+  readonly name: string;
+  readonly legalForm: string | null;
+  readonly nif: string;
+}
+
+/** One RO company: the name, its legal form, and the matching national identifiers. */
+export interface RoCompanyData {
+  readonly name: string;
+  readonly legalForm: string | null;
+  readonly cui: string;
+}
+
+/** One SE company: the name, its legal form, and the matching national identifiers. */
+export interface SeCompanyData {
+  readonly name: string;
+  readonly legalForm: string | null;
+  readonly organisationsnummer: string;
+}
+
+/** One SI company: the name, its legal form, and the matching national identifiers. */
+export interface SiCompanyData {
+  readonly name: string;
+  readonly legalForm: string | null;
+  readonly davcnaStevilka: string;
+}
+
+/** One SK company: the name, its legal form, and the matching national identifiers. */
+export interface SkCompanyData {
+  readonly name: string;
+  readonly legalForm: string | null;
+  readonly ico: string;
+  readonly icDph: string;
+}
+
+
 export interface PolishVehicleRegistrationData {
   readonly value: string;
   readonly prefix: string;

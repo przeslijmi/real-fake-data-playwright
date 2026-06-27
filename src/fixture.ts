@@ -7,7 +7,7 @@ import { CloudFakeDataProvider } from './providers/cloud-provider.js';
 
 /** Test-level configuration, set with `test.use({ realFakeData: { … } })`. */
 export interface RealFakeDataConfig {
-  /** Base URL of the Real Fake Data API, e.g. `https://realfakedata-api.onrender.com`. */
+  /** Base URL of the Real Fake Data API, e.g. `https://api.real-fake-data.com`. */
   baseUrl: string;
   /**
    * Base seed for the test. When omitted, a stable seed is derived from the

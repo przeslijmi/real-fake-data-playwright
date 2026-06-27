@@ -1,9 +1,10 @@
 # @przeslijmi/real-fake-data-playwright
 
-Playwright fixtures for [Real Fake Data](https://github.com/przeslijmi/rfd) — **164 generators** of realistic, synthetic test data, one typed method per record:
+Playwright fixtures for [Real Fake Data](https://github.com/przeslijmi/rfd) — **190 generators** of realistic, synthetic test data, one typed method per record:
 
 - **Person and company names across 27 EU countries** — `dePersonName`, `itCompanyName`, `frPersonName`, … in the local script and inflection, plus multi-country `personName`/`companyName` that draw from any mix of countries.
 - **National identifiers and VAT / company numbers for every EU member state** — French `frNir`/`frSiren`, Italian `itCodiceFiscale`, Spanish `esDni`/`esNie`, Danish `dkCpr`, Swedish `sePersonnummer`, Dutch `nlBsn`, German `deSteuerId`/`deUstIdnr`, and 60+ more — each with correct checksums and the same `invalid`/`edge` triggers.
+- **One-call whole people and companies for every EU country** — `dkPerson`, `frPerson`, … return a consistent name + national number; `dkCompany`, `deCompany`, `nlCompany`, … return a consistent trading name, legal form, and the country's register / tax / VAT numbers, all from one seed.
 - **The full Polish national set** — valid PESELs (correct checksums), NIPs, REGONs, IBANs, KRS and land-register numbers, ID cards, passports, driving licences, addresses drawn from real cities and streets, and vehicle plates.
 - **Locale-agnostic** — emails, lorem ipsum, and `customRegex` (a random string matching any regex you supply; Pro plan and above).
 
@@ -29,7 +30,7 @@ Point the fixture at a Real Fake Data API instance, then pull data inside any te
 ```ts
 import { test, expect } from '@przeslijmi/real-fake-data-playwright';
 
-test.use({ realFakeData: { baseUrl: 'https://realfakedata-api.onrender.com' } });
+test.use({ realFakeData: { baseUrl: 'https://api.real-fake-data.com' } });
 
 test('registers a new customer', async ({ page, fakeData }) => {
   const person = await fakeData.plPerson({ sex: 'f' });
@@ -52,7 +53,7 @@ Set options with `test.use({ realFakeData: { … } })`, at any scope (file, `des
 
 | Option    | Type                     | Description                                                                                              |
 | --------- | ------------------------ | ------------------------------------------------------------------------------------------------------- |
-| `baseUrl` | `string` (required)      | Base URL of the Real Fake Data API, e.g. `https://realfakedata-api.onrender.com`.                                      |
+| `baseUrl` | `string` (required)      | Base URL of the Real Fake Data API, e.g. `https://api.real-fake-data.com`.                                      |
 | `seed`    | `number`                 | Base seed for the test. Omit to derive a stable seed from the test title (reproducible-by-default).      |
 | `headers` | `Record<string, string>` | Extra headers sent with every request (e.g. an API key once your plan requires one).                    |
 
@@ -72,12 +73,13 @@ Every method accepts optional constraints. Pass `seed` on any call to override t
 
 #### Names across 27 EU countries
 
-Every country listed below exposes `<cc>PersonName`/`<cc>PersonNames` and `<cc>CompanyName`/`<cc>CompanyNames`, where `<cc>` is its ISO 3166 code: `at`, `be`, `bg`, `cy`, `cz`, `de`, `dk`, `ee`, `es`, `fi`, `fr`, `gr`, `hr`, `hu`, `ie`, `it`, `lt`, `lu`, `lv`, `mt`, `nl`, `pl`, `pt`, `ro`, `se`, `si`, `sk`.
+Every country listed below exposes `<cc>PersonName`/`<cc>PersonNames`, `<cc>CompanyName`/`<cc>CompanyNames`, and `<cc>Company`/`<cc>Companies`, where `<cc>` is its ISO 3166 code: `at`, `be`, `bg`, `cy`, `cz`, `de`, `dk`, `ee`, `es`, `fi`, `fr`, `gr`, `hr`, `hu`, `ie`, `it`, `lt`, `lu`, `lv`, `mt`, `nl`, `pl`, `pt`, `ro`, `se`, `si`, `sk`.
 
 | Singular                | Plural                          | Returns (singular)                          | Options                                |
 | ----------------------- | ------------------------------- | ------------------------------------------- | -------------------------------------- |
 | `<cc>PersonName(opts?)` | `<cc>PersonNames(count, opts?)` | `{ name, surname, initials, sex }`          | `sex`, `edge`, `caseStrict`            |
 | `<cc>CompanyName(opts?)`| `<cc>CompanyNames(count, opts?)`| `{ value, legalForm, strategy }`            | `strategy`, `legalForm`, `edge`        |
+| `<cc>Company(opts?)`    | `<cc>Companies(count, opts?)`   | `{ name, legalForm, …national ids }`        | `strategy`, `legalForm`, `invalid`, `edge` |
 | `personName(opts?)`     | `personNames(count, opts?)`     | `{ name, surname, initials, sex, country }` | `sex`, `edge`, `caseStrict`, `countries` |
 | `companyName(opts?)`    | `companyNames(count, opts?)`    | `{ value, legalForm, strategy, country }`   | `strategy`, `edge`, `countries`        |
 
@@ -393,7 +395,7 @@ The fixture is a thin wrapper over a provider and a facade you can use directly 
 ```ts
 import { CloudFakeDataProvider, createFakeData } from '@przeslijmi/real-fake-data-playwright';
 
-const provider = new CloudFakeDataProvider({ baseUrl: 'https://realfakedata-api.onrender.com' });
+const provider = new CloudFakeDataProvider({ baseUrl: 'https://api.real-fake-data.com' });
 const fakeData = createFakeData(provider, { seed: 42 });
 
 const company = await fakeData.plCompanyName({ legalForm: 'S.A.' });

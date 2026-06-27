@@ -6,7 +6,7 @@ import type { FakeDataProvider, GeneratorResponse, QueryValue } from '../fake-da
 export type FetchLike = (input: string | URL, init?: RequestInit) => Promise<Response>;
 
 export interface CloudFakeDataProviderOptions {
-  /** Base URL of the Real Fake Data API, e.g. `https://realfakedata-api.onrender.com`. */
+  /** Base URL of the Real Fake Data API, e.g. `https://api.real-fake-data.com`. */
   readonly baseUrl: string;
   /** Extra headers (e.g. authentication) sent with every request. */
   readonly headers?: Readonly<Record<string, string>>;

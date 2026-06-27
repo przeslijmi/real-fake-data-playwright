@@ -23,6 +23,33 @@ import type {
   BgEikOptions,
   CompanyNameOptions,
   CompanyOptions,
+  LocaleCompanyOptions,
+  AtCompanyData,
+  BeCompanyData,
+  BgCompanyData,
+  CyCompanyData,
+  CzCompanyData,
+  DeCompanyData,
+  DkCompanyData,
+  EeCompanyData,
+  EsCompanyData,
+  FiCompanyData,
+  FrCompanyData,
+  GrCompanyData,
+  HrCompanyData,
+  HuCompanyData,
+  IeCompanyData,
+  ItCompanyData,
+  LtCompanyData,
+  LuCompanyData,
+  LvCompanyData,
+  MtCompanyData,
+  NlCompanyData,
+  PtCompanyData,
+  RoCompanyData,
+  SeCompanyData,
+  SiCompanyData,
+  SkCompanyData,
   CountryCode,
   CustomRegexData,
   CustomRegexOptions,
@@ -341,6 +368,58 @@ export type FakeData = PersonNameMethods &
     plRegons(count: number, options?: RegonOptions): Promise<PolishRegonData[]>;
     plCompany(options?: CompanyOptions): Promise<PolishCompanyData>;
     plCompanies(count: number, options?: CompanyOptions): Promise<PolishCompanyData[]>;
+    atCompany(options?: LocaleCompanyOptions): Promise<AtCompanyData>;
+    atCompanies(count: number, options?: LocaleCompanyOptions): Promise<AtCompanyData[]>;
+    beCompany(options?: LocaleCompanyOptions): Promise<BeCompanyData>;
+    beCompanies(count: number, options?: LocaleCompanyOptions): Promise<BeCompanyData[]>;
+    bgCompany(options?: LocaleCompanyOptions): Promise<BgCompanyData>;
+    bgCompanies(count: number, options?: LocaleCompanyOptions): Promise<BgCompanyData[]>;
+    cyCompany(options?: LocaleCompanyOptions): Promise<CyCompanyData>;
+    cyCompanies(count: number, options?: LocaleCompanyOptions): Promise<CyCompanyData[]>;
+    czCompany(options?: LocaleCompanyOptions): Promise<CzCompanyData>;
+    czCompanies(count: number, options?: LocaleCompanyOptions): Promise<CzCompanyData[]>;
+    deCompany(options?: LocaleCompanyOptions): Promise<DeCompanyData>;
+    deCompanies(count: number, options?: LocaleCompanyOptions): Promise<DeCompanyData[]>;
+    dkCompany(options?: LocaleCompanyOptions): Promise<DkCompanyData>;
+    dkCompanies(count: number, options?: LocaleCompanyOptions): Promise<DkCompanyData[]>;
+    eeCompany(options?: LocaleCompanyOptions): Promise<EeCompanyData>;
+    eeCompanies(count: number, options?: LocaleCompanyOptions): Promise<EeCompanyData[]>;
+    esCompany(options?: LocaleCompanyOptions): Promise<EsCompanyData>;
+    esCompanies(count: number, options?: LocaleCompanyOptions): Promise<EsCompanyData[]>;
+    fiCompany(options?: LocaleCompanyOptions): Promise<FiCompanyData>;
+    fiCompanies(count: number, options?: LocaleCompanyOptions): Promise<FiCompanyData[]>;
+    frCompany(options?: LocaleCompanyOptions): Promise<FrCompanyData>;
+    frCompanies(count: number, options?: LocaleCompanyOptions): Promise<FrCompanyData[]>;
+    grCompany(options?: LocaleCompanyOptions): Promise<GrCompanyData>;
+    grCompanies(count: number, options?: LocaleCompanyOptions): Promise<GrCompanyData[]>;
+    hrCompany(options?: LocaleCompanyOptions): Promise<HrCompanyData>;
+    hrCompanies(count: number, options?: LocaleCompanyOptions): Promise<HrCompanyData[]>;
+    huCompany(options?: LocaleCompanyOptions): Promise<HuCompanyData>;
+    huCompanies(count: number, options?: LocaleCompanyOptions): Promise<HuCompanyData[]>;
+    ieCompany(options?: LocaleCompanyOptions): Promise<IeCompanyData>;
+    ieCompanies(count: number, options?: LocaleCompanyOptions): Promise<IeCompanyData[]>;
+    itCompany(options?: LocaleCompanyOptions): Promise<ItCompanyData>;
+    itCompanies(count: number, options?: LocaleCompanyOptions): Promise<ItCompanyData[]>;
+    ltCompany(options?: LocaleCompanyOptions): Promise<LtCompanyData>;
+    ltCompanies(count: number, options?: LocaleCompanyOptions): Promise<LtCompanyData[]>;
+    luCompany(options?: LocaleCompanyOptions): Promise<LuCompanyData>;
+    luCompanies(count: number, options?: LocaleCompanyOptions): Promise<LuCompanyData[]>;
+    lvCompany(options?: LocaleCompanyOptions): Promise<LvCompanyData>;
+    lvCompanies(count: number, options?: LocaleCompanyOptions): Promise<LvCompanyData[]>;
+    mtCompany(options?: LocaleCompanyOptions): Promise<MtCompanyData>;
+    mtCompanies(count: number, options?: LocaleCompanyOptions): Promise<MtCompanyData[]>;
+    nlCompany(options?: LocaleCompanyOptions): Promise<NlCompanyData>;
+    nlCompanies(count: number, options?: LocaleCompanyOptions): Promise<NlCompanyData[]>;
+    ptCompany(options?: LocaleCompanyOptions): Promise<PtCompanyData>;
+    ptCompanies(count: number, options?: LocaleCompanyOptions): Promise<PtCompanyData[]>;
+    roCompany(options?: LocaleCompanyOptions): Promise<RoCompanyData>;
+    roCompanies(count: number, options?: LocaleCompanyOptions): Promise<RoCompanyData[]>;
+    seCompany(options?: LocaleCompanyOptions): Promise<SeCompanyData>;
+    seCompanies(count: number, options?: LocaleCompanyOptions): Promise<SeCompanyData[]>;
+    siCompany(options?: LocaleCompanyOptions): Promise<SiCompanyData>;
+    siCompanies(count: number, options?: LocaleCompanyOptions): Promise<SiCompanyData[]>;
+    skCompany(options?: LocaleCompanyOptions): Promise<SkCompanyData>;
+    skCompanies(count: number, options?: LocaleCompanyOptions): Promise<SkCompanyData[]>;
     plCompanyName(options?: CompanyNameOptions): Promise<PolishCompanyNameData>;
     plCompanyNames(count: number, options?: CompanyNameOptions): Promise<PolishCompanyNameData[]>;
     plVehicleRegistration(
@@ -722,6 +801,110 @@ export const createFakeData = (
       await run<PolishCompanyData>('pl/company', companyOptions),
     plCompanies: async (count, companyOptions = {}) =>
       await runMany<PolishCompanyData>('pl/company', count, companyOptions),
+    atCompany: async (companyOptions = {}) =>
+      await run<AtCompanyData>('at/company', companyOptions),
+    atCompanies: async (count, companyOptions = {}) =>
+      await runMany<AtCompanyData>('at/company', count, companyOptions),
+    beCompany: async (companyOptions = {}) =>
+      await run<BeCompanyData>('be/company', companyOptions),
+    beCompanies: async (count, companyOptions = {}) =>
+      await runMany<BeCompanyData>('be/company', count, companyOptions),
+    bgCompany: async (companyOptions = {}) =>
+      await run<BgCompanyData>('bg/company', companyOptions),
+    bgCompanies: async (count, companyOptions = {}) =>
+      await runMany<BgCompanyData>('bg/company', count, companyOptions),
+    cyCompany: async (companyOptions = {}) =>
+      await run<CyCompanyData>('cy/company', companyOptions),
+    cyCompanies: async (count, companyOptions = {}) =>
+      await runMany<CyCompanyData>('cy/company', count, companyOptions),
+    czCompany: async (companyOptions = {}) =>
+      await run<CzCompanyData>('cz/company', companyOptions),
+    czCompanies: async (count, companyOptions = {}) =>
+      await runMany<CzCompanyData>('cz/company', count, companyOptions),
+    deCompany: async (companyOptions = {}) =>
+      await run<DeCompanyData>('de/company', companyOptions),
+    deCompanies: async (count, companyOptions = {}) =>
+      await runMany<DeCompanyData>('de/company', count, companyOptions),
+    dkCompany: async (companyOptions = {}) =>
+      await run<DkCompanyData>('dk/company', companyOptions),
+    dkCompanies: async (count, companyOptions = {}) =>
+      await runMany<DkCompanyData>('dk/company', count, companyOptions),
+    eeCompany: async (companyOptions = {}) =>
+      await run<EeCompanyData>('ee/company', companyOptions),
+    eeCompanies: async (count, companyOptions = {}) =>
+      await runMany<EeCompanyData>('ee/company', count, companyOptions),
+    esCompany: async (companyOptions = {}) =>
+      await run<EsCompanyData>('es/company', companyOptions),
+    esCompanies: async (count, companyOptions = {}) =>
+      await runMany<EsCompanyData>('es/company', count, companyOptions),
+    fiCompany: async (companyOptions = {}) =>
+      await run<FiCompanyData>('fi/company', companyOptions),
+    fiCompanies: async (count, companyOptions = {}) =>
+      await runMany<FiCompanyData>('fi/company', count, companyOptions),
+    frCompany: async (companyOptions = {}) =>
+      await run<FrCompanyData>('fr/company', companyOptions),
+    frCompanies: async (count, companyOptions = {}) =>
+      await runMany<FrCompanyData>('fr/company', count, companyOptions),
+    grCompany: async (companyOptions = {}) =>
+      await run<GrCompanyData>('gr/company', companyOptions),
+    grCompanies: async (count, companyOptions = {}) =>
+      await runMany<GrCompanyData>('gr/company', count, companyOptions),
+    hrCompany: async (companyOptions = {}) =>
+      await run<HrCompanyData>('hr/company', companyOptions),
+    hrCompanies: async (count, companyOptions = {}) =>
+      await runMany<HrCompanyData>('hr/company', count, companyOptions),
+    huCompany: async (companyOptions = {}) =>
+      await run<HuCompanyData>('hu/company', companyOptions),
+    huCompanies: async (count, companyOptions = {}) =>
+      await runMany<HuCompanyData>('hu/company', count, companyOptions),
+    ieCompany: async (companyOptions = {}) =>
+      await run<IeCompanyData>('ie/company', companyOptions),
+    ieCompanies: async (count, companyOptions = {}) =>
+      await runMany<IeCompanyData>('ie/company', count, companyOptions),
+    itCompany: async (companyOptions = {}) =>
+      await run<ItCompanyData>('it/company', companyOptions),
+    itCompanies: async (count, companyOptions = {}) =>
+      await runMany<ItCompanyData>('it/company', count, companyOptions),
+    ltCompany: async (companyOptions = {}) =>
+      await run<LtCompanyData>('lt/company', companyOptions),
+    ltCompanies: async (count, companyOptions = {}) =>
+      await runMany<LtCompanyData>('lt/company', count, companyOptions),
+    luCompany: async (companyOptions = {}) =>
+      await run<LuCompanyData>('lu/company', companyOptions),
+    luCompanies: async (count, companyOptions = {}) =>
+      await runMany<LuCompanyData>('lu/company', count, companyOptions),
+    lvCompany: async (companyOptions = {}) =>
+      await run<LvCompanyData>('lv/company', companyOptions),
+    lvCompanies: async (count, companyOptions = {}) =>
+      await runMany<LvCompanyData>('lv/company', count, companyOptions),
+    mtCompany: async (companyOptions = {}) =>
+      await run<MtCompanyData>('mt/company', companyOptions),
+    mtCompanies: async (count, companyOptions = {}) =>
+      await runMany<MtCompanyData>('mt/company', count, companyOptions),
+    nlCompany: async (companyOptions = {}) =>
+      await run<NlCompanyData>('nl/company', companyOptions),
+    nlCompanies: async (count, companyOptions = {}) =>
+      await runMany<NlCompanyData>('nl/company', count, companyOptions),
+    ptCompany: async (companyOptions = {}) =>
+      await run<PtCompanyData>('pt/company', companyOptions),
+    ptCompanies: async (count, companyOptions = {}) =>
+      await runMany<PtCompanyData>('pt/company', count, companyOptions),
+    roCompany: async (companyOptions = {}) =>
+      await run<RoCompanyData>('ro/company', companyOptions),
+    roCompanies: async (count, companyOptions = {}) =>
+      await runMany<RoCompanyData>('ro/company', count, companyOptions),
+    seCompany: async (companyOptions = {}) =>
+      await run<SeCompanyData>('se/company', companyOptions),
+    seCompanies: async (count, companyOptions = {}) =>
+      await runMany<SeCompanyData>('se/company', count, companyOptions),
+    siCompany: async (companyOptions = {}) =>
+      await run<SiCompanyData>('si/company', companyOptions),
+    siCompanies: async (count, companyOptions = {}) =>
+      await runMany<SiCompanyData>('si/company', count, companyOptions),
+    skCompany: async (companyOptions = {}) =>
+      await run<SkCompanyData>('sk/company', companyOptions),
+    skCompanies: async (count, companyOptions = {}) =>
+      await runMany<SkCompanyData>('sk/company', count, companyOptions),
     plCompanyName: async (companyNameOptions = {}) =>
       await run<PolishCompanyNameData>('pl/company-name', companyNameOptions),
     plCompanyNames: async (count, companyNameOptions = {}) =>

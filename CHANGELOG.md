@@ -5,6 +5,22 @@ All notable changes to `@przeslijmi/real-fake-data-playwright` are documented he
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.5.0] - 2026-06-27
+
+Adds full-company fixtures for every EU country: the fixture grows from 164 generators to **190**.
+
+### Added
+
+- **Full-company fixtures for all 27 EU countries** — `<cc>Company` / `<cc>Companies` for
+  every member state (`dkCompany`, `frCompany`, `deCompany`, `nlCompany`, …) return a
+  consistent synthetic company (trading name, legal form, and the matching national
+  identifiers) in one call, like `plCompany`. Each bundles that country's real registers —
+  Denmark's CVR, France's SIREN, the Netherlands' KvK + RSIN + btw-id, Germany's
+  Handelsregister + USt-IdNr + Wirtschafts-IdNr, and so on — one to three numbers per
+  country. `strategy` / `legalForm` shape the name; `invalid` corrupts every checksummed
+  identifier (the name and any checksum-less number stay intact); `edge` sweeps the rare
+  corners. New `LocaleCompanyOptions` plus one `<Cc>CompanyData` type per country.
+
 ## [1.4.0] - 2026-06-24
 
 Adds the custom-regex generator: the fixture grows from 163 generators to **164**.
