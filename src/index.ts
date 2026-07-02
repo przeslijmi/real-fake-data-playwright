@@ -4,6 +4,8 @@ export type { RealFakeDataConfig, RealFakeDataFixtures } from './fixture.js';
 export { createFakeData } from './fake-data.js';
 export type { CreateFakeDataOptions, FakeData } from './fake-data.js';
 
+export { fakeData } from './singleton.js';
+
 export { CloudFakeDataProvider } from './providers/cloud-provider.js';
 export type { CloudFakeDataProviderOptions, FetchLike } from './providers/cloud-provider.js';
 

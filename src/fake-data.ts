@@ -82,6 +82,8 @@ import type {
   EeKmkrOptions,
   EeRegistrikoodData,
   EeRegistrikoodOptions,
+  AnyEmailData,
+  AnyEmailOptions,
   EmailData,
   EmailOptions,
   EsCifData,
@@ -289,6 +291,22 @@ type LocaleCompanyNameMethods = {
 };
 
 /**
+ * `email` method pair for every country (`deEmail`, `plEmail`, …). Every
+ * country shares the same wire shape — only the name pools and regional /
+ * corporate domains differ — so unlike `company-name`, Poland is not special.
+ */
+type EmailMethods = {
+  [Country in CountryCode as `${Country}Email`]: (
+    options?: EmailOptions,
+  ) => Promise<EmailData>;
+} & {
+  [Country in CountryCode as `${Country}Emails`]: (
+    count: number,
+    options?: EmailOptions,
+  ) => Promise<EmailData[]>;
+};
+
+/**
  * The typed surface tests use. Each generator exposes a singular method
  * returning one record and a plural returning an array of `count` records.
  *
@@ -305,7 +323,8 @@ type LocaleCompanyNameMethods = {
  * {@link PersonNameMethods} and {@link LocaleCompanyNameMethods}).
  */
 export type FakeData = PersonNameMethods &
-  LocaleCompanyNameMethods & {
+  LocaleCompanyNameMethods &
+  EmailMethods & {
     plPesel(options?: PeselOptions): Promise<PolishPeselData>;
     plPesels(count: number, options?: PeselOptions): Promise<PolishPeselData[]>;
     plPerson(options?: PersonOptions): Promise<PolishPersonData>;
@@ -451,8 +470,8 @@ export type FakeData = PersonNameMethods &
     /** Multi-country company name: each record is drawn from one of `countries` (default: all 27). */
     companyName(options?: AnyCompanyNameOptions): Promise<AnyCompanyNameData>;
     companyNames(count: number, options?: AnyCompanyNameOptions): Promise<AnyCompanyNameData[]>;
-    email(options?: EmailOptions): Promise<EmailData>;
-    emails(count: number, options?: EmailOptions): Promise<EmailData[]>;
+    email(options?: AnyEmailOptions): Promise<AnyEmailData>;
+    emails(count: number, options?: AnyEmailOptions): Promise<AnyEmailData[]>;
     lorem(options?: LoremOptions): Promise<LoremData>;
     lorems(count: number, options?: LoremOptions): Promise<LoremData[]>;
     /** Random string matching a supplied regex `pattern`. Requires the Pro plan or above. */
@@ -705,6 +724,16 @@ export const createFakeData = (
         ),
     }) as Pick<LocaleCompanyNameMethods, `${Country}CompanyName` | `${Country}CompanyNames`>;
 
+  const emailPair = <Country extends CountryCode>(
+    countryCode: Country,
+  ): Pick<EmailMethods, `${Country}Email` | `${Country}Emails`> =>
+    ({
+      [`${countryCode}Email`]: async (emailOptions: EmailOptions = {}) =>
+        await run<EmailData>(`${countryCode}/email`, emailOptions),
+      [`${countryCode}Emails`]: async (count: number, emailOptions: EmailOptions = {}) =>
+        await runMany<EmailData>(`${countryCode}/email`, count, emailOptions),
+    }) as Pick<EmailMethods, `${Country}Email` | `${Country}Emails`>;
+
   return {
     plPesel: async (peselOptions = {}) => await run<PolishPeselData>('pl/pesel', peselOptions),
     plPesels: async (count, peselOptions = {}) =>
@@ -943,9 +972,9 @@ export const createFakeData = (
       await run<AnyCompanyNameData>('company-name', toAggregateWire(companyNameOptions)),
     companyNames: async (count, companyNameOptions = {}) =>
       await runMany<AnyCompanyNameData>('company-name', count, toAggregateWire(companyNameOptions)),
-    email: async (emailOptions = {}) => await run<EmailData>('email', emailOptions),
+    email: async (emailOptions = {}) => await run<AnyEmailData>('email', emailOptions),
     emails: async (count, emailOptions = {}) =>
-      await runMany<EmailData>('email', count, emailOptions),
+      await runMany<AnyEmailData>('email', count, emailOptions),
     lorem: async (loremOptions = {}) => await run<LoremData>('lorem', loremOptions),
     lorems: async (count, loremOptions = {}) =>
       await runMany<LoremData>('lorem', count, loremOptions),
@@ -1006,6 +1035,33 @@ export const createFakeData = (
     ...companyNamePair('se'),
     ...companyNamePair('si'),
     ...companyNamePair('sk'),
+    ...emailPair('at'),
+    ...emailPair('be'),
+    ...emailPair('bg'),
+    ...emailPair('cy'),
+    ...emailPair('cz'),
+    ...emailPair('de'),
+    ...emailPair('dk'),
+    ...emailPair('ee'),
+    ...emailPair('es'),
+    ...emailPair('fi'),
+    ...emailPair('fr'),
+    ...emailPair('gr'),
+    ...emailPair('hr'),
+    ...emailPair('hu'),
+    ...emailPair('ie'),
+    ...emailPair('it'),
+    ...emailPair('lt'),
+    ...emailPair('lu'),
+    ...emailPair('lv'),
+    ...emailPair('mt'),
+    ...emailPair('nl'),
+    ...emailPair('pl'),
+    ...emailPair('pt'),
+    ...emailPair('ro'),
+    ...emailPair('se'),
+    ...emailPair('si'),
+    ...emailPair('sk'),
     frSiren: async (frSirenOptions = {}) => await run<FrSirenData>('fr/siren', frSirenOptions),
     frSirens: async (count, frSirenOptions = {}) =>
       await runMany<FrSirenData>('fr/siren', count, frSirenOptions),

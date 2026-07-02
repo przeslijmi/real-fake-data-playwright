@@ -5,9 +5,16 @@ import type { FakeDataProvider, GeneratorResponse, QueryValue } from '../fake-da
 /** The subset of the global `fetch` signature this provider relies on. */
 export type FetchLike = (input: string | URL, init?: RequestInit) => Promise<Response>;
 
+/** Base URL of the public, hosted Real Fake Data API — the default endpoint. */
+export const PUBLIC_API_BASE_URL = 'https://api.real-fake-data.com';
+
 export interface CloudFakeDataProviderOptions {
-  /** Base URL of the Real Fake Data API, e.g. `https://api.real-fake-data.com`. */
-  readonly baseUrl: string;
+  /**
+   * Base URL of the Real Fake Data API. Omit (or leave empty) to target the
+   * public hosted API at {@link PUBLIC_API_BASE_URL}; set it to point at a
+   * self-hosted or staging instance.
+   */
+  readonly baseUrl?: string;
   /** Extra headers (e.g. authentication) sent with every request. */
   readonly headers?: Readonly<Record<string, string>>;
   /** Custom fetch implementation; defaults to the global `fetch`. */
@@ -25,8 +32,9 @@ export class CloudFakeDataProvider implements FakeDataProvider {
   readonly #headers: Record<string, string>;
   readonly #fetch: FetchLike;
 
-  public constructor(options: CloudFakeDataProviderOptions) {
-    this.#baseUrl = options.baseUrl.replace(/\/+$/u, '');
+  public constructor(options: CloudFakeDataProviderOptions = {}) {
+    const baseUrl = options.baseUrl === undefined || options.baseUrl === '' ? PUBLIC_API_BASE_URL : options.baseUrl;
+    this.#baseUrl = baseUrl.replace(/\/+$/u, '');
     this.#headers = { ...options.headers };
     this.#fetch = options.fetch ?? globalThis.fetch;
   }
@@ -35,14 +43,6 @@ export class CloudFakeDataProvider implements FakeDataProvider {
     path: string,
     query: Readonly<Record<string, QueryValue>>,
   ): Promise<GeneratorResponse<Data>> {
-    if (this.#baseUrl === '') {
-      throw new RealFakeDataError(
-        'Real Fake Data baseUrl is not configured. Set it via ' +
-          'test.use({ realFakeData: { baseUrl: "https://…" } }).',
-        0,
-      );
-    }
-
     const url = new URL(`${this.#baseUrl}/v1/${path}`);
     for (const [key, value] of Object.entries(query)) {
       if (value !== undefined) {

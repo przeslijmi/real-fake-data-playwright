@@ -65,10 +65,12 @@ export type EmailLocalPattern =
   | 'first.last.number'
   | 'flast'
   | 'initial.last'
-  | 'noun.number';
+  | 'noun.number'
+  | 'first.company'
+  | 'company.first';
 
-/** Provider-domain category the email generator can draw from. */
-export type EmailDomainCategory = 'free' | 'regional';
+/** Domain category the email generator can draw from. */
+export type EmailDomainCategory = 'free' | 'regional' | 'corporate';
 
 /**
  * Per-call options shared by every method. A `seed` here overrides the
@@ -175,10 +177,20 @@ export interface DrivingLicenseOptions extends RequestOptions {
   readonly year?: number;
 }
 
+/**
+ * Options shared by every country's `email` generator (`deEmail`, `plEmail`,
+ * …) and the multi-country `email` aggregate. The controls are identical
+ * across countries; only the underlying name pools and regional/corporate
+ * domains differ.
+ */
 export interface EmailOptions extends RequestOptions {
-  /** Pin an exact provider domain, e.g. `"gmail.com"`. */
+  /** Pin an exact domain, e.g. `"gmail.com"`. */
   readonly domain?: string;
-  /** Scope the weighted domain draw; ignored when `domain` is set. */
+  /**
+   * Scope the weighted domain draw — `free` webmail, `regional` providers,
+   * `corporate` (a company-derived domain), or `any`. Ignored when `domain`
+   * is set.
+   */
   readonly domainCategory?: EmailDomainCategory | 'any';
   /** Which local-part shape to produce, or `any` for a weighted-random one. */
   readonly pattern?: EmailLocalPattern | 'any';
@@ -190,6 +202,17 @@ export interface EmailOptions extends RequestOptions {
   readonly plusTag?: boolean | string;
   /** Opt in to the rarer-but-still-RFC-valid local-part characters. */
   readonly exotic?: boolean;
+  /** Restrict output to edge-case addresses from the rare corners of the format. */
+  readonly edge?: boolean;
+}
+
+/** Options for the multi-country `email` generator. */
+export interface AnyEmailOptions extends EmailOptions {
+  /**
+   * ISO 3166 codes to draw each record from, e.g. `['pl', 'de', 'it']`. Each
+   * record picks one country from the list at random. Omit to draw from all 27.
+   */
+  readonly countries?: readonly CountryCode[];
 }
 
 export interface LoremOptions extends RequestOptions {
@@ -545,7 +568,17 @@ export interface EmailData {
   readonly localPart: string;
   readonly domain: string;
   readonly pattern: EmailLocalPattern;
+  /** Whether the domain is free webmail, a regional provider, or corporate. */
+  readonly domainCategory: EmailDomainCategory;
+  /** The company a corporate domain / company local-part was derived from, or `null`. */
+  readonly company: string | null;
   readonly plusTag: string | null;
+}
+
+/** A multi-country email: the shared fields plus the country it was drawn from. */
+export interface AnyEmailData extends EmailData {
+  /** ISO 3166 alpha-2 code of the country this address was drawn from. */
+  readonly country: string;
 }
 
 export interface LoremData {

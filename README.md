@@ -1,18 +1,18 @@
 # @przeslijmi/real-fake-data-playwright
 
-Playwright fixtures for [Real Fake Data](https://github.com/przeslijmi/rfd) — **190 generators** of realistic, synthetic test data, one typed method per record:
+Playwright fixtures for [Real Fake Data](https://github.com/przeslijmi/rfd) — **217 generators** of realistic, synthetic test data, one typed method per record:
 
-- **Person and company names across 27 EU countries** — `dePersonName`, `itCompanyName`, `frPersonName`, … in the local script and inflection, plus multi-country `personName`/`companyName` that draw from any mix of countries.
+- **Person & company names and email addresses across 27 EU countries** — `dePersonName`, `itCompanyName`, `plEmail`, … in the local script and inflection (names romanised to ASCII for emails, with free, regional, and company-derived domains), plus multi-country `personName`/`companyName`/`email` that draw from any mix of countries.
 - **National identifiers and VAT / company numbers for every EU member state** — French `frNir`/`frSiren`, Italian `itCodiceFiscale`, Spanish `esDni`/`esNie`, Danish `dkCpr`, Swedish `sePersonnummer`, Dutch `nlBsn`, German `deSteuerId`/`deUstIdnr`, and 60+ more — each with correct checksums and the same `invalid`/`edge` triggers.
 - **One-call whole people and companies for every EU country** — `dkPerson`, `frPerson`, … return a consistent name + national number; `dkCompany`, `deCompany`, `nlCompany`, … return a consistent trading name, legal form, and the country's register / tax / VAT numbers, all from one seed.
 - **The full Polish national set** — valid PESELs (correct checksums), NIPs, REGONs, IBANs, KRS and land-register numbers, ID cards, passports, driving licences, addresses drawn from real cities and streets, and vehicle plates.
-- **Locale-agnostic** — emails, lorem ipsum, and `customRegex` (a random string matching any regex you supply; Pro plan and above).
+- **Locale-agnostic** — lorem ipsum and `customRegex` (a random string matching any regex you supply; Pro plan and above).
 
 Output _looks_ real but is fake — safe for staging, demos, and seed data.
 
-- **Seeded and reproducible by default.** Each test derives a stable seed from its title, so a failing test replays the exact same data on the next run — no flakiness, trivial repro.
+- **Random by default.** It's a random-data generator: every call returns fresh data on each run. Pin a `seed` only when you want a fixed, reproducible dataset — e.g. to replay exactly what a failing run used.
+- **Three ways in, no lock-in.** A zero-config `fakeData` singleton (import and go), a `createFakeData` builder for full control (custom URL, auth headers, seed), or the Playwright `fakeData` fixture — pick per test, mix freely.
 - **Typed end to end.** Two methods per generator (one record, or a batch), fully typed inputs and results.
-- **Zero ceremony.** A `fakeData` fixture; no manual client wiring.
 
 ## Install
 
@@ -25,14 +25,17 @@ Requires `@playwright/test` (peer dependency) and Node 18+ (for global `fetch`).
 
 ## Quick start
 
-Point the fixture at a Real Fake Data API instance, then pull data inside any test:
+There are three ways to pull data in — pick whichever fits, they all return the same typed records. None is privileged; the fixture is not required.
+
+### 1. Singleton — import and go
+
+Zero config. The `fakeData` singleton is pre-wired to the public hosted API and returns fresh random data on every run. Best when you just want data in one (or many) tests without touching your Playwright config.
 
 ```ts
-import { test, expect } from '@przeslijmi/real-fake-data-playwright';
+import { test, expect } from '@playwright/test';
+import { fakeData } from '@przeslijmi/real-fake-data-playwright';
 
-test.use({ realFakeData: { baseUrl: 'https://api.real-fake-data.com' } });
-
-test('registers a new customer', async ({ page, fakeData }) => {
+test('registers a new customer', async ({ page }) => {
   const person = await fakeData.plPerson({ sex: 'f' });
 
   await page.goto('/signup');
@@ -45,7 +48,47 @@ test('registers a new customer', async ({ page, fakeData }) => {
 });
 ```
 
-`test` and `expect` are the standard Playwright exports, extended with the `fakeData` fixture — use them exactly as you would `@playwright/test`.
+The singleton targets the public endpoint only and sends no auth headers. Need a custom URL, headers, or a pinned seed? Use one of the next two.
+
+### 2. `createFakeData` — full control
+
+Build your own instance over any base URL, with auth headers and an optional seed. Best when you self-host the API, need authentication, or want to pin a fixed dataset.
+
+```ts
+import { test, expect } from '@playwright/test';
+import { createFakeData, CloudFakeDataProvider } from '@przeslijmi/real-fake-data-playwright';
+
+const fakeData = createFakeData(
+  new CloudFakeDataProvider({
+    baseUrl: 'https://api.real-fake-data.com',
+    headers: { 'x-api-key': process.env.RFD_API_KEY ?? '' },
+  }),
+  { seed: 42 }, // optional — omit for random
+);
+
+test('uses pinned data', async ({ page }) => {
+  const person = await fakeData.plPerson({ sex: 'f' });
+  // …
+});
+```
+
+### 3. Fixture — Playwright-native
+
+Configure once with `test.use(...)` and the `fakeData` fixture is injected into every test in scope. Best when you want the data wired into Playwright's lifecycle and configured per file / project.
+
+```ts
+import { test, expect } from '@przeslijmi/real-fake-data-playwright';
+
+test.use({ realFakeData: { baseUrl: 'https://api.real-fake-data.com' } });
+
+test('registers a new customer', async ({ page, fakeData }) => {
+  const person = await fakeData.plPerson({ sex: 'f' });
+  // …
+  await expect(page.getByText(person.surname)).toBeVisible();
+});
+```
+
+Here `test` and `expect` are the standard Playwright exports, extended with the `fakeData` fixture — use them exactly as you would `@playwright/test`. `baseUrl` is optional: omit it to use the public hosted API, set it for a self-hosted instance. Like the other two, it's random by default; add `seed` to pin it (see [Configuration](#configuration)).
 
 ## Configuration
 
@@ -53,43 +96,48 @@ Set options with `test.use({ realFakeData: { … } })`, at any scope (file, `des
 
 | Option    | Type                     | Description                                                                                              |
 | --------- | ------------------------ | ------------------------------------------------------------------------------------------------------- |
-| `baseUrl` | `string` (required)      | Base URL of the Real Fake Data API, e.g. `https://api.real-fake-data.com`.                                      |
-| `seed`    | `number`                 | Base seed for the test. Omit to derive a stable seed from the test title (reproducible-by-default).      |
+| `baseUrl` | `string`                 | Base URL of the Real Fake Data API. Omit to use the public hosted API (`https://api.real-fake-data.com`); set it for a self-hosted or staging instance. |
+| `seed`    | `number`                 | Base seed for the test. Omit (the default) for fresh random data on every run; set it to pin the test to a fixed, reproducible dataset. |
 | `headers` | `Record<string, string>` | Extra headers sent with every request (e.g. an API key once your plan requires one).                    |
 
-### Determinism
+### Random by default, reproducible on demand
 
-With a base seed in play, the **Nth call within a test uses `seed + N`** — so calls are reproducible across runs yet distinct from one another. Because the default seed comes from the test title, every test is already deterministic without configuring anything; set `seed` explicitly only when you want to pin a test to a known fixed dataset.
+By default no seed is set, so every call draws fresh random data on each run — this is a random-data generator, and that's the point. When a test fails on a particular record, log the data (or have your CI capture it) and pin a `seed` to replay the exact same dataset:
 
 ```ts
 test.use({ realFakeData: { baseUrl, seed: 42 } }); // pin this file to a fixed dataset
 ```
 
+With a base seed in play, the **Nth call within a test uses `seed + N`** — so the calls stay distinct from one another, yet the whole sequence reproduces identically on the next run. So three back-to-back `plPerson()` calls still return three *different* people; re-running with the same seed returns those same three. The same holds for the singleton and `createFakeData` instances. Pass `seed` on any individual call to override just that one draw.
+
 ## Generators
 
-Each generator exposes a **singular** method returning one record and a **plural** taking `count` as its first argument and returning an array of that many. Method names are locale-prefixed (`plPesel`, `dePersonName`, …) so generators for different countries never collide; locale-agnostic generators (`email`, `lorem`) and the multi-country aggregates (`personName`, `companyName`) carry no prefix.
+Each generator exposes a **singular** method returning one record and a **plural** taking `count` as its first argument and returning an array of that many. Method names are locale-prefixed (`plPesel`, `dePersonName`, `plEmail`, …) so generators for different countries never collide; the locale-agnostic `lorem` and the multi-country aggregates (`personName`, `companyName`, `email`) carry no prefix.
 
-Every method accepts optional constraints. Pass `seed` on any call to override that call's automatic seed.
+Every method accepts optional constraints. Pass `seed` on any call to pin just that draw (overriding the instance's seed sequence when one is set).
 
 #### Names across 27 EU countries
 
-Every country listed below exposes `<cc>PersonName`/`<cc>PersonNames`, `<cc>CompanyName`/`<cc>CompanyNames`, and `<cc>Company`/`<cc>Companies`, where `<cc>` is its ISO 3166 code: `at`, `be`, `bg`, `cy`, `cz`, `de`, `dk`, `ee`, `es`, `fi`, `fr`, `gr`, `hr`, `hu`, `ie`, `it`, `lt`, `lu`, `lv`, `mt`, `nl`, `pl`, `pt`, `ro`, `se`, `si`, `sk`.
+Every country listed below exposes `<cc>PersonName`/`<cc>PersonNames`, `<cc>CompanyName`/`<cc>CompanyNames`, `<cc>Company`/`<cc>Companies`, and `<cc>Email`/`<cc>Emails`, where `<cc>` is its ISO 3166 code: `at`, `be`, `bg`, `cy`, `cz`, `de`, `dk`, `ee`, `es`, `fi`, `fr`, `gr`, `hr`, `hu`, `ie`, `it`, `lt`, `lu`, `lv`, `mt`, `nl`, `pl`, `pt`, `ro`, `se`, `si`, `sk`.
 
 | Singular                | Plural                          | Returns (singular)                          | Options                                |
 | ----------------------- | ------------------------------- | ------------------------------------------- | -------------------------------------- |
 | `<cc>PersonName(opts?)` | `<cc>PersonNames(count, opts?)` | `{ name, surname, initials, sex }`          | `sex`, `edge`, `caseStrict`            |
 | `<cc>CompanyName(opts?)`| `<cc>CompanyNames(count, opts?)`| `{ value, legalForm, strategy }`            | `strategy`, `legalForm`, `edge`        |
 | `<cc>Company(opts?)`    | `<cc>Companies(count, opts?)`   | `{ name, legalForm, …national ids }`        | `strategy`, `legalForm`, `invalid`, `edge` |
+| `<cc>Email(opts?)`      | `<cc>Emails(count, opts?)`      | `{ value, localPart, domain, pattern, domainCategory, company, plusTag }` | `domain`, `domainCategory`, `pattern`, `plusTag`, `exotic`, `edge` |
 | `personName(opts?)`     | `personNames(count, opts?)`     | `{ name, surname, initials, sex, country }` | `sex`, `edge`, `caseStrict`, `countries` |
 | `companyName(opts?)`    | `companyNames(count, opts?)`    | `{ value, legalForm, strategy, country }`   | `strategy`, `edge`, `countries`        |
+| `email(opts?)`          | `emails(count, opts?)`          | `{ value, localPart, domain, pattern, domainCategory, company, plusTag, country }` | `domain`, `domainCategory`, `pattern`, `plusTag`, `exotic`, `edge`, `countries` |
 
 ```ts
 const ceo = await fakeData.dePersonName({ sex: 'f' });        // German given name + surname
 const vendor = await fakeData.itCompanyName({ edge: true });  // edge-case Italian company name
 const eu = await fakeData.personName({ countries: ['pl', 'sk', 'it'] }); // drawn from one of the three
+const inbox = await fakeData.plEmail({ domainCategory: 'corporate' }); // anna.kowalska@kowalski-bud.pl
 ```
 
-`countries` (on the prefix-less `personName`/`companyName` only) is an array of ISO codes; each record is generated by one country picked from the list. Omit it to draw from all 27. The per-country `legalForm` values differ by country (e.g. `GmbH`, `S.r.l.`, `S.A.`), so they are typed as `string`; pass `'any'` for a weighted-random one or `'none'` to omit it.
+`countries` (on the prefix-less `personName`/`companyName`/`email` only) is an array of ISO codes; each record is generated by one country picked from the list. Omit it to draw from all 27. The per-country `legalForm` values differ by country (e.g. `GmbH`, `S.r.l.`, `S.A.`), so they are typed as `string`; pass `'any'` for a weighted-random one or `'none'` to omit it. For email, `domainCategory: 'corporate'` builds the address on a company-derived domain and reports the brand in `company`; non-Latin names (Cyrillic, Greek) are romanised to ASCII.
 
 #### Polish national generators
 
@@ -342,13 +390,12 @@ Every EU member state exposes its core national-person identifier and its busine
 
 | Singular                       | Plural                                 | Returns (singular)                                          | Common options                                                        |
 | ------------------------------ | -------------------------------------- | ---------------------------------------------------------- | --------------------------------------------------------------------- |
-| `email(opts?)`                 | `emails(count, opts?)`                 | `{ value, localPart, domain, pattern, plusTag }`          | `domain`, `domainCategory`, `pattern`, `plusTag`, `exotic`           |
 | `lorem(opts?)`                 | `lorems(count, opts?)`                 | `{ value, words, chars, bytes, paragraphs, startedWithLorem }` | `bytes`, `chars`, `words`, `paragraphs`, `startWithLorem`      |
 | `customRegex(opts)`            | `customRegexes(count, opts)`           | `{ value, pattern }`                                       | `pattern` (required), `maxRepetition` — Pro plan and above            |
 
 ### Generating many records at once
 
-Every plural takes `count` as its first argument and returns an array. The bound (10 by default, raised by paid tiers) is enforced by the API — an out-of-range `count` throws a `RealFakeDataError` (HTTP 400), never a silent clamp. A plural is a single request seeded once, so it consumes one slot of the per-test seed sequence just like a singular call.
+Every plural takes `count` as its first argument and returns an array. The bound (10 by default, raised by paid tiers) is enforced by the API — an out-of-range `count` throws a `RealFakeDataError` (HTTP 400), never a silent clamp. A plural is a single request, so — when a seed is in play — it consumes one slot of the seed sequence just like a singular call.
 
 ```ts
 const team = await fakeData.plPeople(5, { sex: 'f' }); // PolishPersonData[] of length 5
