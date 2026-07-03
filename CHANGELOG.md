@@ -5,6 +5,32 @@ All notable changes to `@przeslijmi/real-fake-data-playwright` are documented he
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.8.0] - 2026-07-03
+
+Adds the `extreme` trigger across every generator.
+
+### Added
+
+- **`extreme` trigger.** Every generator that already took `edge` now also accepts
+  `extreme: true` — it returns **correct** data presented in a deliberately hostile
+  encoding: untrimmed whitespace (incl. non-breaking spaces), invisible/zero-width
+  characters and a leading BOM, homoglyph letters (Cyrillic/Greek/fullwidth
+  lookalikes), or a bidi override / stacked combining marks. One class is drawn per
+  value, so a batch (the plural methods) rotates across them. Use it to test that
+  your pipeline trims, normalises, and compares values safely.
+
+  Only the human-facing string is mangled and the value stays recoverable:
+  - **identifiers** (PESEL, NIP, IBAN, CPR, codice fiscale, BSN, …) mangle `value`
+    and exclude the homoglyph class, so the digits/letters stay machine-parseable
+    and still checksum after normalisation.
+  - **names / companies / emails** mangle the name (or assembled `value`); `initials`,
+    `legalForm`, and the decomposition stay clean.
+  - **whole people / companies** mangle the name only — the national identifier and
+    birth date stay clean.
+
+  `lorem` and `customRegex` do not take `extreme` (it would break their length and
+  regex-match contracts).
+
 ## [1.7.0] - 2026-06-28
 
 Adds two seedless ways to pull data — the fixture is no longer the only entry point — and makes data random by default everywhere.

@@ -129,6 +129,8 @@ export interface CompanyNameOptions extends RequestOptions {
   readonly activityPrefix?: boolean;
   /** Restrict output to edge-case names (punctuation-heavy families, long/rare forms). */
   readonly edge?: boolean;
+  /** Present the company name in a hostile-but-recoverable encoding (untrimmed whitespace, invisible/zero-width chars, BOM, homoglyphs, or bidi/combining marks); legal form and identifiers stay clean. */
+  readonly extreme?: boolean;
 }
 
 export interface CompanyOptions extends RequestOptions {
@@ -139,6 +141,8 @@ export interface CompanyOptions extends RequestOptions {
   readonly invalid?: boolean;
   /** Restrict output to edge-case values from the rare corners. */
   readonly edge?: boolean;
+  /** Present the company name in a hostile-but-recoverable encoding (untrimmed whitespace, invisible/zero-width chars, BOM, homoglyphs, or bidi/combining marks); legal form and identifiers stay clean. */
+  readonly extreme?: boolean;
 }
 
 export interface VehicleRegistrationOptions extends RequestOptions {
@@ -204,6 +208,8 @@ export interface EmailOptions extends RequestOptions {
   readonly exotic?: boolean;
   /** Restrict output to edge-case addresses from the rare corners of the format. */
   readonly edge?: boolean;
+  /** Present the address in a hostile-but-recoverable encoding (untrimmed whitespace, invisible/zero-width chars, BOM, homoglyphs, or bidi/combining marks); the decomposition stays clean. */
+  readonly extreme?: boolean;
 }
 
 /** Options for the multi-country `email` generator. */
@@ -325,6 +331,8 @@ export interface LocaleCompanyOptions extends RequestOptions {
   readonly invalid?: boolean;
   /** Restrict output to edge-case values from the rare corners. */
   readonly edge?: boolean;
+  /** Present the company name in a hostile-but-recoverable encoding (untrimmed whitespace, invisible/zero-width chars, BOM, homoglyphs, or bidi/combining marks); legal form and identifiers stay clean. */
+  readonly extreme?: boolean;
 }
 
 /** One AT company: the name, its legal form, and the matching national identifiers. */
@@ -609,6 +617,8 @@ export interface PersonNameOptions extends RequestOptions {
    * surnames, and minimal-length names become far more likely.
    */
   readonly edge?: boolean;
+  /** Present name and surname in a hostile-but-recoverable encoding (untrimmed whitespace, invisible/zero-width chars, BOM, homoglyphs, or bidi/combining marks); initials and any identifier stay clean. */
+  readonly extreme?: boolean;
   /**
    * Defaults to `true` (proper casing). Set `false` to deliberately mangle the
    * casing of name and surname (all-lower, all-upper, or random); initials stay
@@ -652,12 +662,16 @@ export interface LocaleCompanyNameOptions extends RequestOptions {
   readonly legalForm?: string;
   /** Restrict output to edge-case names (punctuation-heavy families, long/rare forms). */
   readonly edge?: boolean;
+  /** Present the company name in a hostile-but-recoverable encoding (untrimmed whitespace, invisible/zero-width chars, BOM, homoglyphs, or bidi/combining marks); legal form and identifiers stay clean. */
+  readonly extreme?: boolean;
 }
 
 /** Options for the multi-country `companyName` generator (no `legalForm` — it is country-specific). */
 export interface AnyCompanyNameOptions extends RequestOptions {
   readonly strategy?: CompanyNameStrategy | 'any';
   readonly edge?: boolean;
+  /** Present the company name in a hostile-but-recoverable encoding (untrimmed whitespace, invisible/zero-width chars, BOM, homoglyphs, or bidi/combining marks); legal form and identifiers stay clean. */
+  readonly extreme?: boolean;
   /**
    * ISO 3166 codes to draw each record from, e.g. `['de', 'fr', 'it']`. Omit to
    * draw from all 27.
@@ -693,6 +707,8 @@ export interface FrSirenOptions extends RequestOptions {
   readonly format?: 'siren' | 'siret' | 'vat';
   readonly invalid?: boolean;
   readonly edge?: boolean;
+  /** Present the value in a hostile-but-recoverable encoding (untrimmed whitespace, invisible/zero-width chars, BOM, or bidi/combining marks); homoglyphs excluded so it stays machine-parseable. */
+  readonly extreme?: boolean;
 }
 
 export interface FrSirenData {
@@ -710,6 +726,8 @@ export interface FrNirOptions extends RequestOptions {
   readonly bornAfter?: string;
   readonly invalid?: boolean;
   readonly edge?: boolean;
+  /** Present the value in a hostile-but-recoverable encoding (untrimmed whitespace, invisible/zero-width chars, BOM, or bidi/combining marks); homoglyphs excluded so it stays machine-parseable. */
+  readonly extreme?: boolean;
 }
 
 export interface FrNirData {
@@ -729,6 +747,8 @@ export interface AtSvnrOptions extends RequestOptions {
   readonly bornAfter?: string;
   readonly invalid?: boolean;
   readonly edge?: boolean;
+  /** Present the value in a hostile-but-recoverable encoding (untrimmed whitespace, invisible/zero-width chars, BOM, or bidi/combining marks); homoglyphs excluded so it stays machine-parseable. */
+  readonly extreme?: boolean;
 }
 
 export interface AtSvnrData {
@@ -741,6 +761,8 @@ export interface AtUidOptions extends RequestOptions {
   readonly format?: 'national' | 'vat';
   readonly invalid?: boolean;
   readonly edge?: boolean;
+  /** Present the value in a hostile-but-recoverable encoding (untrimmed whitespace, invisible/zero-width chars, BOM, or bidi/combining marks); homoglyphs excluded so it stays machine-parseable. */
+  readonly extreme?: boolean;
 }
 
 export interface AtUidData {
@@ -751,6 +773,8 @@ export interface AtUidData {
 export interface AtFirmenbuchnummerOptions extends RequestOptions {
   readonly invalid?: boolean;
   readonly edge?: boolean;
+  /** Present the value in a hostile-but-recoverable encoding (untrimmed whitespace, invisible/zero-width chars, BOM, or bidi/combining marks); homoglyphs excluded so it stays machine-parseable. */
+  readonly extreme?: boolean;
 }
 
 export interface AtFirmenbuchnummerData {
@@ -761,6 +785,8 @@ export interface AtFirmenbuchnummerData {
 
 export interface AtSteuernummerOptions extends RequestOptions {
   readonly edge?: boolean;
+  /** Present the value in a hostile-but-recoverable encoding (untrimmed whitespace, invisible/zero-width chars, BOM, or bidi/combining marks); homoglyphs excluded so it stays machine-parseable. */
+  readonly extreme?: boolean;
 }
 
 export interface AtSteuernummerData {
@@ -779,6 +805,8 @@ export interface BeRijksregisternummerOptions extends RequestOptions {
   readonly kind?: 'national' | 'bis';
   readonly invalid?: boolean;
   readonly edge?: boolean;
+  /** Present the value in a hostile-but-recoverable encoding (untrimmed whitespace, invisible/zero-width chars, BOM, or bidi/combining marks); homoglyphs excluded so it stays machine-parseable. */
+  readonly extreme?: boolean;
 }
 
 export interface BeRijksregisternummerData {
@@ -792,6 +820,8 @@ export interface BeOndernemingsnummerOptions extends RequestOptions {
   readonly format?: 'national' | 'vat';
   readonly invalid?: boolean;
   readonly edge?: boolean;
+  /** Present the value in a hostile-but-recoverable encoding (untrimmed whitespace, invisible/zero-width chars, BOM, or bidi/combining marks); homoglyphs excluded so it stays machine-parseable. */
+  readonly extreme?: boolean;
 }
 
 export interface BeOndernemingsnummerData {
@@ -809,6 +839,8 @@ export interface BgEgnOptions extends RequestOptions {
   readonly bornAfter?: string;
   readonly invalid?: boolean;
   readonly edge?: boolean;
+  /** Present the value in a hostile-but-recoverable encoding (untrimmed whitespace, invisible/zero-width chars, BOM, or bidi/combining marks); homoglyphs excluded so it stays machine-parseable. */
+  readonly extreme?: boolean;
 }
 
 export interface BgEgnData {
@@ -822,6 +854,8 @@ export interface BgEikOptions extends RequestOptions {
   readonly format?: 'national' | 'vat';
   readonly invalid?: boolean;
   readonly edge?: boolean;
+  /** Present the value in a hostile-but-recoverable encoding (untrimmed whitespace, invisible/zero-width chars, BOM, or bidi/combining marks); homoglyphs excluded so it stays machine-parseable. */
+  readonly extreme?: boolean;
 }
 
 export interface BgEikData {
@@ -833,6 +867,8 @@ export interface HrOibOptions extends RequestOptions {
   readonly format?: 'national' | 'vat';
   readonly invalid?: boolean;
   readonly edge?: boolean;
+  /** Present the value in a hostile-but-recoverable encoding (untrimmed whitespace, invisible/zero-width chars, BOM, or bidi/combining marks); homoglyphs excluded so it stays machine-parseable. */
+  readonly extreme?: boolean;
 }
 
 export interface HrOibData {
@@ -850,6 +886,8 @@ export interface HrJmbgOptions extends RequestOptions {
   readonly bornAfter?: string;
   readonly invalid?: boolean;
   readonly edge?: boolean;
+  /** Present the value in a hostile-but-recoverable encoding (untrimmed whitespace, invisible/zero-width chars, BOM, or bidi/combining marks); homoglyphs excluded so it stays machine-parseable. */
+  readonly extreme?: boolean;
 }
 
 export interface HrJmbgData {
@@ -863,6 +901,8 @@ export interface CyTicOptions extends RequestOptions {
   readonly format?: 'national' | 'vat';
   readonly invalid?: boolean;
   readonly edge?: boolean;
+  /** Present the value in a hostile-but-recoverable encoding (untrimmed whitespace, invisible/zero-width chars, BOM, or bidi/combining marks); homoglyphs excluded so it stays machine-parseable. */
+  readonly extreme?: boolean;
 }
 
 export interface CyTicData {
@@ -882,6 +922,8 @@ export interface CzRodneCisloOptions extends RequestOptions {
   readonly format?: 'plain' | 'with-slash';
   readonly invalid?: boolean;
   readonly edge?: boolean;
+  /** Present the value in a hostile-but-recoverable encoding (untrimmed whitespace, invisible/zero-width chars, BOM, or bidi/combining marks); homoglyphs excluded so it stays machine-parseable. */
+  readonly extreme?: boolean;
 }
 
 export interface CzRodneCisloData {
@@ -895,6 +937,8 @@ export interface CzIcoOptions extends RequestOptions {
   readonly format?: 'national' | 'vat';
   readonly invalid?: boolean;
   readonly edge?: boolean;
+  /** Present the value in a hostile-but-recoverable encoding (untrimmed whitespace, invisible/zero-width chars, BOM, or bidi/combining marks); homoglyphs excluded so it stays machine-parseable. */
+  readonly extreme?: boolean;
 }
 
 export interface CzIcoData {
@@ -914,6 +958,8 @@ export interface DkCprOptions extends RequestOptions {
   readonly format?: 'plain' | 'with-hyphen';
   readonly invalid?: boolean;
   readonly edge?: boolean;
+  /** Present the value in a hostile-but-recoverable encoding (untrimmed whitespace, invisible/zero-width chars, BOM, or bidi/combining marks); homoglyphs excluded so it stays machine-parseable. */
+  readonly extreme?: boolean;
 }
 
 export interface DkCprData {
@@ -940,6 +986,8 @@ export interface DkCvrOptions extends RequestOptions {
   readonly format?: 'national' | 'vat';
   readonly invalid?: boolean;
   readonly edge?: boolean;
+  /** Present the value in a hostile-but-recoverable encoding (untrimmed whitespace, invisible/zero-width chars, BOM, or bidi/combining marks); homoglyphs excluded so it stays machine-parseable. */
+  readonly extreme?: boolean;
 }
 
 export interface DkCvrData {
@@ -957,6 +1005,8 @@ export interface EeIsikukoodOptions extends RequestOptions {
   readonly bornAfter?: string;
   readonly invalid?: boolean;
   readonly edge?: boolean;
+  /** Present the value in a hostile-but-recoverable encoding (untrimmed whitespace, invisible/zero-width chars, BOM, or bidi/combining marks); homoglyphs excluded so it stays machine-parseable. */
+  readonly extreme?: boolean;
 }
 
 export interface EeIsikukoodData {
@@ -969,6 +1019,8 @@ export interface EeIsikukoodData {
 export interface EeRegistrikoodOptions extends RequestOptions {
   readonly invalid?: boolean;
   readonly edge?: boolean;
+  /** Present the value in a hostile-but-recoverable encoding (untrimmed whitespace, invisible/zero-width chars, BOM, or bidi/combining marks); homoglyphs excluded so it stays machine-parseable. */
+  readonly extreme?: boolean;
 }
 
 export interface EeRegistrikoodData {
@@ -980,6 +1032,8 @@ export interface EeKmkrOptions extends RequestOptions {
   readonly format?: 'national' | 'vat';
   readonly invalid?: boolean;
   readonly edge?: boolean;
+  /** Present the value in a hostile-but-recoverable encoding (untrimmed whitespace, invisible/zero-width chars, BOM, or bidi/combining marks); homoglyphs excluded so it stays machine-parseable. */
+  readonly extreme?: boolean;
 }
 
 export interface EeKmkrData {
@@ -997,6 +1051,8 @@ export interface FiHenkilotunnusOptions extends RequestOptions {
   readonly bornAfter?: string;
   readonly invalid?: boolean;
   readonly edge?: boolean;
+  /** Present the value in a hostile-but-recoverable encoding (untrimmed whitespace, invisible/zero-width chars, BOM, or bidi/combining marks); homoglyphs excluded so it stays machine-parseable. */
+  readonly extreme?: boolean;
 }
 
 export interface FiHenkilotunnusData {
@@ -1010,6 +1066,8 @@ export interface FiYTunnusOptions extends RequestOptions {
   readonly format?: 'national' | 'vat';
   readonly invalid?: boolean;
   readonly edge?: boolean;
+  /** Present the value in a hostile-but-recoverable encoding (untrimmed whitespace, invisible/zero-width chars, BOM, or bidi/combining marks); homoglyphs excluded so it stays machine-parseable. */
+  readonly extreme?: boolean;
 }
 
 export interface FiYTunnusData {
@@ -1020,6 +1078,8 @@ export interface FiYTunnusData {
 export interface DeSteuerIdOptions extends RequestOptions {
   readonly invalid?: boolean;
   readonly edge?: boolean;
+  /** Present the value in a hostile-but-recoverable encoding (untrimmed whitespace, invisible/zero-width chars, BOM, or bidi/combining marks); homoglyphs excluded so it stays machine-parseable. */
+  readonly extreme?: boolean;
 }
 
 export interface DeSteuerIdData {
@@ -1031,6 +1091,8 @@ export interface DeUstIdnrOptions extends RequestOptions {
   readonly format?: 'national' | 'vat';
   readonly invalid?: boolean;
   readonly edge?: boolean;
+  /** Present the value in a hostile-but-recoverable encoding (untrimmed whitespace, invisible/zero-width chars, BOM, or bidi/combining marks); homoglyphs excluded so it stays machine-parseable. */
+  readonly extreme?: boolean;
 }
 
 export interface DeUstIdnrData {
@@ -1041,6 +1103,8 @@ export interface DeUstIdnrData {
 export interface DeHandelsregisternummerOptions extends RequestOptions {
   readonly division?: 'HRA' | 'HRB';
   readonly edge?: boolean;
+  /** Present the value in a hostile-but-recoverable encoding (untrimmed whitespace, invisible/zero-width chars, BOM, or bidi/combining marks); homoglyphs excluded so it stays machine-parseable. */
+  readonly extreme?: boolean;
 }
 
 export interface DeHandelsregisternummerData {
@@ -1054,6 +1118,8 @@ export interface DeWirtschaftsIdnrOptions extends RequestOptions {
   readonly suffix?: number;
   readonly invalid?: boolean;
   readonly edge?: boolean;
+  /** Present the value in a hostile-but-recoverable encoding (untrimmed whitespace, invisible/zero-width chars, BOM, or bidi/combining marks); homoglyphs excluded so it stays machine-parseable. */
+  readonly extreme?: boolean;
 }
 
 export interface DeWirtschaftsIdnrData {
@@ -1065,6 +1131,8 @@ export interface DeWirtschaftsIdnrData {
 export interface DePersonalausweisOptions extends RequestOptions {
   readonly invalid?: boolean;
   readonly edge?: boolean;
+  /** Present the value in a hostile-but-recoverable encoding (untrimmed whitespace, invisible/zero-width chars, BOM, or bidi/combining marks); homoglyphs excluded so it stays machine-parseable. */
+  readonly extreme?: boolean;
 }
 
 export interface DePersonalausweisData {
@@ -1083,6 +1151,8 @@ export interface GrAmkaOptions extends RequestOptions {
   readonly bornAfter?: string;
   readonly invalid?: boolean;
   readonly edge?: boolean;
+  /** Present the value in a hostile-but-recoverable encoding (untrimmed whitespace, invisible/zero-width chars, BOM, or bidi/combining marks); homoglyphs excluded so it stays machine-parseable. */
+  readonly extreme?: boolean;
 }
 
 export interface GrAmkaData {
@@ -1096,6 +1166,8 @@ export interface GrAfmOptions extends RequestOptions {
   readonly format?: 'national' | 'vat';
   readonly invalid?: boolean;
   readonly edge?: boolean;
+  /** Present the value in a hostile-but-recoverable encoding (untrimmed whitespace, invisible/zero-width chars, BOM, or bidi/combining marks); homoglyphs excluded so it stays machine-parseable. */
+  readonly extreme?: boolean;
 }
 
 export interface GrAfmData {
@@ -1112,6 +1184,8 @@ export interface HuAdoazonositoJelOptions extends RequestOptions {
   readonly bornAfter?: string;
   readonly invalid?: boolean;
   readonly edge?: boolean;
+  /** Present the value in a hostile-but-recoverable encoding (untrimmed whitespace, invisible/zero-width chars, BOM, or bidi/combining marks); homoglyphs excluded so it stays machine-parseable. */
+  readonly extreme?: boolean;
 }
 
 export interface HuAdoazonositoJelData {
@@ -1123,6 +1197,8 @@ export interface HuAdoazonositoJelData {
 export interface HuTajOptions extends RequestOptions {
   readonly invalid?: boolean;
   readonly edge?: boolean;
+  /** Present the value in a hostile-but-recoverable encoding (untrimmed whitespace, invisible/zero-width chars, BOM, or bidi/combining marks); homoglyphs excluded so it stays machine-parseable. */
+  readonly extreme?: boolean;
 }
 
 export interface HuTajData {
@@ -1141,6 +1217,8 @@ export interface HuSzemelyiAzonositoOptions extends RequestOptions {
   readonly standard?: 'pre-1997' | 'modern' | 'both';
   readonly invalid?: boolean;
   readonly edge?: boolean;
+  /** Present the value in a hostile-but-recoverable encoding (untrimmed whitespace, invisible/zero-width chars, BOM, or bidi/combining marks); homoglyphs excluded so it stays machine-parseable. */
+  readonly extreme?: boolean;
 }
 
 export interface HuSzemelyiAzonositoData {
@@ -1155,6 +1233,8 @@ export interface HuAdoszamOptions extends RequestOptions {
   readonly format?: 'national' | 'vat';
   readonly invalid?: boolean;
   readonly edge?: boolean;
+  /** Present the value in a hostile-but-recoverable encoding (untrimmed whitespace, invisible/zero-width chars, BOM, or bidi/combining marks); homoglyphs excluded so it stays machine-parseable. */
+  readonly extreme?: boolean;
 }
 
 export interface HuAdoszamData {
@@ -1164,6 +1244,8 @@ export interface HuAdoszamData {
 
 export interface HuCegjegyzekszamOptions extends RequestOptions {
   readonly edge?: boolean;
+  /** Present the value in a hostile-but-recoverable encoding (untrimmed whitespace, invisible/zero-width chars, BOM, or bidi/combining marks); homoglyphs excluded so it stays machine-parseable. */
+  readonly extreme?: boolean;
 }
 
 export interface HuCegjegyzekszamData {
@@ -1178,6 +1260,8 @@ export interface IePpsnOptions extends RequestOptions {
   readonly standard?: 'pre-2013' | 'modern' | 'both';
   readonly invalid?: boolean;
   readonly edge?: boolean;
+  /** Present the value in a hostile-but-recoverable encoding (untrimmed whitespace, invisible/zero-width chars, BOM, or bidi/combining marks); homoglyphs excluded so it stays machine-parseable. */
+  readonly extreme?: boolean;
 }
 
 export interface IePpsnData {
@@ -1192,6 +1276,8 @@ export interface IeVatOptions extends RequestOptions {
   readonly standard?: 'pre-2013' | 'modern' | 'both';
   readonly invalid?: boolean;
   readonly edge?: boolean;
+  /** Present the value in a hostile-but-recoverable encoding (untrimmed whitespace, invisible/zero-width chars, BOM, or bidi/combining marks); homoglyphs excluded so it stays machine-parseable. */
+  readonly extreme?: boolean;
 }
 
 export interface IeVatData {
@@ -1201,6 +1287,8 @@ export interface IeVatData {
 
 export interface IeCroOptions extends RequestOptions {
   readonly edge?: boolean;
+  /** Present the value in a hostile-but-recoverable encoding (untrimmed whitespace, invisible/zero-width chars, BOM, or bidi/combining marks); homoglyphs excluded so it stays machine-parseable. */
+  readonly extreme?: boolean;
 }
 
 export interface IeCroData {
@@ -1220,6 +1308,8 @@ export interface ItCodiceFiscaleOptions extends RequestOptions {
   readonly name?: string;
   readonly invalid?: boolean;
   readonly edge?: boolean;
+  /** Present the value in a hostile-but-recoverable encoding (untrimmed whitespace, invisible/zero-width chars, BOM, or bidi/combining marks); homoglyphs excluded so it stays machine-parseable. */
+  readonly extreme?: boolean;
 }
 
 export interface ItCodiceFiscaleData {
@@ -1234,6 +1324,8 @@ export interface ItPartitaIvaOptions extends RequestOptions {
   readonly format?: 'national' | 'vat';
   readonly invalid?: boolean;
   readonly edge?: boolean;
+  /** Present the value in a hostile-but-recoverable encoding (untrimmed whitespace, invisible/zero-width chars, BOM, or bidi/combining marks); homoglyphs excluded so it stays machine-parseable. */
+  readonly extreme?: boolean;
 }
 
 export interface ItPartitaIvaData {
@@ -1252,6 +1344,8 @@ export interface LvPersonasKodsOptions extends RequestOptions {
   readonly format?: 'plain' | 'with-hyphen';
   readonly invalid?: boolean;
   readonly edge?: boolean;
+  /** Present the value in a hostile-but-recoverable encoding (untrimmed whitespace, invisible/zero-width chars, BOM, or bidi/combining marks); homoglyphs excluded so it stays machine-parseable. */
+  readonly extreme?: boolean;
 }
 
 export interface LvPersonasKodsData {
@@ -1264,6 +1358,8 @@ export interface LvRegistracijasNumursOptions extends RequestOptions {
   readonly format?: 'national' | 'vat';
   readonly invalid?: boolean;
   readonly edge?: boolean;
+  /** Present the value in a hostile-but-recoverable encoding (untrimmed whitespace, invisible/zero-width chars, BOM, or bidi/combining marks); homoglyphs excluded so it stays machine-parseable. */
+  readonly extreme?: boolean;
 }
 
 export interface LvRegistracijasNumursData {
@@ -1281,6 +1377,8 @@ export interface LtAsmensKodasOptions extends RequestOptions {
   readonly bornAfter?: string;
   readonly invalid?: boolean;
   readonly edge?: boolean;
+  /** Present the value in a hostile-but-recoverable encoding (untrimmed whitespace, invisible/zero-width chars, BOM, or bidi/combining marks); homoglyphs excluded so it stays machine-parseable. */
+  readonly extreme?: boolean;
 }
 
 export interface LtAsmensKodasData {
@@ -1293,6 +1391,8 @@ export interface LtAsmensKodasData {
 export interface LtImonesKodasOptions extends RequestOptions {
   readonly invalid?: boolean;
   readonly edge?: boolean;
+  /** Present the value in a hostile-but-recoverable encoding (untrimmed whitespace, invisible/zero-width chars, BOM, or bidi/combining marks); homoglyphs excluded so it stays machine-parseable. */
+  readonly extreme?: boolean;
 }
 
 export interface LtImonesKodasData {
@@ -1304,6 +1404,8 @@ export interface LtPvmOptions extends RequestOptions {
   readonly format?: 'national' | 'vat';
   readonly invalid?: boolean;
   readonly edge?: boolean;
+  /** Present the value in a hostile-but-recoverable encoding (untrimmed whitespace, invisible/zero-width chars, BOM, or bidi/combining marks); homoglyphs excluded so it stays machine-parseable. */
+  readonly extreme?: boolean;
 }
 
 export interface LtPvmData {
@@ -1320,6 +1422,8 @@ export interface LuMatriculeOptions extends RequestOptions {
   readonly bornAfter?: string;
   readonly invalid?: boolean;
   readonly edge?: boolean;
+  /** Present the value in a hostile-but-recoverable encoding (untrimmed whitespace, invisible/zero-width chars, BOM, or bidi/combining marks); homoglyphs excluded so it stays machine-parseable. */
+  readonly extreme?: boolean;
 }
 
 export interface LuMatriculeData {
@@ -1332,6 +1436,8 @@ export interface LuTvaOptions extends RequestOptions {
   readonly format?: 'national' | 'vat';
   readonly invalid?: boolean;
   readonly edge?: boolean;
+  /** Present the value in a hostile-but-recoverable encoding (untrimmed whitespace, invisible/zero-width chars, BOM, or bidi/combining marks); homoglyphs excluded so it stays machine-parseable. */
+  readonly extreme?: boolean;
 }
 
 export interface LuTvaData {
@@ -1342,6 +1448,8 @@ export interface LuTvaData {
 export interface MtIdCardOptions extends RequestOptions {
   readonly category?: 'M' | 'G' | 'A' | 'P' | 'L' | 'H' | 'B' | 'Z';
   readonly edge?: boolean;
+  /** Present the value in a hostile-but-recoverable encoding (untrimmed whitespace, invisible/zero-width chars, BOM, or bidi/combining marks); homoglyphs excluded so it stays machine-parseable. */
+  readonly extreme?: boolean;
 }
 
 export interface MtIdCardData {
@@ -1354,6 +1462,8 @@ export interface MtVatOptions extends RequestOptions {
   readonly format?: 'national' | 'vat';
   readonly invalid?: boolean;
   readonly edge?: boolean;
+  /** Present the value in a hostile-but-recoverable encoding (untrimmed whitespace, invisible/zero-width chars, BOM, or bidi/combining marks); homoglyphs excluded so it stays machine-parseable. */
+  readonly extreme?: boolean;
 }
 
 export interface MtVatData {
@@ -1364,6 +1474,8 @@ export interface MtVatData {
 export interface NlBsnOptions extends RequestOptions {
   readonly invalid?: boolean;
   readonly edge?: boolean;
+  /** Present the value in a hostile-but-recoverable encoding (untrimmed whitespace, invisible/zero-width chars, BOM, or bidi/combining marks); homoglyphs excluded so it stays machine-parseable. */
+  readonly extreme?: boolean;
 }
 
 export interface NlBsnData {
@@ -1374,6 +1486,8 @@ export interface NlBsnData {
 export interface NlPersonOptions extends PersonConstraintOptions {
   /** Bias the BSN and name shape toward their rare corners. */
   readonly edge?: boolean;
+  /** Present name and surname in a hostile-but-recoverable encoding (untrimmed whitespace, invisible/zero-width chars, BOM, homoglyphs, or bidi/combining marks); initials and any identifier stay clean. */
+  readonly extreme?: boolean;
   /** Mangle the casing of `name`/`surname` for testing. Defaults to `true`. */
   readonly caseStrict?: boolean;
 }
@@ -1395,6 +1509,8 @@ export interface NlPersonData {
 export interface FullPersonOptions extends PersonConstraintOptions {
   /** Bias the number and name shape toward their rarely-exercised corners. */
   readonly edge?: boolean;
+  /** Present name and surname in a hostile-but-recoverable encoding (untrimmed whitespace, invisible/zero-width chars, BOM, homoglyphs, or bidi/combining marks); initials and any identifier stay clean. */
+  readonly extreme?: boolean;
   /** Mangle the casing of `name`/`surname` for testing. Defaults to `true`. */
   readonly caseStrict?: boolean;
 }
@@ -1643,6 +1759,8 @@ export interface LvPersonData {
 export interface NlRsinOptions extends RequestOptions {
   readonly invalid?: boolean;
   readonly edge?: boolean;
+  /** Present the value in a hostile-but-recoverable encoding (untrimmed whitespace, invisible/zero-width chars, BOM, or bidi/combining marks); homoglyphs excluded so it stays machine-parseable. */
+  readonly extreme?: boolean;
 }
 
 export interface NlRsinData {
@@ -1654,6 +1772,8 @@ export interface NlBtwIdOptions extends RequestOptions {
   readonly standard?: 'legacy' | 'modern' | 'both';
   readonly invalid?: boolean;
   readonly edge?: boolean;
+  /** Present the value in a hostile-but-recoverable encoding (untrimmed whitespace, invisible/zero-width chars, BOM, or bidi/combining marks); homoglyphs excluded so it stays machine-parseable. */
+  readonly extreme?: boolean;
 }
 
 export interface NlBtwIdData {
@@ -1664,6 +1784,8 @@ export interface NlBtwIdData {
 
 export interface NlKvkOptions extends RequestOptions {
   readonly edge?: boolean;
+  /** Present the value in a hostile-but-recoverable encoding (untrimmed whitespace, invisible/zero-width chars, BOM, or bidi/combining marks); homoglyphs excluded so it stays machine-parseable. */
+  readonly extreme?: boolean;
 }
 
 export interface NlKvkData {
@@ -1676,6 +1798,8 @@ export interface PtNifOptions extends RequestOptions {
   readonly format?: 'national' | 'vat';
   readonly invalid?: boolean;
   readonly edge?: boolean;
+  /** Present the value in a hostile-but-recoverable encoding (untrimmed whitespace, invisible/zero-width chars, BOM, or bidi/combining marks); homoglyphs excluded so it stays machine-parseable. */
+  readonly extreme?: boolean;
 }
 
 export interface PtNifData {
@@ -1687,6 +1811,8 @@ export interface PtNifData {
 export interface PtCartaoCidadaoOptions extends RequestOptions {
   readonly invalid?: boolean;
   readonly edge?: boolean;
+  /** Present the value in a hostile-but-recoverable encoding (untrimmed whitespace, invisible/zero-width chars, BOM, or bidi/combining marks); homoglyphs excluded so it stays machine-parseable. */
+  readonly extreme?: boolean;
 }
 
 export interface PtCartaoCidadaoData {
@@ -1705,6 +1831,8 @@ export interface RoCnpOptions extends RequestOptions {
   readonly bornAfter?: string;
   readonly invalid?: boolean;
   readonly edge?: boolean;
+  /** Present the value in a hostile-but-recoverable encoding (untrimmed whitespace, invisible/zero-width chars, BOM, or bidi/combining marks); homoglyphs excluded so it stays machine-parseable. */
+  readonly extreme?: boolean;
 }
 
 export interface RoCnpData {
@@ -1719,6 +1847,8 @@ export interface RoCuiOptions extends RequestOptions {
   readonly format?: 'national' | 'vat';
   readonly invalid?: boolean;
   readonly edge?: boolean;
+  /** Present the value in a hostile-but-recoverable encoding (untrimmed whitespace, invisible/zero-width chars, BOM, or bidi/combining marks); homoglyphs excluded so it stays machine-parseable. */
+  readonly extreme?: boolean;
 }
 
 export interface RoCuiData {
@@ -1737,6 +1867,8 @@ export interface SkRodneCisloOptions extends RequestOptions {
   readonly format?: 'plain' | 'with-slash';
   readonly invalid?: boolean;
   readonly edge?: boolean;
+  /** Present the value in a hostile-but-recoverable encoding (untrimmed whitespace, invisible/zero-width chars, BOM, or bidi/combining marks); homoglyphs excluded so it stays machine-parseable. */
+  readonly extreme?: boolean;
 }
 
 export interface SkRodneCisloData {
@@ -1749,6 +1881,8 @@ export interface SkRodneCisloData {
 export interface SkIcoOptions extends RequestOptions {
   readonly invalid?: boolean;
   readonly edge?: boolean;
+  /** Present the value in a hostile-but-recoverable encoding (untrimmed whitespace, invisible/zero-width chars, BOM, or bidi/combining marks); homoglyphs excluded so it stays machine-parseable. */
+  readonly extreme?: boolean;
 }
 
 export interface SkIcoData {
@@ -1760,6 +1894,8 @@ export interface SkIcDphOptions extends RequestOptions {
   readonly format?: 'national' | 'vat';
   readonly invalid?: boolean;
   readonly edge?: boolean;
+  /** Present the value in a hostile-but-recoverable encoding (untrimmed whitespace, invisible/zero-width chars, BOM, or bidi/combining marks); homoglyphs excluded so it stays machine-parseable. */
+  readonly extreme?: boolean;
 }
 
 export interface SkIcDphData {
@@ -1777,6 +1913,8 @@ export interface SiEmsoOptions extends RequestOptions {
   readonly bornAfter?: string;
   readonly invalid?: boolean;
   readonly edge?: boolean;
+  /** Present the value in a hostile-but-recoverable encoding (untrimmed whitespace, invisible/zero-width chars, BOM, or bidi/combining marks); homoglyphs excluded so it stays machine-parseable. */
+  readonly extreme?: boolean;
 }
 
 export interface SiEmsoData {
@@ -1790,6 +1928,8 @@ export interface SiDavcnaStevilkaOptions extends RequestOptions {
   readonly format?: 'national' | 'vat';
   readonly invalid?: boolean;
   readonly edge?: boolean;
+  /** Present the value in a hostile-but-recoverable encoding (untrimmed whitespace, invisible/zero-width chars, BOM, or bidi/combining marks); homoglyphs excluded so it stays machine-parseable. */
+  readonly extreme?: boolean;
 }
 
 export interface SiDavcnaStevilkaData {
@@ -1800,6 +1940,8 @@ export interface SiDavcnaStevilkaData {
 export interface EsDniOptions extends RequestOptions {
   readonly invalid?: boolean;
   readonly edge?: boolean;
+  /** Present the value in a hostile-but-recoverable encoding (untrimmed whitespace, invisible/zero-width chars, BOM, or bidi/combining marks); homoglyphs excluded so it stays machine-parseable. */
+  readonly extreme?: boolean;
 }
 
 export interface EsDniData {
@@ -1811,6 +1953,8 @@ export interface EsDniData {
 export interface EsNieOptions extends RequestOptions {
   readonly invalid?: boolean;
   readonly edge?: boolean;
+  /** Present the value in a hostile-but-recoverable encoding (untrimmed whitespace, invisible/zero-width chars, BOM, or bidi/combining marks); homoglyphs excluded so it stays machine-parseable. */
+  readonly extreme?: boolean;
 }
 
 export interface EsNieData {
@@ -1824,6 +1968,8 @@ export interface EsCifOptions extends RequestOptions {
   readonly format?: 'national' | 'vat';
   readonly invalid?: boolean;
   readonly edge?: boolean;
+  /** Present the value in a hostile-but-recoverable encoding (untrimmed whitespace, invisible/zero-width chars, BOM, or bidi/combining marks); homoglyphs excluded so it stays machine-parseable. */
+  readonly extreme?: boolean;
 }
 
 export interface EsCifData {
@@ -1843,6 +1989,8 @@ export interface SePersonnummerOptions extends RequestOptions {
   readonly kind?: 'personnummer' | 'samordningsnummer';
   readonly invalid?: boolean;
   readonly edge?: boolean;
+  /** Present the value in a hostile-but-recoverable encoding (untrimmed whitespace, invisible/zero-width chars, BOM, or bidi/combining marks); homoglyphs excluded so it stays machine-parseable. */
+  readonly extreme?: boolean;
 }
 
 export interface SePersonnummerData {
@@ -1856,6 +2004,8 @@ export interface SeOrganisationsnummerOptions extends RequestOptions {
   readonly format?: 'national' | 'vat';
   readonly invalid?: boolean;
   readonly edge?: boolean;
+  /** Present the value in a hostile-but-recoverable encoding (untrimmed whitespace, invisible/zero-width chars, BOM, or bidi/combining marks); homoglyphs excluded so it stays machine-parseable. */
+  readonly extreme?: boolean;
 }
 
 export interface SeOrganisationsnummerData {

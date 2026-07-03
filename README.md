@@ -3,7 +3,7 @@
 Playwright fixtures for [Real Fake Data](https://github.com/przeslijmi/rfd) — **217 generators** of realistic, synthetic test data, one typed method per record:
 
 - **Person & company names and email addresses across 27 EU countries** — `dePersonName`, `itCompanyName`, `plEmail`, … in the local script and inflection (names romanised to ASCII for emails, with free, regional, and company-derived domains), plus multi-country `personName`/`companyName`/`email` that draw from any mix of countries.
-- **National identifiers and VAT / company numbers for every EU member state** — French `frNir`/`frSiren`, Italian `itCodiceFiscale`, Spanish `esDni`/`esNie`, Danish `dkCpr`, Swedish `sePersonnummer`, Dutch `nlBsn`, German `deSteuerId`/`deUstIdnr`, and 60+ more — each with correct checksums and the same `invalid`/`edge` triggers.
+- **National identifiers and VAT / company numbers for every EU member state** — French `frNir`/`frSiren`, Italian `itCodiceFiscale`, Spanish `esDni`/`esNie`, Danish `dkCpr`, Swedish `sePersonnummer`, Dutch `nlBsn`, German `deSteuerId`/`deUstIdnr`, and 60+ more — each with correct checksums and the same `invalid`/`edge`/`extreme` triggers.
 - **One-call whole people and companies for every EU country** — `dkPerson`, `frPerson`, … return a consistent name + national number; `dkCompany`, `deCompany`, `nlCompany`, … return a consistent trading name, legal form, and the country's register / tax / VAT numbers, all from one seed.
 - **The full Polish national set** — valid PESELs (correct checksums), NIPs, REGONs, IBANs, KRS and land-register numbers, ID cards, passports, driving licences, addresses drawn from real cities and streets, and vehicle plates.
 - **Locale-agnostic** — lorem ipsum and `customRegex` (a random string matching any regex you supply; Pro plan and above).
@@ -115,6 +115,17 @@ With a base seed in play, the **Nth call within a test uses `seed + N`** — so 
 Each generator exposes a **singular** method returning one record and a **plural** taking `count` as its first argument and returning an array of that many. Method names are locale-prefixed (`plPesel`, `dePersonName`, `plEmail`, …) so generators for different countries never collide; the locale-agnostic `lorem` and the multi-country aggregates (`personName`, `companyName`, `email`) carry no prefix.
 
 Every method accepts optional constraints. Pass `seed` on any call to pin just that draw (overriding the instance's seed sequence when one is set).
+
+**Triggers.** Beyond each generator's own knobs, three cross-cutting flags shape *what kind* of data you get. Every generator that lists `edge` below also accepts all three:
+
+- **`edge: true`** — restrict output to rarely-exercised but still-valid corners (leap-day PESELs, punctuation-heavy company names, boundary serials).
+- **`invalid: true`** — deliberately corrupt the check digit so the value **fails** validation (checksum-bearing generators only); the rest of the record stays correct.
+- **`extreme: true`** — return **correct** data in a deliberately hostile *encoding*: untrimmed whitespace (incl. non-breaking spaces), invisible/zero-width characters and a leading BOM, homoglyph lookalikes, or a bidi override / stacked combining marks — one class per value, so a plural call rotates across them. Only the human-facing string is mangled and it stays recoverable after normalisation: identifiers keep their digits ASCII (homoglyphs excluded) and still checksum; names/companies/people mangle the name only, leaving `initials`, `legalForm`, birth dates, and national identifiers clean. `lorem` and `customRegex` don't take it (it would break their length / regex-match contracts). Use it to test that your pipeline trims, normalises, and compares values safely.
+
+```ts
+const messy = await fakeData.plPesel({ extreme: true });   // e.g. "  53022100027\n" — trims back to a valid PESEL
+const spoof = await fakeData.dePersonName({ extreme: true }); // Cyrillic-lookalike letters; initials stay clean
+```
 
 #### Names across 27 EU countries
 
