@@ -1,11 +1,13 @@
 # @przeslijmi/real-fake-data-playwright
 
-Playwright fixtures for [Real Fake Data](https://github.com/przeslijmi/rfd) — **217 generators** of realistic, synthetic test data, one typed method per record:
+Playwright fixtures for [Real Fake Data](https://github.com/przeslijmi/rfd) — **269 generators** of realistic, synthetic test data, one typed method per record:
 
 - **Person & company names and email addresses across 27 EU countries** — `dePersonName`, `itCompanyName`, `plEmail`, … in the local script and inflection (names romanised to ASCII for emails, with free, regional, and company-derived domains), plus multi-country `personName`/`companyName`/`email` that draw from any mix of countries.
 - **National identifiers and VAT / company numbers for every EU member state** — French `frNir`/`frSiren`, Italian `itCodiceFiscale`, Spanish `esDni`/`esNie`, Danish `dkCpr`, Swedish `sePersonnummer`, Dutch `nlBsn`, German `deSteuerId`/`deUstIdnr`, and 60+ more — each with correct checksums and the same `invalid`/`edge`/`extreme` triggers.
 - **One-call whole people and companies for every EU country** — `dkPerson`, `frPerson`, … return a consistent name + national number; `dkCompany`, `deCompany`, `nlCompany`, … return a consistent trading name, legal form, and the country's register / tax / VAT numbers, all from one seed.
-- **The full Polish national set** — valid PESELs (correct checksums), NIPs, REGONs, IBANs, KRS and land-register numbers, ID cards, passports, driving licences, addresses drawn from real cities and streets, and vehicle plates.
+- **Vehicle registration plates for all 27 EU countries** — `deVehicleRegistration`, `frVehicleRegistration`, `itVehicleRegistration`, … produce realistic plates with each country's own plate kinds (standard, custom/vanity, motorcycle, diplomatic, military, historic, electric, …), region/district codes, era formats, and the shared `edge`/`extreme` triggers.
+- **IBANs for all 27 EU countries** — `deIban`, `frIban`, `itIban`, … return a valid IBAN with correct mod-97 check digits (and, where the national account number has its own internal check digit, that too — Italy's CIN, Spain's DC, France's clé RIB, and the rest), embedding a **real** bank code you can pin by `bankCode` or `bankName`. The shared `invalid` / `edge` / `extreme` triggers apply.
+- **The full Polish national set** — valid PESELs (correct checksums), NIPs, REGONs, IBANs, KRS and land-register numbers, ID cards, passports, driving licences, and addresses drawn from real cities and streets.
 - **Locale-agnostic** — lorem ipsum and `customRegex` (a random string matching any regex you supply; Pro plan and above).
 
 Output _looks_ real but is fake — safe for staging, demos, and seed data.
@@ -167,7 +169,9 @@ const inbox = await fakeData.plEmail({ domainCategory: 'corporate' }); // anna.k
 | `plKrs(opts?)`                 | `plKrsNumbers(count, opts?)`           | `{ value, number }`                                        | `format`                                                             |
 | `plLandRegister(opts?)`        | `plLandRegisters(count, opts?)`        | `{ value, courtCode, number, checkDigit, court? }`         | `format`, `court`, `invalid`                                         |
 | `plDrivingLicense(opts?)`      | `plDrivingLicenses(count, opts?)`      | `{ value, serial, year, suffix }`                          | `format`, `year`                                                     |
-| `plVehicleRegistration(opts?)` | `plVehicleRegistrations(count, opts?)` | `{ value, prefix, individualPart, type, … }`              | `type`, `voivodeship`, `county`, `format`                           |
+| `plVehicleRegistration(opts?)` | `plVehicleRegistrations(count, opts?)` | `{ value, prefix, individualPart, type, … }`              | `type`, `voivodeship`, `county`, `format`, `edge`, `extreme`        |
+
+The Polish plate is also part of the all-27-country vehicle-registration family below.
 
 A Polish person name on its own (no PESEL/birth date) is `plPersonName` — part of the 27-country table above.
 
@@ -396,6 +400,46 @@ Every EU member state exposes its core national-person identifier and its busine
 | `sePersonnummer(opts?)` | `sePersonnummers(count, opts?)` | `{ value, digits, birthDate, sex }` | `sex`, age/birth filters, `format`, `kind`, `invalid`, `edge` |
 | `sePerson(opts?)` | `sePeople(count, opts?)` | `{ name, surname, initials, birthDate, personnummer }` | `sex`, age/birth filters, `invalid`, `edge`, `caseStrict` |
 | `seOrganisationsnummer(opts?)` | `seOrganisationsnummers(count, opts?)` | `{ value, digits }` | `format`, `invalid`, `edge` |
+
+#### Vehicle registration plates
+
+Every EU member state exposes `<cc>VehicleRegistration(opts?)` / `<cc>VehicleRegistrations(count, opts?)`, returning at least `{ value, type }` (plus country-specific fields — region/district/province codes, `era`, `expiryMonth`, `subregion`, …). Each country owns its own `type` union — the plate kinds that country actually issues — so the returned `type` and the accepted `type` option are typed per country. Every method takes the shared `edge` and `extreme` triggers; other options (`format`, `era`, region filters) vary by country as listed below.
+
+| Country | Method prefix | `type` values | Other options |
+| ------- | ------------- | ------------- | ------------- |
+| Poland (`pl`) | `plVehicleRegistration` | standard, custom, police, military, historic, motorcycle, short | `voivodeship`, `county`, `format` |
+| Austria (`at`) | `atVehicleRegistration` | standard, custom, motorcycle, military, police, diplomatic | `district`, `state`, `format` |
+| Belgium (`be`) | `beVehicleRegistration` | standard, custom, motorcycle, moped, diplomatic, dealer, export, oldtimer, taxi, trailer | `format` |
+| Bulgaria (`bg`) | `bgVehicleRegistration` | standard, custom, motorcycle, military, diplomatic, electric, temporary | `script`, `province`, `format` |
+| Cyprus (`cy`) | `cyVehicleRegistration` | standard, motorcycle, diplomatic, trailer, un, sba | `format` |
+| Czechia (`cz`) | `czVehicleRegistration` | standard, extended, custom, motorcycle, diplomatic, historic, electric, military | `region`, `format` |
+| Germany (`de`) | `deVehicleRegistration` | standard, custom, seasonal, historic, electric, motorcycle, military, diplomatic | `district`, `era`, `format` |
+| Denmark (`dk`) | `dkVehicleRegistration` | standard, custom, diplomatic, trailer, motorcycle, export | `era`, `format` |
+| Estonia (`ee`) | `eeVehicleRegistration` | standard, custom, diplomatic, dealer, racing, classic, motorcycle, moped, transit, military | `era`, `format` |
+| Spain (`es`) | `esVehicleRegistration` | standard, motorcycle, military, diplomatic, guardia-civil, national-police, temporary, dealer, historic, trailer | `era`, `province`, `format` |
+| Finland (`fi`) | `fiVehicleRegistration` | standard, custom, diplomatic, export, dealer, museum, trailer, military, motorcycle, aland | `era`, `format` |
+| France (`fr`) | `frVehicleRegistration` | standard, diplomatic, temporary, export, motorcycle | `era`, `withDepartment`, `department`, `format` |
+| Greece (`gr`) | `grVehicleRegistration` | standard, motorcycle, taxi, diplomatic, historic, trailer | `script`, `era`, `region`, `format` |
+| Croatia (`hr`) | `hrVehicleRegistration` | standard, custom, military, diplomatic, export, historic, motorcycle | `city`, `format` |
+| Hungary (`hu`) | `huVehicleRegistration` | standard, custom, military, diplomatic, police, oldtimer, taxi, electric, motorcycle, temporary | `era`, `format` |
+| Ireland (`ie`) | `ieVehicleRegistration` | standard, temporary-import, vintage, taxi, electric | `era`, `county`, `format` |
+| Italy (`it`) | `itVehicleRegistration` | standard, motorcycle, military, diplomatic, trailer | `withProvince`, `province`, `format` |
+| Lithuania (`lt`) | `ltVehicleRegistration` | standard, custom, military, diplomatic, motorcycle, moped, trailer, ev, taxi, historic, dealer | `format` |
+| Luxembourg (`lu`) | `luVehicleRegistration` | standard, custom, military, diplomatic, official, dealer, export, moped, deputies | `era`, `format` |
+| Latvia (`lv`) | `lvVehicleRegistration` | standard, custom, military, diplomatic, consular, historic, taxi, transit, motorcycle, moped | `format` |
+| Malta (`mt`) | `mtVehicleRegistration` | standard, motorcycle, military, government, diplomatic, taxi, bus, trailer, tax-free, custom | `expiryMonth`, `format` |
+| Netherlands (`nl`) | `nlVehicleRegistration` | standard, motorcycle, historic, diplomatic, military, dealer, export | `sidecode`, `era`, `format` |
+| Portugal (`pt`) | `ptVehicleRegistration` | standard, motorcycle, military, diplomatic, police, export | `era`, `format` |
+| Romania (`ro`) | `roVehicleRegistration` | standard, motorcycle, electric, temporary, military, police, diplomatic | `county`, `format` |
+| Sweden (`se`) | `seVehicleRegistration` | standard, custom, diplomatic, military, motorcycle | `era`, `format` |
+| Slovenia (`si`) | `siVehicleRegistration` | standard, custom, motorcycle, military, diplomatic, police, export | `region`, `format` |
+| Slovakia (`sk`) | `skVehicleRegistration` | standard, motorcycle, military, diplomatic, consular, trailer, historic, electric, dealer, custom | `era`, `district`, `region`, `format` |
+
+#### IBANs
+
+Every EU member state exposes `<cc>Iban(opts?)` / `<cc>Ibans(count, opts?)`, all returning the same shape `{ value, electronicFormat, bankCode, bankName }`. The IBAN carries correct mod-97 check digits and, where the national account number has an internal check digit, that is reproduced too. Pin the issuing bank with `bankCode` (country-specific width) or `bankName` (case-insensitive fragment, mutually exclusive), or let it be chosen at random. Every method takes `format` (`grouped`/`compact`) and the shared `invalid` / `edge` / `extreme` triggers.
+
+`plIban`, `deIban`, `atIban`, `beIban`, `bgIban`, `cyIban`, `czIban`, `dkIban`, `eeIban`, `esIban`, `fiIban`, `frIban`, `grIban`, `hrIban`, `huIban`, `ieIban`, `itIban`, `ltIban`, `luIban`, `lvIban`, `mtIban`, `nlIban`, `ptIban`, `roIban`, `seIban`, `siIban`, `skIban` — each hits `GET /v1/<cc>/iban`.
 
 #### Locale-agnostic
 

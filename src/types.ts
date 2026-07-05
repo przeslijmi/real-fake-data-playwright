@@ -54,8 +54,15 @@ export type PolishLegalForm =
 /** Naming family the company-name generator drew from. */
 export type CompanyNameStrategy = 'morpheme' | 'surname' | 'descriptive' | 'modern';
 
-/** Kind of vehicle registration plate produced. */
-export type VehicleRegistrationType = 'standard' | 'custom' | 'police' | 'military' | 'historic';
+/** Kind of Polish vehicle registration plate produced. */
+export type VehicleRegistrationType =
+  | 'standard'
+  | 'custom'
+  | 'police'
+  | 'military'
+  | 'historic'
+  | 'motorcycle'
+  | 'short';
 
 /** Local-part shape the email generator can produce. */
 export type EmailLocalPattern =
@@ -112,10 +119,26 @@ export interface NipOptions extends RequestOptions {
 export interface IbanOptions extends RequestOptions {
   readonly format?: 'grouped' | 'compact';
   readonly invalid?: boolean;
-  /** Pin the issuing bank by its four-digit code. Mutually exclusive with `bankName`. */
+  /** Restrict output to valid edge-case IBANs from the rare corners of the format. */
+  readonly edge?: boolean;
+  /** Return a correct value wrapped in a hostile encoding (whitespace, invisible chars, BOM, bidi). */
+  readonly extreme?: boolean;
+  /** Pin the issuing bank by its country-specific code. Mutually exclusive with `bankName`. */
   readonly bankCode?: string;
   /** Pin the issuing bank by a case-insensitive name fragment. Mutually exclusive with `bankCode`. */
   readonly bankName?: string;
+}
+
+/**
+ * The result shape of every country's IBAN generator. The output contract is
+ * uniform across the fleet (the electronic-format length and bank-code width
+ * differ per country, but the fields do not), so one type serves all 27.
+ */
+export interface IbanData {
+  readonly value: string;
+  readonly electronicFormat: string;
+  readonly bankCode: string;
+  readonly bankName: string;
 }
 
 export interface RegonOptions extends RequestOptions {
@@ -150,6 +173,686 @@ export interface VehicleRegistrationOptions extends RequestOptions {
   readonly voivodeship?: string;
   readonly county?: string;
   readonly format?: 'with-space' | 'compact';
+  /** Restrict output to edge-case plates from the rare corners of the format. */
+  readonly edge?: boolean;
+  /** Return a correct plate wrapped in a hostile-but-recoverable encoding. */
+  readonly extreme?: boolean;
+}
+
+export interface AtVehicleRegistrationOptions extends RequestOptions {
+  readonly type?: 'standard' | 'custom' | 'motorcycle' | 'military' | 'police' | 'diplomatic';
+  readonly district?: string;
+  readonly state?: string;
+  readonly format?: 'with-space' | 'compact';
+  readonly edge?: boolean;
+  readonly extreme?: boolean;
+}
+
+export interface AtVehicleRegistrationData {
+  readonly value: string;
+  readonly type: 'standard' | 'custom' | 'motorcycle' | 'military' | 'police' | 'diplomatic';
+  readonly district?: string;
+  readonly state?: string;
+}
+
+export interface BeVehicleRegistrationOptions extends RequestOptions {
+  readonly type?:
+    | 'standard'
+    | 'custom'
+    | 'motorcycle'
+    | 'moped'
+    | 'diplomatic'
+    | 'dealer'
+    | 'export'
+    | 'oldtimer'
+    | 'taxi'
+    | 'trailer';
+  readonly format?: 'hyphen' | 'with-space' | 'compact';
+  readonly edge?: boolean;
+  readonly extreme?: boolean;
+}
+
+export interface BeVehicleRegistrationData {
+  readonly value: string;
+  readonly type:
+    | 'standard'
+    | 'custom'
+    | 'motorcycle'
+    | 'moped'
+    | 'diplomatic'
+    | 'dealer'
+    | 'export'
+    | 'oldtimer'
+    | 'taxi'
+    | 'trailer';
+}
+
+export interface BgVehicleRegistrationOptions extends RequestOptions {
+  readonly type?:
+    | 'standard'
+    | 'custom'
+    | 'motorcycle'
+    | 'military'
+    | 'diplomatic'
+    | 'electric'
+    | 'temporary';
+  readonly script?: 'latin' | 'native';
+  readonly province?: string;
+  readonly format?: 'with-space' | 'compact';
+  readonly edge?: boolean;
+  readonly extreme?: boolean;
+}
+
+export interface BgVehicleRegistrationData {
+  readonly value: string;
+  readonly type:
+    | 'standard'
+    | 'custom'
+    | 'motorcycle'
+    | 'military'
+    | 'diplomatic'
+    | 'electric'
+    | 'temporary';
+  readonly province?: string;
+  readonly provinceCode?: string;
+}
+
+export interface CyVehicleRegistrationOptions extends RequestOptions {
+  readonly type?: 'standard' | 'motorcycle' | 'diplomatic' | 'trailer' | 'un' | 'sba';
+  readonly format?: 'with-space' | 'compact';
+  readonly edge?: boolean;
+  readonly extreme?: boolean;
+}
+
+export interface CyVehicleRegistrationData {
+  readonly value: string;
+  readonly type: 'standard' | 'motorcycle' | 'diplomatic' | 'trailer' | 'un' | 'sba';
+}
+
+export interface CzVehicleRegistrationOptions extends RequestOptions {
+  readonly type?:
+    | 'standard'
+    | 'extended'
+    | 'custom'
+    | 'motorcycle'
+    | 'diplomatic'
+    | 'historic'
+    | 'electric'
+    | 'military';
+  readonly region?: string;
+  readonly format?: 'with-space' | 'compact';
+  readonly edge?: boolean;
+  readonly extreme?: boolean;
+}
+
+export interface CzVehicleRegistrationData {
+  readonly value: string;
+  readonly type:
+    | 'standard'
+    | 'extended'
+    | 'custom'
+    | 'motorcycle'
+    | 'diplomatic'
+    | 'historic'
+    | 'electric'
+    | 'military';
+  readonly region?: string;
+}
+
+export interface DeVehicleRegistrationOptions extends RequestOptions {
+  readonly type?:
+    | 'standard'
+    | 'custom'
+    | 'seasonal'
+    | 'historic'
+    | 'electric'
+    | 'motorcycle'
+    | 'military'
+    | 'diplomatic';
+  readonly district?: string;
+  readonly era?: 'current' | 'legacy' | 'both';
+  readonly format?: 'with-space' | 'compact';
+  readonly edge?: boolean;
+  readonly extreme?: boolean;
+}
+
+export interface DeVehicleRegistrationData {
+  readonly value: string;
+  readonly type:
+    | 'standard'
+    | 'custom'
+    | 'seasonal'
+    | 'historic'
+    | 'electric'
+    | 'motorcycle'
+    | 'military'
+    | 'diplomatic';
+  readonly district?: string;
+  readonly state?: string;
+  readonly city?: string;
+}
+
+export interface DkVehicleRegistrationOptions extends RequestOptions {
+  readonly type?: 'standard' | 'custom' | 'diplomatic' | 'trailer' | 'motorcycle' | 'export';
+  readonly era?: 'current' | 'legacy' | 'both';
+  readonly format?: 'with-space' | 'compact';
+  readonly edge?: boolean;
+  readonly extreme?: boolean;
+}
+
+export interface DkVehicleRegistrationData {
+  readonly value: string;
+  readonly type: 'standard' | 'custom' | 'diplomatic' | 'trailer' | 'motorcycle' | 'export';
+}
+
+export interface EeVehicleRegistrationOptions extends RequestOptions {
+  readonly type?:
+    | 'standard'
+    | 'custom'
+    | 'diplomatic'
+    | 'dealer'
+    | 'racing'
+    | 'classic'
+    | 'motorcycle'
+    | 'moped'
+    | 'transit'
+    | 'military';
+  readonly era?: 'current' | 'legacy' | 'both';
+  readonly format?: 'with-space' | 'compact';
+  readonly edge?: boolean;
+  readonly extreme?: boolean;
+}
+
+export interface EeVehicleRegistrationData {
+  readonly value: string;
+  readonly type:
+    | 'standard'
+    | 'custom'
+    | 'diplomatic'
+    | 'dealer'
+    | 'racing'
+    | 'classic'
+    | 'motorcycle'
+    | 'moped'
+    | 'transit'
+    | 'military';
+}
+
+export interface EsVehicleRegistrationOptions extends RequestOptions {
+  readonly type?:
+    | 'standard'
+    | 'motorcycle'
+    | 'military'
+    | 'diplomatic'
+    | 'guardia-civil'
+    | 'national-police'
+    | 'temporary'
+    | 'dealer'
+    | 'historic'
+    | 'trailer';
+  readonly era?: 'current' | 'legacy' | 'both';
+  readonly province?: string;
+  readonly format?: 'with-space' | 'compact';
+  readonly edge?: boolean;
+  readonly extreme?: boolean;
+}
+
+export interface EsVehicleRegistrationData {
+  readonly value: string;
+  readonly type:
+    | 'standard'
+    | 'motorcycle'
+    | 'military'
+    | 'diplomatic'
+    | 'guardia-civil'
+    | 'national-police'
+    | 'temporary'
+    | 'dealer'
+    | 'historic'
+    | 'trailer';
+  readonly era: 'current' | 'legacy';
+  readonly province?: string;
+}
+
+export interface FiVehicleRegistrationOptions extends RequestOptions {
+  readonly type?:
+    | 'standard'
+    | 'custom'
+    | 'diplomatic'
+    | 'export'
+    | 'dealer'
+    | 'museum'
+    | 'trailer'
+    | 'military'
+    | 'motorcycle'
+    | 'aland';
+  readonly era?: 'current' | 'legacy' | 'both';
+  readonly format?: 'hyphen' | 'with-space' | 'compact';
+  readonly edge?: boolean;
+  readonly extreme?: boolean;
+}
+
+export interface FiVehicleRegistrationData {
+  readonly value: string;
+  readonly type:
+    | 'standard'
+    | 'custom'
+    | 'diplomatic'
+    | 'export'
+    | 'dealer'
+    | 'museum'
+    | 'trailer'
+    | 'military'
+    | 'motorcycle'
+    | 'aland';
+  readonly era?: 'current' | 'legacy';
+}
+
+export interface FrVehicleRegistrationOptions extends RequestOptions {
+  readonly type?: 'standard' | 'diplomatic' | 'temporary' | 'export' | 'motorcycle';
+  readonly era?: 'current' | 'legacy' | 'both';
+  readonly withDepartment?: boolean;
+  readonly department?: string;
+  readonly format?: 'hyphen' | 'with-space' | 'compact';
+  readonly edge?: boolean;
+  readonly extreme?: boolean;
+}
+
+export interface FrVehicleRegistrationData {
+  readonly value: string;
+  readonly type: 'standard' | 'diplomatic' | 'temporary' | 'export' | 'motorcycle';
+  readonly era: 'current' | 'legacy';
+  readonly department?: string;
+}
+
+export interface GrVehicleRegistrationOptions extends RequestOptions {
+  readonly type?: 'standard' | 'motorcycle' | 'taxi' | 'diplomatic' | 'historic' | 'trailer';
+  readonly script?: 'latin' | 'native';
+  readonly era?: 'current' | 'legacy' | 'both';
+  readonly region?: string;
+  readonly format?: 'hyphen' | 'with-space' | 'compact';
+  readonly edge?: boolean;
+  readonly extreme?: boolean;
+}
+
+export interface GrVehicleRegistrationData {
+  readonly value: string;
+  readonly type: 'standard' | 'motorcycle' | 'taxi' | 'diplomatic' | 'historic' | 'trailer';
+  readonly region?: string;
+  readonly regionCode?: string;
+}
+
+export interface HrVehicleRegistrationOptions extends RequestOptions {
+  readonly type?:
+    | 'standard'
+    | 'custom'
+    | 'military'
+    | 'diplomatic'
+    | 'export'
+    | 'historic'
+    | 'motorcycle';
+  readonly city?: string;
+  readonly format?: 'with-space' | 'compact';
+  readonly edge?: boolean;
+  readonly extreme?: boolean;
+}
+
+export interface HrVehicleRegistrationData {
+  readonly value: string;
+  readonly type:
+    | 'standard'
+    | 'custom'
+    | 'military'
+    | 'diplomatic'
+    | 'export'
+    | 'historic'
+    | 'motorcycle';
+  readonly city?: string;
+}
+
+export interface HuVehicleRegistrationOptions extends RequestOptions {
+  readonly type?:
+    | 'standard'
+    | 'custom'
+    | 'military'
+    | 'diplomatic'
+    | 'police'
+    | 'oldtimer'
+    | 'taxi'
+    | 'electric'
+    | 'motorcycle'
+    | 'temporary';
+  readonly era?: 'current' | 'legacy' | 'both';
+  readonly format?: 'hyphen' | 'compact' | 'with-space';
+  readonly edge?: boolean;
+  readonly extreme?: boolean;
+}
+
+export interface HuVehicleRegistrationData {
+  readonly value: string;
+  readonly type:
+    | 'standard'
+    | 'custom'
+    | 'military'
+    | 'diplomatic'
+    | 'police'
+    | 'oldtimer'
+    | 'taxi'
+    | 'electric'
+    | 'motorcycle'
+    | 'temporary';
+}
+
+export interface IeVehicleRegistrationOptions extends RequestOptions {
+  readonly type?: 'standard' | 'temporary-import' | 'vintage' | 'taxi' | 'electric';
+  readonly era?: 'current' | 'legacy' | 'both';
+  readonly county?: string;
+  readonly format?: 'with-hyphen' | 'with-space' | 'compact';
+  readonly edge?: boolean;
+  readonly extreme?: boolean;
+}
+
+export interface IeVehicleRegistrationData {
+  readonly value: string;
+  readonly type: 'standard' | 'temporary-import' | 'vintage' | 'taxi' | 'electric';
+  readonly era?: 'current' | 'legacy';
+  readonly county?: string;
+  readonly subregion?: string;
+}
+
+export interface ItVehicleRegistrationOptions extends RequestOptions {
+  readonly type?: 'standard' | 'motorcycle' | 'military' | 'diplomatic' | 'trailer';
+  readonly withProvince?: boolean;
+  readonly province?: string;
+  readonly format?: 'with-space' | 'compact';
+  readonly edge?: boolean;
+  readonly extreme?: boolean;
+}
+
+export interface ItVehicleRegistrationData {
+  readonly value: string;
+  readonly type: 'standard' | 'motorcycle' | 'military' | 'diplomatic' | 'trailer';
+  readonly province?: string;
+}
+
+export interface LtVehicleRegistrationOptions extends RequestOptions {
+  readonly type?:
+    | 'standard'
+    | 'custom'
+    | 'military'
+    | 'diplomatic'
+    | 'motorcycle'
+    | 'moped'
+    | 'trailer'
+    | 'ev'
+    | 'taxi'
+    | 'historic'
+    | 'dealer';
+  readonly format?: 'with-space' | 'compact';
+  readonly edge?: boolean;
+  readonly extreme?: boolean;
+}
+
+export interface LtVehicleRegistrationData {
+  readonly value: string;
+  readonly type:
+    | 'standard'
+    | 'custom'
+    | 'military'
+    | 'diplomatic'
+    | 'motorcycle'
+    | 'moped'
+    | 'trailer'
+    | 'ev'
+    | 'taxi'
+    | 'historic'
+    | 'dealer';
+}
+
+export interface LuVehicleRegistrationOptions extends RequestOptions {
+  readonly type?:
+    | 'standard'
+    | 'custom'
+    | 'military'
+    | 'diplomatic'
+    | 'official'
+    | 'dealer'
+    | 'export'
+    | 'moped'
+    | 'deputies';
+  readonly era?: 'current' | 'legacy' | 'both';
+  readonly format?: 'with-space' | 'compact';
+  readonly edge?: boolean;
+  readonly extreme?: boolean;
+}
+
+export interface LuVehicleRegistrationData {
+  readonly value: string;
+  readonly type:
+    | 'standard'
+    | 'custom'
+    | 'military'
+    | 'diplomatic'
+    | 'official'
+    | 'dealer'
+    | 'export'
+    | 'moped'
+    | 'deputies';
+}
+
+export interface LvVehicleRegistrationOptions extends RequestOptions {
+  readonly type?:
+    | 'standard'
+    | 'custom'
+    | 'military'
+    | 'diplomatic'
+    | 'consular'
+    | 'historic'
+    | 'taxi'
+    | 'transit'
+    | 'motorcycle'
+    | 'moped';
+  readonly format?: 'hyphen' | 'compact';
+  readonly edge?: boolean;
+  readonly extreme?: boolean;
+}
+
+export interface LvVehicleRegistrationData {
+  readonly value: string;
+  readonly type:
+    | 'standard'
+    | 'custom'
+    | 'military'
+    | 'diplomatic'
+    | 'consular'
+    | 'historic'
+    | 'taxi'
+    | 'transit'
+    | 'motorcycle'
+    | 'moped';
+}
+
+export interface MtVehicleRegistrationOptions extends RequestOptions {
+  readonly type?:
+    | 'standard'
+    | 'motorcycle'
+    | 'military'
+    | 'government'
+    | 'diplomatic'
+    | 'taxi'
+    | 'bus'
+    | 'trailer'
+    | 'tax-free'
+    | 'custom';
+  readonly expiryMonth?: string;
+  readonly format?: 'with-space' | 'compact';
+  readonly edge?: boolean;
+  readonly extreme?: boolean;
+}
+
+export interface MtVehicleRegistrationData {
+  readonly value: string;
+  readonly type:
+    | 'standard'
+    | 'motorcycle'
+    | 'military'
+    | 'government'
+    | 'diplomatic'
+    | 'taxi'
+    | 'bus'
+    | 'trailer'
+    | 'tax-free'
+    | 'custom';
+  readonly expiryMonth?: string;
+}
+
+export interface NlVehicleRegistrationOptions extends RequestOptions {
+  readonly type?:
+    | 'standard'
+    | 'motorcycle'
+    | 'historic'
+    | 'diplomatic'
+    | 'military'
+    | 'dealer'
+    | 'export';
+  readonly sidecode?: 5 | 6 | 8 | 9 | 10 | 11;
+  readonly era?: 'current' | 'legacy' | 'both';
+  readonly format?: 'with-hyphen' | 'compact';
+  readonly edge?: boolean;
+  readonly extreme?: boolean;
+}
+
+export interface NlVehicleRegistrationData {
+  readonly value: string;
+  readonly type:
+    | 'standard'
+    | 'motorcycle'
+    | 'historic'
+    | 'diplomatic'
+    | 'military'
+    | 'dealer'
+    | 'export';
+}
+
+export interface PtVehicleRegistrationOptions extends RequestOptions {
+  readonly type?: 'standard' | 'motorcycle' | 'military' | 'diplomatic' | 'police' | 'export';
+  readonly era?: 'current' | 'legacy' | 'both';
+  readonly format?: 'with-hyphen' | 'with-space' | 'compact';
+  readonly edge?: boolean;
+  readonly extreme?: boolean;
+}
+
+export interface PtVehicleRegistrationData {
+  readonly value: string;
+  readonly type: 'standard' | 'motorcycle' | 'military' | 'diplomatic' | 'police' | 'export';
+  readonly era?: 'current' | '2005-2020' | '1992-2005' | 'pre-1992';
+}
+
+export interface RoVehicleRegistrationOptions extends RequestOptions {
+  readonly type?:
+    | 'standard'
+    | 'motorcycle'
+    | 'electric'
+    | 'temporary'
+    | 'military'
+    | 'police'
+    | 'diplomatic';
+  readonly county?: string;
+  readonly format?: 'with-space' | 'compact';
+  readonly edge?: boolean;
+  readonly extreme?: boolean;
+}
+
+export interface RoVehicleRegistrationData {
+  readonly value: string;
+  readonly type:
+    | 'standard'
+    | 'motorcycle'
+    | 'electric'
+    | 'temporary'
+    | 'military'
+    | 'police'
+    | 'diplomatic';
+  readonly county?: string;
+  readonly countyCode?: string;
+}
+
+export interface SeVehicleRegistrationOptions extends RequestOptions {
+  readonly type?: 'standard' | 'custom' | 'diplomatic' | 'military' | 'motorcycle';
+  readonly era?: 'current' | 'legacy' | 'both';
+  readonly format?: 'with-space' | 'compact';
+  readonly edge?: boolean;
+  readonly extreme?: boolean;
+}
+
+export interface SeVehicleRegistrationData {
+  readonly value: string;
+  readonly type: 'standard' | 'custom' | 'diplomatic' | 'military' | 'motorcycle';
+}
+
+export interface SiVehicleRegistrationOptions extends RequestOptions {
+  readonly type?:
+    | 'standard'
+    | 'custom'
+    | 'motorcycle'
+    | 'military'
+    | 'diplomatic'
+    | 'police'
+    | 'export';
+  readonly region?: string;
+  readonly format?: 'with-space' | 'compact';
+  readonly edge?: boolean;
+  readonly extreme?: boolean;
+}
+
+export interface SiVehicleRegistrationData {
+  readonly value: string;
+  readonly type:
+    | 'standard'
+    | 'custom'
+    | 'motorcycle'
+    | 'military'
+    | 'diplomatic'
+    | 'police'
+    | 'export';
+  readonly region?: string;
+}
+
+export interface SkVehicleRegistrationOptions extends RequestOptions {
+  readonly type?:
+    | 'standard'
+    | 'motorcycle'
+    | 'military'
+    | 'diplomatic'
+    | 'consular'
+    | 'trailer'
+    | 'historic'
+    | 'electric'
+    | 'dealer'
+    | 'custom';
+  readonly era?: 'current' | 'legacy' | 'both';
+  readonly district?: string;
+  readonly region?: string;
+  readonly format?: 'hyphen' | 'compact';
+  readonly edge?: boolean;
+  readonly extreme?: boolean;
+}
+
+export interface SkVehicleRegistrationData {
+  readonly value: string;
+  readonly type:
+    | 'standard'
+    | 'motorcycle'
+    | 'military'
+    | 'diplomatic'
+    | 'consular'
+    | 'trailer'
+    | 'historic'
+    | 'electric'
+    | 'dealer'
+    | 'custom';
+  readonly region?: string;
+  readonly district?: string;
 }
 
 export interface IdCardOptions extends RequestOptions {

@@ -119,6 +119,7 @@ import type {
   HuTajData,
   HuTajOptions,
   IbanOptions,
+  IbanData,
   IdCardOptions,
   IeCroData,
   IeCroOptions,
@@ -257,6 +258,58 @@ import type {
   SkRodneCisloData,
   SkRodneCisloOptions,
   VehicleRegistrationOptions,
+  AtVehicleRegistrationData,
+  AtVehicleRegistrationOptions,
+  BeVehicleRegistrationData,
+  BeVehicleRegistrationOptions,
+  BgVehicleRegistrationData,
+  BgVehicleRegistrationOptions,
+  CyVehicleRegistrationData,
+  CyVehicleRegistrationOptions,
+  CzVehicleRegistrationData,
+  CzVehicleRegistrationOptions,
+  DeVehicleRegistrationData,
+  DeVehicleRegistrationOptions,
+  DkVehicleRegistrationData,
+  DkVehicleRegistrationOptions,
+  EeVehicleRegistrationData,
+  EeVehicleRegistrationOptions,
+  EsVehicleRegistrationData,
+  EsVehicleRegistrationOptions,
+  FiVehicleRegistrationData,
+  FiVehicleRegistrationOptions,
+  FrVehicleRegistrationData,
+  FrVehicleRegistrationOptions,
+  GrVehicleRegistrationData,
+  GrVehicleRegistrationOptions,
+  HrVehicleRegistrationData,
+  HrVehicleRegistrationOptions,
+  HuVehicleRegistrationData,
+  HuVehicleRegistrationOptions,
+  IeVehicleRegistrationData,
+  IeVehicleRegistrationOptions,
+  ItVehicleRegistrationData,
+  ItVehicleRegistrationOptions,
+  LtVehicleRegistrationData,
+  LtVehicleRegistrationOptions,
+  LuVehicleRegistrationData,
+  LuVehicleRegistrationOptions,
+  LvVehicleRegistrationData,
+  LvVehicleRegistrationOptions,
+  MtVehicleRegistrationData,
+  MtVehicleRegistrationOptions,
+  NlVehicleRegistrationData,
+  NlVehicleRegistrationOptions,
+  PtVehicleRegistrationData,
+  PtVehicleRegistrationOptions,
+  RoVehicleRegistrationData,
+  RoVehicleRegistrationOptions,
+  SeVehicleRegistrationData,
+  SeVehicleRegistrationOptions,
+  SiVehicleRegistrationData,
+  SiVehicleRegistrationOptions,
+  SkVehicleRegistrationData,
+  SkVehicleRegistrationOptions,
 } from './types.js';
 
 /**
@@ -383,6 +436,58 @@ export type FakeData = PersonNameMethods &
     plNips(count: number, options?: NipOptions): Promise<PolishNipData[]>;
     plIban(options?: IbanOptions): Promise<PolishIbanData>;
     plIbans(count: number, options?: IbanOptions): Promise<PolishIbanData[]>;
+    deIban(options?: IbanOptions): Promise<IbanData>;
+    deIbans(count: number, options?: IbanOptions): Promise<IbanData[]>;
+    atIban(options?: IbanOptions): Promise<IbanData>;
+    atIbans(count: number, options?: IbanOptions): Promise<IbanData[]>;
+    nlIban(options?: IbanOptions): Promise<IbanData>;
+    nlIbans(count: number, options?: IbanOptions): Promise<IbanData[]>;
+    ieIban(options?: IbanOptions): Promise<IbanData>;
+    ieIbans(count: number, options?: IbanOptions): Promise<IbanData[]>;
+    luIban(options?: IbanOptions): Promise<IbanData>;
+    luIbans(count: number, options?: IbanOptions): Promise<IbanData[]>;
+    dkIban(options?: IbanOptions): Promise<IbanData>;
+    dkIbans(count: number, options?: IbanOptions): Promise<IbanData[]>;
+    seIban(options?: IbanOptions): Promise<IbanData>;
+    seIbans(count: number, options?: IbanOptions): Promise<IbanData[]>;
+    lvIban(options?: IbanOptions): Promise<IbanData>;
+    lvIbans(count: number, options?: IbanOptions): Promise<IbanData[]>;
+    ltIban(options?: IbanOptions): Promise<IbanData>;
+    ltIbans(count: number, options?: IbanOptions): Promise<IbanData[]>;
+    grIban(options?: IbanOptions): Promise<IbanData>;
+    grIbans(count: number, options?: IbanOptions): Promise<IbanData[]>;
+    cyIban(options?: IbanOptions): Promise<IbanData>;
+    cyIbans(count: number, options?: IbanOptions): Promise<IbanData[]>;
+    mtIban(options?: IbanOptions): Promise<IbanData>;
+    mtIbans(count: number, options?: IbanOptions): Promise<IbanData[]>;
+    bgIban(options?: IbanOptions): Promise<IbanData>;
+    bgIbans(count: number, options?: IbanOptions): Promise<IbanData[]>;
+    roIban(options?: IbanOptions): Promise<IbanData>;
+    roIbans(count: number, options?: IbanOptions): Promise<IbanData[]>;
+    beIban(options?: IbanOptions): Promise<IbanData>;
+    beIbans(count: number, options?: IbanOptions): Promise<IbanData[]>;
+    esIban(options?: IbanOptions): Promise<IbanData>;
+    esIbans(count: number, options?: IbanOptions): Promise<IbanData[]>;
+    frIban(options?: IbanOptions): Promise<IbanData>;
+    frIbans(count: number, options?: IbanOptions): Promise<IbanData[]>;
+    itIban(options?: IbanOptions): Promise<IbanData>;
+    itIbans(count: number, options?: IbanOptions): Promise<IbanData[]>;
+    ptIban(options?: IbanOptions): Promise<IbanData>;
+    ptIbans(count: number, options?: IbanOptions): Promise<IbanData[]>;
+    siIban(options?: IbanOptions): Promise<IbanData>;
+    siIbans(count: number, options?: IbanOptions): Promise<IbanData[]>;
+    fiIban(options?: IbanOptions): Promise<IbanData>;
+    fiIbans(count: number, options?: IbanOptions): Promise<IbanData[]>;
+    eeIban(options?: IbanOptions): Promise<IbanData>;
+    eeIbans(count: number, options?: IbanOptions): Promise<IbanData[]>;
+    huIban(options?: IbanOptions): Promise<IbanData>;
+    huIbans(count: number, options?: IbanOptions): Promise<IbanData[]>;
+    hrIban(options?: IbanOptions): Promise<IbanData>;
+    hrIbans(count: number, options?: IbanOptions): Promise<IbanData[]>;
+    czIban(options?: IbanOptions): Promise<IbanData>;
+    czIbans(count: number, options?: IbanOptions): Promise<IbanData[]>;
+    skIban(options?: IbanOptions): Promise<IbanData>;
+    skIbans(count: number, options?: IbanOptions): Promise<IbanData[]>;
     plRegon(options?: RegonOptions): Promise<PolishRegonData>;
     plRegons(count: number, options?: RegonOptions): Promise<PolishRegonData[]>;
     plCompany(options?: CompanyOptions): Promise<PolishCompanyData>;
@@ -448,6 +553,188 @@ export type FakeData = PersonNameMethods &
       count: number,
       options?: VehicleRegistrationOptions,
     ): Promise<PolishVehicleRegistrationData[]>;
+    atVehicleRegistration(
+      options?: AtVehicleRegistrationOptions,
+    ): Promise<AtVehicleRegistrationData>;
+    atVehicleRegistrations(
+      count: number,
+      options?: AtVehicleRegistrationOptions,
+    ): Promise<AtVehicleRegistrationData[]>;
+    beVehicleRegistration(
+      options?: BeVehicleRegistrationOptions,
+    ): Promise<BeVehicleRegistrationData>;
+    beVehicleRegistrations(
+      count: number,
+      options?: BeVehicleRegistrationOptions,
+    ): Promise<BeVehicleRegistrationData[]>;
+    bgVehicleRegistration(
+      options?: BgVehicleRegistrationOptions,
+    ): Promise<BgVehicleRegistrationData>;
+    bgVehicleRegistrations(
+      count: number,
+      options?: BgVehicleRegistrationOptions,
+    ): Promise<BgVehicleRegistrationData[]>;
+    cyVehicleRegistration(
+      options?: CyVehicleRegistrationOptions,
+    ): Promise<CyVehicleRegistrationData>;
+    cyVehicleRegistrations(
+      count: number,
+      options?: CyVehicleRegistrationOptions,
+    ): Promise<CyVehicleRegistrationData[]>;
+    czVehicleRegistration(
+      options?: CzVehicleRegistrationOptions,
+    ): Promise<CzVehicleRegistrationData>;
+    czVehicleRegistrations(
+      count: number,
+      options?: CzVehicleRegistrationOptions,
+    ): Promise<CzVehicleRegistrationData[]>;
+    deVehicleRegistration(
+      options?: DeVehicleRegistrationOptions,
+    ): Promise<DeVehicleRegistrationData>;
+    deVehicleRegistrations(
+      count: number,
+      options?: DeVehicleRegistrationOptions,
+    ): Promise<DeVehicleRegistrationData[]>;
+    dkVehicleRegistration(
+      options?: DkVehicleRegistrationOptions,
+    ): Promise<DkVehicleRegistrationData>;
+    dkVehicleRegistrations(
+      count: number,
+      options?: DkVehicleRegistrationOptions,
+    ): Promise<DkVehicleRegistrationData[]>;
+    eeVehicleRegistration(
+      options?: EeVehicleRegistrationOptions,
+    ): Promise<EeVehicleRegistrationData>;
+    eeVehicleRegistrations(
+      count: number,
+      options?: EeVehicleRegistrationOptions,
+    ): Promise<EeVehicleRegistrationData[]>;
+    esVehicleRegistration(
+      options?: EsVehicleRegistrationOptions,
+    ): Promise<EsVehicleRegistrationData>;
+    esVehicleRegistrations(
+      count: number,
+      options?: EsVehicleRegistrationOptions,
+    ): Promise<EsVehicleRegistrationData[]>;
+    fiVehicleRegistration(
+      options?: FiVehicleRegistrationOptions,
+    ): Promise<FiVehicleRegistrationData>;
+    fiVehicleRegistrations(
+      count: number,
+      options?: FiVehicleRegistrationOptions,
+    ): Promise<FiVehicleRegistrationData[]>;
+    frVehicleRegistration(
+      options?: FrVehicleRegistrationOptions,
+    ): Promise<FrVehicleRegistrationData>;
+    frVehicleRegistrations(
+      count: number,
+      options?: FrVehicleRegistrationOptions,
+    ): Promise<FrVehicleRegistrationData[]>;
+    grVehicleRegistration(
+      options?: GrVehicleRegistrationOptions,
+    ): Promise<GrVehicleRegistrationData>;
+    grVehicleRegistrations(
+      count: number,
+      options?: GrVehicleRegistrationOptions,
+    ): Promise<GrVehicleRegistrationData[]>;
+    hrVehicleRegistration(
+      options?: HrVehicleRegistrationOptions,
+    ): Promise<HrVehicleRegistrationData>;
+    hrVehicleRegistrations(
+      count: number,
+      options?: HrVehicleRegistrationOptions,
+    ): Promise<HrVehicleRegistrationData[]>;
+    huVehicleRegistration(
+      options?: HuVehicleRegistrationOptions,
+    ): Promise<HuVehicleRegistrationData>;
+    huVehicleRegistrations(
+      count: number,
+      options?: HuVehicleRegistrationOptions,
+    ): Promise<HuVehicleRegistrationData[]>;
+    ieVehicleRegistration(
+      options?: IeVehicleRegistrationOptions,
+    ): Promise<IeVehicleRegistrationData>;
+    ieVehicleRegistrations(
+      count: number,
+      options?: IeVehicleRegistrationOptions,
+    ): Promise<IeVehicleRegistrationData[]>;
+    itVehicleRegistration(
+      options?: ItVehicleRegistrationOptions,
+    ): Promise<ItVehicleRegistrationData>;
+    itVehicleRegistrations(
+      count: number,
+      options?: ItVehicleRegistrationOptions,
+    ): Promise<ItVehicleRegistrationData[]>;
+    ltVehicleRegistration(
+      options?: LtVehicleRegistrationOptions,
+    ): Promise<LtVehicleRegistrationData>;
+    ltVehicleRegistrations(
+      count: number,
+      options?: LtVehicleRegistrationOptions,
+    ): Promise<LtVehicleRegistrationData[]>;
+    luVehicleRegistration(
+      options?: LuVehicleRegistrationOptions,
+    ): Promise<LuVehicleRegistrationData>;
+    luVehicleRegistrations(
+      count: number,
+      options?: LuVehicleRegistrationOptions,
+    ): Promise<LuVehicleRegistrationData[]>;
+    lvVehicleRegistration(
+      options?: LvVehicleRegistrationOptions,
+    ): Promise<LvVehicleRegistrationData>;
+    lvVehicleRegistrations(
+      count: number,
+      options?: LvVehicleRegistrationOptions,
+    ): Promise<LvVehicleRegistrationData[]>;
+    mtVehicleRegistration(
+      options?: MtVehicleRegistrationOptions,
+    ): Promise<MtVehicleRegistrationData>;
+    mtVehicleRegistrations(
+      count: number,
+      options?: MtVehicleRegistrationOptions,
+    ): Promise<MtVehicleRegistrationData[]>;
+    nlVehicleRegistration(
+      options?: NlVehicleRegistrationOptions,
+    ): Promise<NlVehicleRegistrationData>;
+    nlVehicleRegistrations(
+      count: number,
+      options?: NlVehicleRegistrationOptions,
+    ): Promise<NlVehicleRegistrationData[]>;
+    ptVehicleRegistration(
+      options?: PtVehicleRegistrationOptions,
+    ): Promise<PtVehicleRegistrationData>;
+    ptVehicleRegistrations(
+      count: number,
+      options?: PtVehicleRegistrationOptions,
+    ): Promise<PtVehicleRegistrationData[]>;
+    roVehicleRegistration(
+      options?: RoVehicleRegistrationOptions,
+    ): Promise<RoVehicleRegistrationData>;
+    roVehicleRegistrations(
+      count: number,
+      options?: RoVehicleRegistrationOptions,
+    ): Promise<RoVehicleRegistrationData[]>;
+    seVehicleRegistration(
+      options?: SeVehicleRegistrationOptions,
+    ): Promise<SeVehicleRegistrationData>;
+    seVehicleRegistrations(
+      count: number,
+      options?: SeVehicleRegistrationOptions,
+    ): Promise<SeVehicleRegistrationData[]>;
+    siVehicleRegistration(
+      options?: SiVehicleRegistrationOptions,
+    ): Promise<SiVehicleRegistrationData>;
+    siVehicleRegistrations(
+      count: number,
+      options?: SiVehicleRegistrationOptions,
+    ): Promise<SiVehicleRegistrationData[]>;
+    skVehicleRegistration(
+      options?: SkVehicleRegistrationOptions,
+    ): Promise<SkVehicleRegistrationData>;
+    skVehicleRegistrations(
+      count: number,
+      options?: SkVehicleRegistrationOptions,
+    ): Promise<SkVehicleRegistrationData[]>;
     plIdCard(options?: IdCardOptions): Promise<PolishIdCardData>;
     plIdCards(count: number, options?: IdCardOptions): Promise<PolishIdCardData[]>;
     plPassport(options?: PassportOptions): Promise<PolishPassportData>;
@@ -823,6 +1110,84 @@ export const createFakeData = (
     plIban: async (ibanOptions = {}) => await run<PolishIbanData>('pl/iban', ibanOptions),
     plIbans: async (count, ibanOptions = {}) =>
       await runMany<PolishIbanData>('pl/iban', count, ibanOptions),
+    deIban: async (ibanOptions = {}) => await run<IbanData>('de/iban', ibanOptions),
+    deIbans: async (count, ibanOptions = {}) =>
+      await runMany<IbanData>('de/iban', count, ibanOptions),
+    atIban: async (ibanOptions = {}) => await run<IbanData>('at/iban', ibanOptions),
+    atIbans: async (count, ibanOptions = {}) =>
+      await runMany<IbanData>('at/iban', count, ibanOptions),
+    nlIban: async (ibanOptions = {}) => await run<IbanData>('nl/iban', ibanOptions),
+    nlIbans: async (count, ibanOptions = {}) =>
+      await runMany<IbanData>('nl/iban', count, ibanOptions),
+    ieIban: async (ibanOptions = {}) => await run<IbanData>('ie/iban', ibanOptions),
+    ieIbans: async (count, ibanOptions = {}) =>
+      await runMany<IbanData>('ie/iban', count, ibanOptions),
+    luIban: async (ibanOptions = {}) => await run<IbanData>('lu/iban', ibanOptions),
+    luIbans: async (count, ibanOptions = {}) =>
+      await runMany<IbanData>('lu/iban', count, ibanOptions),
+    dkIban: async (ibanOptions = {}) => await run<IbanData>('dk/iban', ibanOptions),
+    dkIbans: async (count, ibanOptions = {}) =>
+      await runMany<IbanData>('dk/iban', count, ibanOptions),
+    seIban: async (ibanOptions = {}) => await run<IbanData>('se/iban', ibanOptions),
+    seIbans: async (count, ibanOptions = {}) =>
+      await runMany<IbanData>('se/iban', count, ibanOptions),
+    lvIban: async (ibanOptions = {}) => await run<IbanData>('lv/iban', ibanOptions),
+    lvIbans: async (count, ibanOptions = {}) =>
+      await runMany<IbanData>('lv/iban', count, ibanOptions),
+    ltIban: async (ibanOptions = {}) => await run<IbanData>('lt/iban', ibanOptions),
+    ltIbans: async (count, ibanOptions = {}) =>
+      await runMany<IbanData>('lt/iban', count, ibanOptions),
+    grIban: async (ibanOptions = {}) => await run<IbanData>('gr/iban', ibanOptions),
+    grIbans: async (count, ibanOptions = {}) =>
+      await runMany<IbanData>('gr/iban', count, ibanOptions),
+    cyIban: async (ibanOptions = {}) => await run<IbanData>('cy/iban', ibanOptions),
+    cyIbans: async (count, ibanOptions = {}) =>
+      await runMany<IbanData>('cy/iban', count, ibanOptions),
+    mtIban: async (ibanOptions = {}) => await run<IbanData>('mt/iban', ibanOptions),
+    mtIbans: async (count, ibanOptions = {}) =>
+      await runMany<IbanData>('mt/iban', count, ibanOptions),
+    bgIban: async (ibanOptions = {}) => await run<IbanData>('bg/iban', ibanOptions),
+    bgIbans: async (count, ibanOptions = {}) =>
+      await runMany<IbanData>('bg/iban', count, ibanOptions),
+    roIban: async (ibanOptions = {}) => await run<IbanData>('ro/iban', ibanOptions),
+    roIbans: async (count, ibanOptions = {}) =>
+      await runMany<IbanData>('ro/iban', count, ibanOptions),
+    beIban: async (ibanOptions = {}) => await run<IbanData>('be/iban', ibanOptions),
+    beIbans: async (count, ibanOptions = {}) =>
+      await runMany<IbanData>('be/iban', count, ibanOptions),
+    esIban: async (ibanOptions = {}) => await run<IbanData>('es/iban', ibanOptions),
+    esIbans: async (count, ibanOptions = {}) =>
+      await runMany<IbanData>('es/iban', count, ibanOptions),
+    frIban: async (ibanOptions = {}) => await run<IbanData>('fr/iban', ibanOptions),
+    frIbans: async (count, ibanOptions = {}) =>
+      await runMany<IbanData>('fr/iban', count, ibanOptions),
+    itIban: async (ibanOptions = {}) => await run<IbanData>('it/iban', ibanOptions),
+    itIbans: async (count, ibanOptions = {}) =>
+      await runMany<IbanData>('it/iban', count, ibanOptions),
+    ptIban: async (ibanOptions = {}) => await run<IbanData>('pt/iban', ibanOptions),
+    ptIbans: async (count, ibanOptions = {}) =>
+      await runMany<IbanData>('pt/iban', count, ibanOptions),
+    siIban: async (ibanOptions = {}) => await run<IbanData>('si/iban', ibanOptions),
+    siIbans: async (count, ibanOptions = {}) =>
+      await runMany<IbanData>('si/iban', count, ibanOptions),
+    fiIban: async (ibanOptions = {}) => await run<IbanData>('fi/iban', ibanOptions),
+    fiIbans: async (count, ibanOptions = {}) =>
+      await runMany<IbanData>('fi/iban', count, ibanOptions),
+    eeIban: async (ibanOptions = {}) => await run<IbanData>('ee/iban', ibanOptions),
+    eeIbans: async (count, ibanOptions = {}) =>
+      await runMany<IbanData>('ee/iban', count, ibanOptions),
+    huIban: async (ibanOptions = {}) => await run<IbanData>('hu/iban', ibanOptions),
+    huIbans: async (count, ibanOptions = {}) =>
+      await runMany<IbanData>('hu/iban', count, ibanOptions),
+    hrIban: async (ibanOptions = {}) => await run<IbanData>('hr/iban', ibanOptions),
+    hrIbans: async (count, ibanOptions = {}) =>
+      await runMany<IbanData>('hr/iban', count, ibanOptions),
+    czIban: async (ibanOptions = {}) => await run<IbanData>('cz/iban', ibanOptions),
+    czIbans: async (count, ibanOptions = {}) =>
+      await runMany<IbanData>('cz/iban', count, ibanOptions),
+    skIban: async (ibanOptions = {}) => await run<IbanData>('sk/iban', ibanOptions),
+    skIbans: async (count, ibanOptions = {}) =>
+      await runMany<IbanData>('sk/iban', count, ibanOptions),
     plRegon: async (regonOptions = {}) => await run<PolishRegonData>('pl/regon', regonOptions),
     plRegons: async (count, regonOptions = {}) =>
       await runMany<PolishRegonData>('pl/regon', count, regonOptions),
@@ -946,6 +1311,110 @@ export const createFakeData = (
         count,
         vehicleOptions,
       ),
+    atVehicleRegistration: async (vehicleOptions = {}) =>
+      await run<AtVehicleRegistrationData>('at/vehicle-registration', vehicleOptions),
+    atVehicleRegistrations: async (count, vehicleOptions = {}) =>
+      await runMany<AtVehicleRegistrationData>('at/vehicle-registration', count, vehicleOptions),
+    beVehicleRegistration: async (vehicleOptions = {}) =>
+      await run<BeVehicleRegistrationData>('be/vehicle-registration', vehicleOptions),
+    beVehicleRegistrations: async (count, vehicleOptions = {}) =>
+      await runMany<BeVehicleRegistrationData>('be/vehicle-registration', count, vehicleOptions),
+    bgVehicleRegistration: async (vehicleOptions = {}) =>
+      await run<BgVehicleRegistrationData>('bg/vehicle-registration', vehicleOptions),
+    bgVehicleRegistrations: async (count, vehicleOptions = {}) =>
+      await runMany<BgVehicleRegistrationData>('bg/vehicle-registration', count, vehicleOptions),
+    cyVehicleRegistration: async (vehicleOptions = {}) =>
+      await run<CyVehicleRegistrationData>('cy/vehicle-registration', vehicleOptions),
+    cyVehicleRegistrations: async (count, vehicleOptions = {}) =>
+      await runMany<CyVehicleRegistrationData>('cy/vehicle-registration', count, vehicleOptions),
+    czVehicleRegistration: async (vehicleOptions = {}) =>
+      await run<CzVehicleRegistrationData>('cz/vehicle-registration', vehicleOptions),
+    czVehicleRegistrations: async (count, vehicleOptions = {}) =>
+      await runMany<CzVehicleRegistrationData>('cz/vehicle-registration', count, vehicleOptions),
+    deVehicleRegistration: async (vehicleOptions = {}) =>
+      await run<DeVehicleRegistrationData>('de/vehicle-registration', vehicleOptions),
+    deVehicleRegistrations: async (count, vehicleOptions = {}) =>
+      await runMany<DeVehicleRegistrationData>('de/vehicle-registration', count, vehicleOptions),
+    dkVehicleRegistration: async (vehicleOptions = {}) =>
+      await run<DkVehicleRegistrationData>('dk/vehicle-registration', vehicleOptions),
+    dkVehicleRegistrations: async (count, vehicleOptions = {}) =>
+      await runMany<DkVehicleRegistrationData>('dk/vehicle-registration', count, vehicleOptions),
+    eeVehicleRegistration: async (vehicleOptions = {}) =>
+      await run<EeVehicleRegistrationData>('ee/vehicle-registration', vehicleOptions),
+    eeVehicleRegistrations: async (count, vehicleOptions = {}) =>
+      await runMany<EeVehicleRegistrationData>('ee/vehicle-registration', count, vehicleOptions),
+    esVehicleRegistration: async (vehicleOptions = {}) =>
+      await run<EsVehicleRegistrationData>('es/vehicle-registration', vehicleOptions),
+    esVehicleRegistrations: async (count, vehicleOptions = {}) =>
+      await runMany<EsVehicleRegistrationData>('es/vehicle-registration', count, vehicleOptions),
+    fiVehicleRegistration: async (vehicleOptions = {}) =>
+      await run<FiVehicleRegistrationData>('fi/vehicle-registration', vehicleOptions),
+    fiVehicleRegistrations: async (count, vehicleOptions = {}) =>
+      await runMany<FiVehicleRegistrationData>('fi/vehicle-registration', count, vehicleOptions),
+    frVehicleRegistration: async (vehicleOptions = {}) =>
+      await run<FrVehicleRegistrationData>('fr/vehicle-registration', vehicleOptions),
+    frVehicleRegistrations: async (count, vehicleOptions = {}) =>
+      await runMany<FrVehicleRegistrationData>('fr/vehicle-registration', count, vehicleOptions),
+    grVehicleRegistration: async (vehicleOptions = {}) =>
+      await run<GrVehicleRegistrationData>('gr/vehicle-registration', vehicleOptions),
+    grVehicleRegistrations: async (count, vehicleOptions = {}) =>
+      await runMany<GrVehicleRegistrationData>('gr/vehicle-registration', count, vehicleOptions),
+    hrVehicleRegistration: async (vehicleOptions = {}) =>
+      await run<HrVehicleRegistrationData>('hr/vehicle-registration', vehicleOptions),
+    hrVehicleRegistrations: async (count, vehicleOptions = {}) =>
+      await runMany<HrVehicleRegistrationData>('hr/vehicle-registration', count, vehicleOptions),
+    huVehicleRegistration: async (vehicleOptions = {}) =>
+      await run<HuVehicleRegistrationData>('hu/vehicle-registration', vehicleOptions),
+    huVehicleRegistrations: async (count, vehicleOptions = {}) =>
+      await runMany<HuVehicleRegistrationData>('hu/vehicle-registration', count, vehicleOptions),
+    ieVehicleRegistration: async (vehicleOptions = {}) =>
+      await run<IeVehicleRegistrationData>('ie/vehicle-registration', vehicleOptions),
+    ieVehicleRegistrations: async (count, vehicleOptions = {}) =>
+      await runMany<IeVehicleRegistrationData>('ie/vehicle-registration', count, vehicleOptions),
+    itVehicleRegistration: async (vehicleOptions = {}) =>
+      await run<ItVehicleRegistrationData>('it/vehicle-registration', vehicleOptions),
+    itVehicleRegistrations: async (count, vehicleOptions = {}) =>
+      await runMany<ItVehicleRegistrationData>('it/vehicle-registration', count, vehicleOptions),
+    ltVehicleRegistration: async (vehicleOptions = {}) =>
+      await run<LtVehicleRegistrationData>('lt/vehicle-registration', vehicleOptions),
+    ltVehicleRegistrations: async (count, vehicleOptions = {}) =>
+      await runMany<LtVehicleRegistrationData>('lt/vehicle-registration', count, vehicleOptions),
+    luVehicleRegistration: async (vehicleOptions = {}) =>
+      await run<LuVehicleRegistrationData>('lu/vehicle-registration', vehicleOptions),
+    luVehicleRegistrations: async (count, vehicleOptions = {}) =>
+      await runMany<LuVehicleRegistrationData>('lu/vehicle-registration', count, vehicleOptions),
+    lvVehicleRegistration: async (vehicleOptions = {}) =>
+      await run<LvVehicleRegistrationData>('lv/vehicle-registration', vehicleOptions),
+    lvVehicleRegistrations: async (count, vehicleOptions = {}) =>
+      await runMany<LvVehicleRegistrationData>('lv/vehicle-registration', count, vehicleOptions),
+    mtVehicleRegistration: async (vehicleOptions = {}) =>
+      await run<MtVehicleRegistrationData>('mt/vehicle-registration', vehicleOptions),
+    mtVehicleRegistrations: async (count, vehicleOptions = {}) =>
+      await runMany<MtVehicleRegistrationData>('mt/vehicle-registration', count, vehicleOptions),
+    nlVehicleRegistration: async (vehicleOptions = {}) =>
+      await run<NlVehicleRegistrationData>('nl/vehicle-registration', vehicleOptions),
+    nlVehicleRegistrations: async (count, vehicleOptions = {}) =>
+      await runMany<NlVehicleRegistrationData>('nl/vehicle-registration', count, vehicleOptions),
+    ptVehicleRegistration: async (vehicleOptions = {}) =>
+      await run<PtVehicleRegistrationData>('pt/vehicle-registration', vehicleOptions),
+    ptVehicleRegistrations: async (count, vehicleOptions = {}) =>
+      await runMany<PtVehicleRegistrationData>('pt/vehicle-registration', count, vehicleOptions),
+    roVehicleRegistration: async (vehicleOptions = {}) =>
+      await run<RoVehicleRegistrationData>('ro/vehicle-registration', vehicleOptions),
+    roVehicleRegistrations: async (count, vehicleOptions = {}) =>
+      await runMany<RoVehicleRegistrationData>('ro/vehicle-registration', count, vehicleOptions),
+    seVehicleRegistration: async (vehicleOptions = {}) =>
+      await run<SeVehicleRegistrationData>('se/vehicle-registration', vehicleOptions),
+    seVehicleRegistrations: async (count, vehicleOptions = {}) =>
+      await runMany<SeVehicleRegistrationData>('se/vehicle-registration', count, vehicleOptions),
+    siVehicleRegistration: async (vehicleOptions = {}) =>
+      await run<SiVehicleRegistrationData>('si/vehicle-registration', vehicleOptions),
+    siVehicleRegistrations: async (count, vehicleOptions = {}) =>
+      await runMany<SiVehicleRegistrationData>('si/vehicle-registration', count, vehicleOptions),
+    skVehicleRegistration: async (vehicleOptions = {}) =>
+      await run<SkVehicleRegistrationData>('sk/vehicle-registration', vehicleOptions),
+    skVehicleRegistrations: async (count, vehicleOptions = {}) =>
+      await runMany<SkVehicleRegistrationData>('sk/vehicle-registration', count, vehicleOptions),
     plIdCard: async (idCardOptions = {}) => await run<PolishIdCardData>('pl/id-card', idCardOptions),
     plIdCards: async (count, idCardOptions = {}) =>
       await runMany<PolishIdCardData>('pl/id-card', count, idCardOptions),

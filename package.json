@@ -1,7 +1,7 @@
 {
   "name": "@przeslijmi/real-fake-data-playwright",
-  "version": "1.8.0",
-  "description": "Playwright fixtures for Real Fake Data — 217 seeded, realistic test-data generators: person & company names across 27 EU countries, one-call whole people and whole companies (name + national register/tax/VAT numbers) for every EU member state, national identifiers and VAT/company numbers (NIR, codice fiscale, DNI/NIE, CPR, personnummer, BSN, USt-IdNr, SIREN, CVR, KvK, …), the full Polish national set (PESEL, NIP, REGON, IBAN, KRS, addresses, ID cards, passports, driving licences, vehicle plates), custom-regex patterns, emails, and lorem ipsum.",
+  "version": "1.10.0",
+  "description": "Playwright fixtures for Real Fake Data — 243 seeded, realistic test-data generators: person & company names across 27 EU countries, one-call whole people and whole companies (name + national register/tax/VAT numbers) for every EU member state, national identifiers and VAT/company numbers (NIR, codice fiscale, DNI/NIE, CPR, personnummer, BSN, USt-IdNr, SIREN, CVR, KvK, …), vehicle registration plates for all 27 EU countries, the full Polish national set (PESEL, NIP, REGON, IBAN, KRS, addresses, ID cards, passports, driving licences), custom-regex patterns, emails, and lorem ipsum.",
   "keywords": [
     "playwright",
     "playwright-fixtures",
@@ -19,6 +19,8 @@
     "codice-fiscale",
     "dni",
     "iban",
+    "vehicle-registration",
+    "license-plate",
     "poland"
   ],
   "homepage": "https://github.com/przeslijmi/real-fake-data-playwright#readme",

@@ -5,6 +5,59 @@ All notable changes to `@przeslijmi/real-fake-data-playwright` are documented he
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.10.0] - 2026-07-05
+
+Extends the IBAN family from Poland to all 27 EU member states. The fixture
+grows from **243** to **269** typed generators.
+
+### Added
+
+- **IBANs for the other 26 EU countries.** Alongside the existing `plIban`,
+  every EU member state now exposes an `<cc>Iban(opts?)` /
+  `<cc>Ibans(count, opts?)` pair — `deIban`, `frIban`, `itIban`, `esIban`, …
+  through `skIban`. Each hits `GET /v1/<cc>/iban` and returns the uniform shape
+  `{ value, electronicFormat, bankCode, bankName }` (exported as the shared
+  `IbanData` type). Every IBAN carries correct mod-97 check digits and, where the
+  national account number has its own internal check digit, that is reproduced
+  too (Italy's CIN, Spain's DC, France's clé RIB, Belgium's mod-97 suffix,
+  Portugal's and Slovenia's ISO 7064 checks, Finland's Luhn, Estonia's 7-3-1,
+  Hungary's two check digits, Croatia's per-field MOD 11-10, the Czech/Slovak
+  self-checking account). Pin the issuing bank by `bankCode` or `bankName` (both
+  validated against each country's real-bank registry), or let it be chosen at
+  random.
+- **`edge` and `extreme` on `IbanOptions`.** The two shared triggers are now
+  typed on the IBAN options, matching the rest of the fixture.
+
+## [1.9.0] - 2026-07-04
+
+Extends the vehicle-registration family from Poland to all 27 EU member states.
+The fixture grows from **217** to **243** typed generators.
+
+### Added
+
+- **Vehicle registration plates for the other 26 EU countries.** Alongside the
+  existing `plVehicleRegistration`, every EU member state now exposes a
+  `<cc>VehicleRegistration(opts?)` / `<cc>VehicleRegistrations(count, opts?)`
+  pair — `atVehicleRegistration`, `beVehicleRegistration`,
+  `deVehicleRegistration`, `frVehicleRegistration`, … through
+  `skVehicleRegistration`. Each hits `GET /v1/<cc>/vehicle-registration` and is
+  typed to that country's own generator: its own `type` union (the plate kinds
+  the country actually issues — standard, custom/vanity, motorcycle, diplomatic,
+  military, historic, electric, taxi, dealer, …) and its own result fields
+  (region / district / province / county codes, `era`, `expiryMonth`,
+  `subregion`, …). Country-specific options are wired through verbatim
+  (`script`, `era`, `withDepartment`/`department`, `withProvince`/`province`,
+  `sidecode`, `expiryMonth`, `district`, `region`, `county`, `city`, `state`,
+  and the per-country `format` enum), and every method takes the shared `edge`
+  and `extreme` triggers.
+
+### Changed
+
+- **`VehicleRegistrationType` (Polish) now covers all seven plate kinds** the
+  Polish generator produces: `standard`, `custom`, `police`, `military`,
+  `historic`, and the previously missing `motorcycle` and `short`. The
+  `VehicleRegistrationOptions` type also gains the `edge` and `extreme` triggers.
+
 ## [1.8.0] - 2026-07-03
 
 Adds the `extreme` trigger across every generator.
