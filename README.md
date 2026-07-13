@@ -1,13 +1,15 @@
 # @przeslijmi/real-fake-data-playwright
 
-Playwright fixtures for [Real Fake Data](https://github.com/przeslijmi/rfd) — **269 generators** of realistic, synthetic test data, one typed method per record:
+Playwright fixtures for [Real Fake Data](https://github.com/przeslijmi/rfd) — **302 generators** of realistic, synthetic test data, one typed method per record:
 
 - **Person & company names and email addresses across 27 EU countries** — `dePersonName`, `itCompanyName`, `plEmail`, … in the local script and inflection (names romanised to ASCII for emails, with free, regional, and company-derived domains), plus multi-country `personName`/`companyName`/`email` that draw from any mix of countries.
 - **National identifiers and VAT / company numbers for every EU member state** — French `frNir`/`frSiren`, Italian `itCodiceFiscale`, Spanish `esDni`/`esNie`, Danish `dkCpr`, Swedish `sePersonnummer`, Dutch `nlBsn`, German `deSteuerId`/`deUstIdnr`, and 60+ more — each with correct checksums and the same `invalid`/`edge`/`extreme` triggers.
 - **One-call whole people and companies for every EU country** — `dkPerson`, `frPerson`, … return a consistent name + national number; `dkCompany`, `deCompany`, `nlCompany`, … return a consistent trading name, legal form, and the country's register / tax / VAT numbers, all from one seed.
 - **Vehicle registration plates for all 27 EU countries** — `deVehicleRegistration`, `frVehicleRegistration`, `itVehicleRegistration`, … produce realistic plates with each country's own plate kinds (standard, custom/vanity, motorcycle, diplomatic, military, historic, electric, …), region/district codes, era formats, and the shared `edge`/`extreme` triggers.
 - **IBANs for all 27 EU countries** — `deIban`, `frIban`, `itIban`, … return a valid IBAN with correct mod-97 check digits (and, where the national account number has its own internal check digit, that too — Italy's CIN, Spain's DC, France's clé RIB, and the rest), embedding a **real** bank code you can pin by `bankCode` or `bankName`. The shared `invalid` / `edge` / `extreme` triggers apply.
+- **Product & service offerings for all 27 EU countries** — `deOffering`, `frOffering`, … return a localized product/service with a plausible EUR price, unit, and its NACE industry; plus multi-country `offering` that draws from any mix. Filter by `industry`, `type`, or full-text `offeringName`/`industryName`, with the shared `edge`/`extreme`/`invalid` triggers.
 - **The full Polish national set** — valid PESELs (correct checksums), NIPs, REGONs, IBANs, KRS and land-register numbers, ID cards, passports, driving licences, and addresses drawn from real cities and streets.
+- **Synthetic IDs** — `uuid` (v4/v7), `ulid`, `nanoId`, `objectId`, and auto-increment `sequence`: the technical primary keys every record needs, deterministic from the seed (so a seeded UUID is reproducible).
 - **Locale-agnostic** — lorem ipsum and `customRegex` (a random string matching any regex you supply; Pro plan and above).
 
 Output _looks_ real but is fake — safe for staging, demos, and seed data.
@@ -131,7 +133,7 @@ const spoof = await fakeData.dePersonName({ extreme: true }); // Cyrillic-lookal
 
 #### Names across 27 EU countries
 
-Every country listed below exposes `<cc>PersonName`/`<cc>PersonNames`, `<cc>CompanyName`/`<cc>CompanyNames`, `<cc>Company`/`<cc>Companies`, and `<cc>Email`/`<cc>Emails`, where `<cc>` is its ISO 3166 code: `at`, `be`, `bg`, `cy`, `cz`, `de`, `dk`, `ee`, `es`, `fi`, `fr`, `gr`, `hr`, `hu`, `ie`, `it`, `lt`, `lu`, `lv`, `mt`, `nl`, `pl`, `pt`, `ro`, `se`, `si`, `sk`.
+Every country listed below exposes `<cc>PersonName`/`<cc>PersonNames`, `<cc>CompanyName`/`<cc>CompanyNames`, `<cc>Company`/`<cc>Companies`, `<cc>Email`/`<cc>Emails`, and `<cc>Offering`/`<cc>Offerings`, where `<cc>` is its ISO 3166 code: `at`, `be`, `bg`, `cy`, `cz`, `de`, `dk`, `ee`, `es`, `fi`, `fr`, `gr`, `hr`, `hu`, `ie`, `it`, `lt`, `lu`, `lv`, `mt`, `nl`, `pl`, `pt`, `ro`, `se`, `si`, `sk`.
 
 | Singular                | Plural                          | Returns (singular)                          | Options                                |
 | ----------------------- | ------------------------------- | ------------------------------------------- | -------------------------------------- |
@@ -139,18 +141,24 @@ Every country listed below exposes `<cc>PersonName`/`<cc>PersonNames`, `<cc>Comp
 | `<cc>CompanyName(opts?)`| `<cc>CompanyNames(count, opts?)`| `{ value, legalForm, strategy }`            | `strategy`, `legalForm`, `edge`        |
 | `<cc>Company(opts?)`    | `<cc>Companies(count, opts?)`   | `{ name, legalForm, …national ids }`        | `strategy`, `legalForm`, `invalid`, `edge` |
 | `<cc>Email(opts?)`      | `<cc>Emails(count, opts?)`      | `{ value, localPart, domain, pattern, domainCategory, company, plusTag }` | `domain`, `domainCategory`, `pattern`, `plusTag`, `exotic`, `edge` |
+| `<cc>Offering(opts?)`   | `<cc>Offerings(count, opts?)`   | `{ value, offeringName, kind, unit, price, currency, industryCode, industryName, language }` | `industry`, `type`, `industryName`, `offeringName`, `language`, `edge`, `extreme`, `invalid` |
 | `personName(opts?)`     | `personNames(count, opts?)`     | `{ name, surname, initials, sex, country }` | `sex`, `edge`, `caseStrict`, `countries` |
 | `companyName(opts?)`    | `companyNames(count, opts?)`    | `{ value, legalForm, strategy, country }`   | `strategy`, `edge`, `countries`        |
 | `email(opts?)`          | `emails(count, opts?)`          | `{ value, localPart, domain, pattern, domainCategory, company, plusTag, country }` | `domain`, `domainCategory`, `pattern`, `plusTag`, `exotic`, `edge`, `countries` |
+| `offering(opts?)`       | `offerings(count, opts?)`       | `{ value, offeringName, kind, unit, price, currency, industryCode, industryName, language, country }` | `industry`, `type`, `industryName`, `offeringName`, `language`, `edge`, `extreme`, `invalid`, `countries` |
 
 ```ts
 const ceo = await fakeData.dePersonName({ sex: 'f' });        // German given name + surname
 const vendor = await fakeData.itCompanyName({ edge: true });  // edge-case Italian company name
 const eu = await fakeData.personName({ countries: ['pl', 'sk', 'it'] }); // drawn from one of the three
 const inbox = await fakeData.plEmail({ domainCategory: 'corporate' }); // anna.kowalska@kowalski-bud.pl
+const item = await fakeData.deOffering({ type: 'service' });  // localized German service + price
+const cart = await fakeData.offering({ countries: ['pl', 'it'], industry: '56.11' }); // restaurant items
 ```
 
-`countries` (on the prefix-less `personName`/`companyName`/`email` only) is an array of ISO codes; each record is generated by one country picked from the list. Omit it to draw from all 27. The per-country `legalForm` values differ by country (e.g. `GmbH`, `S.r.l.`, `S.A.`), so they are typed as `string`; pass `'any'` for a weighted-random one or `'none'` to omit it. For email, `domainCategory: 'corporate'` builds the address on a company-derived domain and reports the brand in `company`; non-Latin names (Cyrillic, Greek) are romanised to ASCII.
+An **offering** is a product or service a business sells: a localized `value`/`offeringName`, a `kind` (`product`/`service`), a `unit` (`pc`, `month`, `kg`, …), a `price` in **EUR minor units (cents)** with `currency`, and the `industryCode` + localized `industryName` it belongs to. Pin an `industry` by NACE code, restrict to `type`, or full-text filter with `offeringName`/`industryName`; `language` pins the name language (multilingual countries otherwise blend theirs). `edge`/`extreme`/`invalid` apply as elsewhere (`invalid` cannot combine with `edge`/`extreme`).
+
+`countries` (on the prefix-less `personName`/`companyName`/`email`/`offering` only) is an array of ISO codes; each record is generated by one country picked from the list. Omit it to draw from all 27. The per-country `legalForm` values differ by country (e.g. `GmbH`, `S.r.l.`, `S.A.`), so they are typed as `string`; pass `'any'` for a weighted-random one or `'none'` to omit it. For email, `domainCategory: 'corporate'` builds the address on a company-derived domain and reports the brand in `company`; non-Latin names (Cyrillic, Greek) are romanised to ASCII.
 
 #### Polish national generators
 
@@ -447,6 +455,20 @@ Every EU member state exposes `<cc>Iban(opts?)` / `<cc>Ibans(count, opts?)`, all
 | ------------------------------ | -------------------------------------- | ---------------------------------------------------------- | --------------------------------------------------------------------- |
 | `lorem(opts?)`                 | `lorems(count, opts?)`                 | `{ value, words, chars, bytes, paragraphs, startedWithLorem }` | `bytes`, `chars`, `words`, `paragraphs`, `startWithLorem`      |
 | `customRegex(opts)`            | `customRegexes(count, opts)`           | `{ value, pattern }`                                       | `pattern` (required), `maxRepetition` — Pro plan and above            |
+
+#### Synthetic IDs
+
+The technical identifiers a record needs but no national registry issues — primary keys. Locale-agnostic, no prefix. Deterministic from the `seed`, so a seeded UUID is reproducible; any embedded timestamp (UUID v7, ULID, ObjectId) is seed-derived, not wall-clock.
+
+| Singular                       | Plural                                 | Returns (singular)          | Common options                          |
+| ------------------------------ | -------------------------------------- | --------------------------- | --------------------------------------- |
+| `uuid(opts?)`                  | `uuids(count, opts?)`                  | `{ value, version }`        | `version: '4' \| '7'` (default `'4'`)   |
+| `ulid(opts?)`                  | `ulids(count, opts?)`                  | `{ value }`                 | —                                       |
+| `nanoId(opts?)`                | `nanoIds(count, opts?)`                | `{ value }`                 | `size` (default 21), `alphabet`         |
+| `objectId(opts?)`              | `objectIds(count, opts?)`              | `{ value }`                 | —                                       |
+| `sequence(opts?)`              | `sequences(count, opts?)`              | `{ value }`                 | `start` (default 1), `step` (default 1) |
+
+For `sequence`, a plural call returns the run `start, start + step, …`; a singular call returns `start`.
 
 ### Generating many records at once
 

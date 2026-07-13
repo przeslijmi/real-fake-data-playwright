@@ -53,6 +53,16 @@ import type {
   CountryCode,
   CustomRegexData,
   CustomRegexOptions,
+  UuidData,
+  UuidOptions,
+  UlidData,
+  UlidOptions,
+  NanoIdData,
+  NanoIdOptions,
+  ObjectIdData,
+  ObjectIdOptions,
+  SequenceData,
+  SequenceOptions,
   CyTicData,
   CyTicOptions,
   CzIcoData,
@@ -86,6 +96,10 @@ import type {
   AnyEmailOptions,
   EmailData,
   EmailOptions,
+  AnyOfferingData,
+  AnyOfferingOptions,
+  OfferingData,
+  OfferingOptions,
   EsCifData,
   EsCifOptions,
   EsDniData,
@@ -360,6 +374,22 @@ type EmailMethods = {
 };
 
 /**
+ * `offering` method pair for every country (`deOffering`, `plOffering`, …).
+ * Every country shares the same wire shape — only the resolved language mix
+ * differs — so like `email`, Poland is not special.
+ */
+type OfferingMethods = {
+  [Country in CountryCode as `${Country}Offering`]: (
+    options?: OfferingOptions,
+  ) => Promise<OfferingData>;
+} & {
+  [Country in CountryCode as `${Country}Offerings`]: (
+    count: number,
+    options?: OfferingOptions,
+  ) => Promise<OfferingData[]>;
+};
+
+/**
  * The typed surface tests use. Each generator exposes a singular method
  * returning one record and a plural returning an array of `count` records.
  *
@@ -377,7 +407,8 @@ type EmailMethods = {
  */
 export type FakeData = PersonNameMethods &
   LocaleCompanyNameMethods &
-  EmailMethods & {
+  EmailMethods &
+  OfferingMethods & {
     plPesel(options?: PeselOptions): Promise<PolishPeselData>;
     plPesels(count: number, options?: PeselOptions): Promise<PolishPeselData[]>;
     plPerson(options?: PersonOptions): Promise<PolishPersonData>;
@@ -759,11 +790,29 @@ export type FakeData = PersonNameMethods &
     companyNames(count: number, options?: AnyCompanyNameOptions): Promise<AnyCompanyNameData[]>;
     email(options?: AnyEmailOptions): Promise<AnyEmailData>;
     emails(count: number, options?: AnyEmailOptions): Promise<AnyEmailData[]>;
+    /** Multi-country offering: each record is drawn from one of `countries` (default: all 27). */
+    offering(options?: AnyOfferingOptions): Promise<AnyOfferingData>;
+    offerings(count: number, options?: AnyOfferingOptions): Promise<AnyOfferingData[]>;
     lorem(options?: LoremOptions): Promise<LoremData>;
     lorems(count: number, options?: LoremOptions): Promise<LoremData[]>;
     /** Random string matching a supplied regex `pattern`. Requires the Pro plan or above. */
     customRegex(options: CustomRegexOptions): Promise<CustomRegexData>;
     customRegexes(count: number, options: CustomRegexOptions): Promise<CustomRegexData[]>;
+    /** UUID — `version: '4'` (random, default) or `'7'` (time-ordered). */
+    uuid(options?: UuidOptions): Promise<UuidData>;
+    uuids(count: number, options?: UuidOptions): Promise<UuidData[]>;
+    /** ULID — 26-character Crockford-Base32 identifier. */
+    ulid(options?: UlidOptions): Promise<UlidData>;
+    ulids(count: number, options?: UlidOptions): Promise<UlidData[]>;
+    /** Nano ID — compact URL-safe id; set `size` and a custom `alphabet`. */
+    nanoId(options?: NanoIdOptions): Promise<NanoIdData>;
+    nanoIds(count: number, options?: NanoIdOptions): Promise<NanoIdData[]>;
+    /** MongoDB ObjectId — 24-character hex. */
+    objectId(options?: ObjectIdOptions): Promise<ObjectIdData>;
+    objectIds(count: number, options?: ObjectIdOptions): Promise<ObjectIdData[]>;
+    /** Auto-increment integer — `start` (default 1), `step` (default 1); a batch returns the run. */
+    sequence(options?: SequenceOptions): Promise<SequenceData>;
+    sequences(count: number, options?: SequenceOptions): Promise<SequenceData[]>;
     /* EU national-identifier generators (see types.ts). One pair per number. */
     frSiren(options?: FrSirenOptions): Promise<FrSirenData>;
     frSirens(count: number, options?: FrSirenOptions): Promise<FrSirenData[]>;
@@ -917,7 +966,7 @@ export interface CreateFakeDataOptions {
  * comma-separated string (`?countries=pl,sk,it`), so we join it here.
  */
 const toAggregateWire = (
-  aggregateOptions: AnyPersonNameOptions | AnyCompanyNameOptions,
+  aggregateOptions: AnyPersonNameOptions | AnyCompanyNameOptions | AnyOfferingOptions,
 ): RequestOptions => {
   const { countries, ...rest } = aggregateOptions;
   return {
@@ -1020,6 +1069,16 @@ export const createFakeData = (
       [`${countryCode}Emails`]: async (count: number, emailOptions: EmailOptions = {}) =>
         await runMany<EmailData>(`${countryCode}/email`, count, emailOptions),
     }) as Pick<EmailMethods, `${Country}Email` | `${Country}Emails`>;
+
+  const offeringPair = <Country extends CountryCode>(
+    countryCode: Country,
+  ): Pick<OfferingMethods, `${Country}Offering` | `${Country}Offerings`> =>
+    ({
+      [`${countryCode}Offering`]: async (offeringOptions: OfferingOptions = {}) =>
+        await run<OfferingData>(`${countryCode}/offering`, offeringOptions),
+      [`${countryCode}Offerings`]: async (count: number, offeringOptions: OfferingOptions = {}) =>
+        await runMany<OfferingData>(`${countryCode}/offering`, count, offeringOptions),
+    }) as Pick<OfferingMethods, `${Country}Offering` | `${Country}Offerings`>;
 
   return {
     plPesel: async (peselOptions = {}) => await run<PolishPeselData>('pl/pesel', peselOptions),
@@ -1444,6 +1503,10 @@ export const createFakeData = (
     email: async (emailOptions = {}) => await run<AnyEmailData>('email', emailOptions),
     emails: async (count, emailOptions = {}) =>
       await runMany<AnyEmailData>('email', count, emailOptions),
+    offering: async (offeringOptions = {}) =>
+      await run<AnyOfferingData>('offering', toAggregateWire(offeringOptions)),
+    offerings: async (count, offeringOptions = {}) =>
+      await runMany<AnyOfferingData>('offering', count, toAggregateWire(offeringOptions)),
     lorem: async (loremOptions = {}) => await run<LoremData>('lorem', loremOptions),
     lorems: async (count, loremOptions = {}) =>
       await runMany<LoremData>('lorem', count, loremOptions),
@@ -1451,6 +1514,19 @@ export const createFakeData = (
       await run<CustomRegexData>('custom-regex', customRegexOptions),
     customRegexes: async (count, customRegexOptions) =>
       await runMany<CustomRegexData>('custom-regex', count, customRegexOptions),
+    uuid: async (uuidOptions = {}) => await run<UuidData>('uuid', uuidOptions),
+    uuids: async (count, uuidOptions = {}) => await runMany<UuidData>('uuid', count, uuidOptions),
+    ulid: async (ulidOptions = {}) => await run<UlidData>('ulid', ulidOptions),
+    ulids: async (count, ulidOptions = {}) => await runMany<UlidData>('ulid', count, ulidOptions),
+    nanoId: async (nanoIdOptions = {}) => await run<NanoIdData>('nanoid', nanoIdOptions),
+    nanoIds: async (count, nanoIdOptions = {}) =>
+      await runMany<NanoIdData>('nanoid', count, nanoIdOptions),
+    objectId: async (objectIdOptions = {}) => await run<ObjectIdData>('object-id', objectIdOptions),
+    objectIds: async (count, objectIdOptions = {}) =>
+      await runMany<ObjectIdData>('object-id', count, objectIdOptions),
+    sequence: async (sequenceOptions = {}) => await run<SequenceData>('sequence', sequenceOptions),
+    sequences: async (count, sequenceOptions = {}) =>
+      await runMany<SequenceData>('sequence', count, sequenceOptions),
     ...personNamePair('at'),
     ...personNamePair('be'),
     ...personNamePair('bg'),
@@ -1531,6 +1607,33 @@ export const createFakeData = (
     ...emailPair('se'),
     ...emailPair('si'),
     ...emailPair('sk'),
+    ...offeringPair('at'),
+    ...offeringPair('be'),
+    ...offeringPair('bg'),
+    ...offeringPair('cy'),
+    ...offeringPair('cz'),
+    ...offeringPair('de'),
+    ...offeringPair('dk'),
+    ...offeringPair('ee'),
+    ...offeringPair('es'),
+    ...offeringPair('fi'),
+    ...offeringPair('fr'),
+    ...offeringPair('gr'),
+    ...offeringPair('hr'),
+    ...offeringPair('hu'),
+    ...offeringPair('ie'),
+    ...offeringPair('it'),
+    ...offeringPair('lt'),
+    ...offeringPair('lu'),
+    ...offeringPair('lv'),
+    ...offeringPair('mt'),
+    ...offeringPair('nl'),
+    ...offeringPair('pl'),
+    ...offeringPair('pt'),
+    ...offeringPair('ro'),
+    ...offeringPair('se'),
+    ...offeringPair('si'),
+    ...offeringPair('sk'),
     frSiren: async (frSirenOptions = {}) => await run<FrSirenData>('fr/siren', frSirenOptions),
     frSirens: async (count, frSirenOptions = {}) =>
       await runMany<FrSirenData>('fr/siren', count, frSirenOptions),

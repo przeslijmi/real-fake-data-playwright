@@ -924,6 +924,58 @@ export interface AnyEmailOptions extends EmailOptions {
   readonly countries?: readonly CountryCode[];
 }
 
+export interface OfferingOptions extends RequestOptions {
+  /** Pin the industry by NACE code (`61`, `56.11`). Omit to draw across all covered industries. */
+  readonly industry?: string;
+  /** Full-text filter: keep offerings whose localized industry label contains this (case-insensitive). */
+  readonly industryName?: string;
+  /** Full-text filter: keep offerings whose localized name contains this (case-insensitive). */
+  readonly offeringName?: string;
+  /** Pin the name language to one of the country's official subtags. Omit for its weighted mix. */
+  readonly language?: string;
+  /** Restrict to products or services. Omit for both. */
+  readonly type?: 'product' | 'service';
+  /** Restrict to edge-case offerings (price-band extremes, unusual units, long names). */
+  readonly edge?: boolean;
+  /** Present the offering name in a hostile-but-recoverable encoding; price, unit and industry label stay clean. */
+  readonly extreme?: boolean;
+  /** Return a deliberately invalid offering (price outside its band, negative price, or empty name). Cannot combine with edge/extreme. */
+  readonly invalid?: boolean;
+}
+
+/** Options for the multi-country `offering` generator. */
+export interface AnyOfferingOptions extends OfferingOptions {
+  /**
+   * ISO 3166 codes to draw each record from, e.g. `['pl', 'de', 'it']`. Each
+   * record picks one country from the list at random. Omit to draw from all 27.
+   */
+  readonly countries?: readonly CountryCode[];
+}
+
+export interface OfferingData {
+  readonly value: string;
+  /** The full offering name (alias of `value`). */
+  readonly offeringName: string;
+  readonly kind: 'product' | 'service';
+  /** The unit the price is quoted per — a canonical symbol (`pc`, `month`, `kg`, …). */
+  readonly unit: string;
+  /** A single plausible price, in EUR minor units (cents). */
+  readonly price: number;
+  readonly currency: 'EUR';
+  /** NACE Rev. 2.1 code of the offering's industry. */
+  readonly industryCode: string;
+  /** The localized industry label in the resolved language. */
+  readonly industryName: string;
+  /** BCP-47 subtag used for this record's names. */
+  readonly language: string;
+}
+
+/** A multi-country offering: the shared fields plus the country it was drawn from. */
+export interface AnyOfferingData extends OfferingData {
+  /** ISO 3166 alpha-2 code of the country this offering was drawn from. */
+  readonly country: string;
+}
+
 export interface LoremOptions extends RequestOptions {
   /**
    * Size the text by a length unit. When more than one is given the most
@@ -1305,6 +1357,61 @@ export interface CustomRegexData {
   readonly value: string;
   /** The source pattern the value was generated from, echoed back. */
   readonly pattern: string;
+}
+
+export interface UuidOptions extends RequestOptions {
+  /**
+   * UUID version: `'4'` (fully random, the default) or `'7'` (time-ordered,
+   * RFC 9562). The v7 timestamp is derived from the seed, not the wall clock.
+   */
+  readonly version?: '4' | '7';
+}
+
+export interface UuidData {
+  /** The canonical hyphenated lowercase UUID. */
+  readonly value: string;
+  /** The version generated: `'4'` or `'7'`. */
+  readonly version: '4' | '7';
+}
+
+/** ULID takes no options beyond the shared `seed`. */
+export type UlidOptions = RequestOptions;
+
+export interface UlidData {
+  /** The 26-character Crockford-Base32 ULID. */
+  readonly value: string;
+}
+
+export interface NanoIdOptions extends RequestOptions {
+  /** Id length in characters (1–255). Defaults to 21. */
+  readonly size?: number;
+  /** Custom alphabet to draw from. Defaults to nanoid’s URL-safe 64-character set. */
+  readonly alphabet?: string;
+}
+
+export interface NanoIdData {
+  /** The generated Nano ID. */
+  readonly value: string;
+}
+
+/** ObjectId takes no options beyond the shared `seed`. */
+export type ObjectIdOptions = RequestOptions;
+
+export interface ObjectIdData {
+  /** The 24-character hex MongoDB ObjectId. */
+  readonly value: string;
+}
+
+export interface SequenceOptions extends RequestOptions {
+  /** First value of the sequence. Defaults to 1. */
+  readonly start?: number;
+  /** Increment between consecutive records. Defaults to 1; must be non-zero. */
+  readonly step?: number;
+}
+
+export interface SequenceData {
+  /** The sequence value: `start + index · step`. */
+  readonly value: number;
 }
 
 /**

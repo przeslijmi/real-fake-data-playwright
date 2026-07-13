@@ -5,6 +5,45 @@ All notable changes to `@przeslijmi/real-fake-data-playwright` are documented he
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.12.0] - 2026-07-12
+
+Adds product & service **offerings** for all 27 EU countries plus a
+multi-country aggregate. The fixture grows from **274** to **302** typed
+generators.
+
+### Added
+
+- **Offering generators for all 27 EU countries.** New method pairs
+  `<cc>Offering(opts?)` / `<cc>Offerings(count, opts?)` for every ISO code, each
+  returning a localized product or service — `{ value, offeringName, kind, unit,
+  price, currency, industryCode, industryName, language }`. `price` is a single
+  plausible amount in EUR minor units (cents), snapped onto a sensible grid.
+  Options: `industry` (NACE code), `type` (`product`/`service`), `industryName`
+  / `offeringName` full-text filters, `language`, and the shared `edge` /
+  `extreme` / `invalid` triggers (`invalid` cannot combine with `edge`/`extreme`).
+- **Multi-country `offering(opts?)` / `offerings(count, opts?)`.** Draws each
+  record from one of `countries` (an array of ISO codes; omit for all 27) and
+  reports the `country` it came from.
+
+## [1.11.0] - 2026-07-05
+
+Adds synthetic ID generators — the technical primary keys every record needs.
+The fixture grows from **269** to **274** typed generators.
+
+### Added
+
+- **Five synthetic ID generators.** New locale-agnostic method pairs:
+  `uuid(opts?)` / `uuids(count, opts?)` — a UUID, `version: '4'` (random,
+  default) or `'7'` (time-ordered, RFC 9562); `ulid` — a 26-character
+  Crockford-Base32 ULID; `nanoId` — a compact URL-safe Nano ID with `size` and a
+  custom `alphabet`; `objectId` — a 24-character hex MongoDB ObjectId; and
+  `sequence` — an auto-increment integer with `start` (default 1) and `step`
+  (default 1), where a plural call returns the run `start, start + step, …`.
+  Exported data types: `UuidData`, `UlidData`, `NanoIdData`, `ObjectIdData`,
+  `SequenceData` (and matching `*Options`). Like everything else they are
+  deterministic from the `seed`, so a seeded UUID is reproducible; any embedded
+  timestamp (UUID v7, ULID, ObjectId) is seed-derived, not wall-clock.
+
 ## [1.10.0] - 2026-07-05
 
 Extends the IBAN family from Poland to all 27 EU member states. The fixture
