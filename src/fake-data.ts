@@ -53,6 +53,10 @@ import type {
   CountryCode,
   CustomRegexData,
   CustomRegexOptions,
+  EnumData,
+  EnumOptions,
+  ObjectData,
+  ObjectOptions,
   UuidData,
   UuidOptions,
   UlidData,
@@ -798,6 +802,12 @@ export type FakeData = PersonNameMethods &
     /** Random string matching a supplied regex `pattern`. Requires the Pro plan or above. */
     customRegex(options: CustomRegexOptions): Promise<CustomRegexData>;
     customRegexes(count: number, options: CustomRegexOptions): Promise<CustomRegexData[]>;
+    /** Draw a member from a weighted enumeration (`choices` map of member → relative weight). */
+    enum(options: EnumOptions): Promise<EnumData>;
+    enums(count: number, options: EnumOptions): Promise<EnumData[]>;
+    /** Draw an object from a weighted list of `{ object, weight }` candidates. */
+    object(options: ObjectOptions): Promise<ObjectData>;
+    objects(count: number, options: ObjectOptions): Promise<ObjectData[]>;
     /** UUID — `version: '4'` (random, default) or `'7'` (time-ordered). */
     uuid(options?: UuidOptions): Promise<UuidData>;
     uuids(count: number, options?: UuidOptions): Promise<UuidData[]>;
@@ -974,6 +984,20 @@ const toAggregateWire = (
     ...(countries === undefined ? {} : { countries: countries.join(',') }),
   };
 };
+
+/**
+ * Builds the wire query for the weighted `enum` / `object` generators. Their
+ * `choices` (a map or a list) is carried as a single JSON query param, so it is
+ * serialized here; the rest of the options — `seed` and the `edge` / `extreme`
+ * / `invalid` mode flags — pass through unchanged as plain scalars.
+ */
+const toWeightedWire = (
+  weightedOptions: Omit<EnumOptions, 'choices'> | Omit<ObjectOptions, 'choices'>,
+  choices: EnumOptions['choices'] | ObjectOptions['choices'],
+): RequestOptions & { readonly choices: string } => ({
+  ...weightedOptions,
+  choices: JSON.stringify(choices),
+});
 
 /**
  * Builds a {@link FakeData} facade over any {@link FakeDataProvider}. Owns the
@@ -1514,6 +1538,18 @@ export const createFakeData = (
       await run<CustomRegexData>('custom-regex', customRegexOptions),
     customRegexes: async (count, customRegexOptions) =>
       await runMany<CustomRegexData>('custom-regex', count, customRegexOptions),
+    // `choices` is a nested structure the API expects as a single JSON query
+    // param; the transport serializes each value with `String(...)`, so we
+    // stringify `choices` to JSON here (an object would become "[object
+    // Object]" otherwise). The mode flags pass through as plain booleans.
+    enum: async ({ choices, ...enumOptions }) =>
+      await run<EnumData>('enum', toWeightedWire(enumOptions, choices)),
+    enums: async (count, { choices, ...enumOptions }) =>
+      await runMany<EnumData>('enum', count, toWeightedWire(enumOptions, choices)),
+    object: async ({ choices, ...objectOptions }) =>
+      await run<ObjectData>('object', toWeightedWire(objectOptions, choices)),
+    objects: async (count, { choices, ...objectOptions }) =>
+      await runMany<ObjectData>('object', count, toWeightedWire(objectOptions, choices)),
     uuid: async (uuidOptions = {}) => await run<UuidData>('uuid', uuidOptions),
     uuids: async (count, uuidOptions = {}) => await runMany<UuidData>('uuid', count, uuidOptions),
     ulid: async (ulidOptions = {}) => await run<UlidData>('ulid', ulidOptions),

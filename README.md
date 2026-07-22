@@ -1,6 +1,6 @@
 # @przeslijmi/real-fake-data-playwright
 
-Playwright fixtures for [Real Fake Data](https://github.com/przeslijmi/rfd) — **302 generators** of realistic, synthetic test data, one typed method per record:
+Playwright fixtures for [Real Fake Data](https://github.com/przeslijmi/rfd) — **304 generators** of realistic, synthetic test data, one typed method per record:
 
 - **Person & company names and email addresses across 27 EU countries** — `dePersonName`, `itCompanyName`, `plEmail`, … in the local script and inflection (names romanised to ASCII for emails, with free, regional, and company-derived domains), plus multi-country `personName`/`companyName`/`email` that draw from any mix of countries.
 - **National identifiers and VAT / company numbers for every EU member state** — French `frNir`/`frSiren`, Italian `itCodiceFiscale`, Spanish `esDni`/`esNie`, Danish `dkCpr`, Swedish `sePersonnummer`, Dutch `nlBsn`, German `deSteuerId`/`deUstIdnr`, and 60+ more — each with correct checksums and the same `invalid`/`edge`/`extreme` triggers.
@@ -10,7 +10,7 @@ Playwright fixtures for [Real Fake Data](https://github.com/przeslijmi/rfd) — 
 - **Product & service offerings for all 27 EU countries** — `deOffering`, `frOffering`, … return a localized product/service with a plausible EUR price, unit, and its NACE industry; plus multi-country `offering` that draws from any mix. Filter by `industry`, `type`, or full-text `offeringName`/`industryName`, with the shared `edge`/`extreme`/`invalid` triggers.
 - **The full Polish national set** — valid PESELs (correct checksums), NIPs, REGONs, IBANs, KRS and land-register numbers, ID cards, passports, driving licences, and addresses drawn from real cities and streets.
 - **Synthetic IDs** — `uuid` (v4/v7), `ulid`, `nanoId`, `objectId`, and auto-increment `sequence`: the technical primary keys every record needs, deterministic from the seed (so a seeded UUID is reproducible).
-- **Locale-agnostic** — lorem ipsum and `customRegex` (a random string matching any regex you supply; Pro plan and above).
+- **Locale-agnostic** — lorem ipsum, `customRegex` (a random string matching any regex you supply; Pro plan and above), and the weighted `enum` / `object` pickers (draw a member or object from a distribution you supply).
 
 Output _looks_ real but is fake — safe for staging, demos, and seed data.
 
@@ -455,6 +455,8 @@ Every EU member state exposes `<cc>Iban(opts?)` / `<cc>Ibans(count, opts?)`, all
 | ------------------------------ | -------------------------------------- | ---------------------------------------------------------- | --------------------------------------------------------------------- |
 | `lorem(opts?)`                 | `lorems(count, opts?)`                 | `{ value, words, chars, bytes, paragraphs, startedWithLorem }` | `bytes`, `chars`, `words`, `paragraphs`, `startWithLorem`      |
 | `customRegex(opts)`            | `customRegexes(count, opts)`           | `{ value, pattern }`                                       | `pattern` (required), `maxRepetition` — Pro plan and above            |
+| `enum(opts)`                   | `enums(count, opts)`                   | `{ value, probability }`                                   | `choices` (required — weighted map `{member:weight}` or bare array `[…]` for equal weights), `edge`, `extreme`, `invalid` |
+| `object(opts)`                 | `objects(count, opts)`                 | `{ value, probability }`                                   | `choices` (required — weighted `{object,weight}[]` or bare array of objects for equal weights), `edge`, `extreme`, `invalid` |
 
 #### Synthetic IDs
 

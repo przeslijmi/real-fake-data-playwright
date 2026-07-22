@@ -1010,6 +1010,71 @@ export interface CustomRegexOptions extends RequestOptions {
   readonly maxRepetition?: number;
 }
 
+export interface EnumOptions extends RequestOptions {
+  /**
+   * The enumeration to draw from, in either shape (required):
+   * - a weighted map of member → **relative** weight, e.g. `{ gold: 1, silver:
+   *   4, bronze: 15 }` (drawn 1/20, 4/20, 15/20; weights need not sum to 1); or
+   * - a bare array of members, e.g. `['gold', 'silver', 'bronze']`, for an
+   *   **equal** distribution (each weight 1).
+   */
+  readonly choices: Readonly<Record<string, number>> | readonly string[];
+  /**
+   * Invert the distribution: the least-probable member becomes the most likely
+   * (a zero-weight member rises to the top). Requires the Pro plan or above.
+   */
+  readonly edge?: boolean;
+  /** Return the drawn member wrapped in a hostile encoding. Requires the Pro plan or above. */
+  readonly extreme?: boolean;
+  /** Return a value that is NOT in `choices` (probability 0). */
+  readonly invalid?: boolean;
+}
+
+export interface EnumData {
+  /** The drawn enum member. */
+  readonly value: string;
+  /** The member's weight normalized by the sum of all weights. */
+  readonly probability: number;
+}
+
+export interface ObjectChoiceInput {
+  /** The candidate returned if drawn — any JSON value. */
+  readonly object: unknown;
+  /** This candidate's relative weight. */
+  readonly weight: number;
+}
+
+export interface ObjectOptions extends RequestOptions {
+  /**
+   * The candidates to draw from, in either shape (required):
+   * - a weighted list of `{ object, weight }` pairs (weights **relative**,
+   *   normalized by their sum); or
+   * - a bare array of candidates (any JSON values), e.g. `[{ tier: 'gold' },
+   *   { tier: 'free' }]`, for an **equal** distribution (each weight 1).
+   */
+  readonly choices: readonly ObjectChoiceInput[] | readonly unknown[];
+  /**
+   * Invert the distribution: the least-probable candidate becomes the most
+   * likely (a zero-weight candidate rises to the top). Requires the Pro plan
+   * or above.
+   */
+  readonly edge?: boolean;
+  /**
+   * Return the drawn candidate with its string and number leaves wrapped in a
+   * hostile encoding. Requires the Pro plan or above.
+   */
+  readonly extreme?: boolean;
+  /** Return a sentinel object not among `choices` (probability 0). */
+  readonly invalid?: boolean;
+}
+
+export interface ObjectData {
+  /** The drawn candidate, returned verbatim. */
+  readonly value: unknown;
+  /** The candidate's weight normalized by the sum of all weights. */
+  readonly probability: number;
+}
+
 export interface PolishPeselData {
   readonly value: string;
   readonly birthDate: string;

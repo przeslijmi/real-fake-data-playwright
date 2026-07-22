@@ -5,6 +5,25 @@ All notable changes to `@przeslijmi/real-fake-data-playwright` are documented he
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.13.0] - 2026-07-19
+
+Adds the weighted `enum` and `object` pickers — draw a member or a whole object
+from a distribution you supply. The fixture grows from **302** to **304** typed
+generators.
+
+### Added
+
+- **`enum(opts)` / `enums(count, opts)`.** Draw a member from a weighted map
+  (`choices`, member → **relative** weight; need not sum to 1), returning
+  `{ value, probability }` where `probability` is the drawn member's normalized
+  weight. Supports the shared `edge` (inverts the distribution — the rarest
+  member becomes the most likely), `extreme` (hostile-encoded value), and
+  `invalid` (a value not in `choices`) triggers.
+- **`object(opts)` / `objects(count, opts)`.** The object counterpart: draw from
+  a weighted list of `{ object, weight }` candidates and get the chosen object
+  back verbatim, with the same three mode triggers. `choices` is sent as a
+  single JSON query param under the hood.
+
 ## [1.12.0] - 2026-07-12
 
 Adds product & service **offerings** for all 27 EU countries plus a
