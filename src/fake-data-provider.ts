@@ -28,4 +28,11 @@ export interface FakeDataProvider {
     path: string,
     query: Readonly<Record<string, QueryValue>>,
   ): Promise<GeneratorResponse<Data>>;
+
+  /**
+   * `POST /v1/compose` — fill a caller-supplied document skeleton in one call.
+   * Unlike {@link generate} (query params on a GET), compose takes a JSON body,
+   * so `body` is the whole request document, relayed verbatim.
+   */
+  compose<Data>(body: unknown): Promise<GeneratorResponse<Data>>;
 }

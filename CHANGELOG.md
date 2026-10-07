@@ -5,6 +5,139 @@ All notable changes to `@przeslijmi/real-fake-data-playwright` are documented he
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.18.0] - 2026-10-07
+
+**`enum` and `object` can draw from a team Dictionary.** Pass `dictionary` — the name of a Dictionary defined in the Real-Fake-Data.com dashboard — instead of `choices`: `fakeData.enum({ dictionary: 'client-products' })`, `fakeData.object({ dictionary: 'plans' })`. It needs the team's API key in the fixture's `headers`. `EnumOptions` and `ObjectOptions` now take exactly one of `choices` or `dictionary`, so passing both, or neither, is a type error; existing `choices` calls are unchanged.
+
+**Every method now takes all three testing modes.** The API accepts `edge`, `extreme` and `invalid` on every generator, but 59 of the addon's option types were missing one or more of them — `uuid`, `ulid`, `nanoId`, `objectId`, `sequence`, `lorem`, `customRegex`, the per-country `vehicleRegistration`s, the name and email methods, several national identifiers and the Polish set among them — so typed code could not pass them. They all accept the three now (a new shared `ModeOptions` type), and `plPerson` gains `caseStrict`. Nothing changes for calls that do not use them.
+
+**A multi-country `vehicleRegistration` fixture.** `vehicleRegistration(opts?)` /
+`vehicleRegistrations(count, opts?)` draw a plate from any of the 29 countries and
+return `{ country, value, type, category, region? }`. The generator count grows
+from **326** to **327**.
+
+Its `type` is the one option that is not a per-country passthrough. The 29
+national `type` unions share no vocabulary — Italy's `standard` is the US's
+`passenger`, Hungary's `oldtimer` is Ireland's `vintage` is Finland's `museum` —
+so the cross-country option takes a **shared category** (`standard`, `custom`,
+`motorcycle`, `moped`, `military`, `police`, `diplomatic`, `government`,
+`commercial`, `taxi`, `trailer`, `historic`, `electric`, `temporary`, `export`,
+`dealer`, `other`) and each record reports both it and the national name. A
+`type` narrows the pool to the countries that issue it; pairing it with a
+`countries` pool that issues nothing of the kind is a 400 rather than a silent
+substitution. The per-country methods are unchanged.
+
+**`plAddress` takes a new `live` option, and a pinned seed now reproduces.**
+The endpoint serves a frozen catalogue by default — ~9,300 places, ~25,000
+streets, all 2,479 gminas, so `teryt` still resolves at every level — which
+means `plAddress({ seed: 42 })` keeps returning the same address instead of
+drifting whenever the national register is republished. Pass `live: true` for
+the full, current register, accepting that a seed may not reproduce across
+releases. No method signatures moved.
+
+**Dictionary-backed fixtures return different values than in 1.17.0.** Names,
+company names, offerings and emails are now drawn by scoring entries against the
+seed rather than by list position, so adding entries to a dictionary no longer
+reshuffles everyone else's data. That is a **one-time** change of what each seed
+yields; snapshots taken against 1.17.0 need re-recording.
+
+**No feature is gated by payment any more.** `edge`, `extreme`, `invalid` and
+compose work on every lane, anonymous callers included; `customRegex` is the one
+exception and needs a *free* account, for an audit trail of caller-supplied
+patterns rather than for revenue. Earlier entries below describe these as
+"Requires the Pro plan or above" — that was true when they were written and is
+kept as the record, but the Pro plan no longer exists.
+
+Usage is now metered purely in **tokens**: no request quota, no per-minute rate
+limit, and no per-call records cap beyond a flat 10,000 memory guard. A call
+costs `1 + ceil(records / 10)` tokens. Only the type docs changed in this
+package; no method signatures moved.
+
+## [1.17.0] - 2026-08-10
+
+The multi-country `personName`, `companyName` and `offering` fixtures now draw
+from **29** countries instead of 27 — the US and Canada join the pool that
+`email` already spanned. No new methods, so the generator count stays at
+**326**; `CountryCode` already carried `'us'` and `'ca'`, so
+`personName({ countries: ['us', 'ca'] })` type-checked before this release and
+merely returned a 400 from the API.
+
+**`offering` is now multi-currency.** US offerings are quoted in USD and
+Canadian ones in CAD, and prices are *not* rate-converted, so an unpinned
+`offerings(100)` mixes EUR, USD and CAD. Each record has always reported its
+own `currency` — read it rather than assuming euros. Pin `countries` to a
+single country if a test needs one currency.
+
+Canadian records arrive bilingual: names draw from a weighted anglophone /
+French-Canadian mix, and company legal forms include `Ltée` and `ULC` beside
+`Inc.` and `Ltd.`.
+
+Also corrects the README and type docs, which described the plate family as
+EU-only — `usVehicleRegistration` and `caVehicleRegistration` have shipped
+since 1.15.0 and 1.16.0 respectively.
+
+## [1.16.0] - 2026-08-09
+
+Adds **Canada**. Eleven new methods: `caSin`, `caBusinessNumber`,
+`caTransitNumber`, `caBankAccount`, `caVehicleRegistration`, `caPerson`,
+`caCompany`, plus `caPersonName`, `caCompanyName`, `caEmail` and `caOffering`.
+The generator count grows from **315** to **326**.
+
+Canada inverts several US expectations, and the types say so:
+
+- **`caSin` and `caBusinessNumber` are Luhn-checked**, where the US SSN and EIN
+  carry no checksum at all — so `invalid` breaks real arithmetic rather than
+  merely violating a range.
+- **`caTransitNumber`** returns both real renderings, and their **field order
+  reverses**: `XXXXX-YYY` on a cheque, `0YYYXXXXX` for EFT. `electronicFormat`
+  is always reported, whichever you asked for.
+- **`caBankAccount` is *better* standardised than `usBankAccount`**: CPA
+  Standard 006 fixes the account number at 7 or 12 digits, where no US
+  authority defines a length at all.
+- **`caBusinessNumber`'s `programAccount`** appends the CRA suffix. Mind the
+  distinction: two results sharing a `businessNumber` are the same company —
+  `…RC0001` and `…RT0001` are its corporate-tax and GST/HST accounts.
+
+Names, company forms and jurisdictions are bilingual throughout: surnames draw
+from a weighted anglophone/French-Canadian mix, legal forms include `Ltée`
+alongside `Inc.`/`Ltd.`, and `caVehicleRegistration` accepts `QC`, `Quebec` or
+`Québec` interchangeably across all 13 provinces and territories.
+
+## [1.15.0] - 2026-08-09
+
+Adds the **United States** — the first country outside the EU. Eleven new
+methods: `usSsn`, `usEin`, `usRoutingNumber`, `usBankAccount`,
+`usVehicleRegistration`, `usPerson`, `usCompany`, plus `usPersonName`,
+`usCompanyName`, `usEmail` and `usOffering`. The generator count grows from
+**304** to **315**.
+
+Three of these behave unlike their European counterparts, and the types say so:
+
+- **`usSsn`** takes no `sex` or age options. An SSN encodes nothing — not sex,
+  not birth date, and since 2011 not even a state of issue — so there would be
+  nothing for them to constrain.
+- **`usPerson`** does accept them, but they shape the drawn `birthDate` and name
+  directly rather than being decoded from the identifier, as they are for a CPR
+  or PESEL.
+- **`usBankAccount`** returns a checksum-valid routing number paired with a
+  synthetic account number. That asymmetry is inherent: the US has no national
+  account-number standard, so there is no checksum or registry to validate the
+  account half against. `usRoutingNumber({ realBank: true })` draws a genuine
+  published number from a bundled registry.
+
+`usVehicleRegistration` covers all 51 jurisdictions with each state's own serial
+format, and reports `state` rather than expecting you to parse it out of the
+plate — a US plate does not encode its jurisdiction. Wyoming additionally
+reports the `county` its leading number identifies.
+
+## [1.14.0] - 2026-07-30
+
+Adds `compose()` — seed a whole nested dataset in one call. You send a `shape`
+skeleton with `$`-sources (`$generator.…`, `$count`, `$generators`/`shared`,
+`$date`/`$anchor`) and get back the filled document, foreign keys and dates
+already consistent. Requires a Pro API key. The generator count is unchanged
+(**304**) — compose is a capability over the generators, not a new one.
+
 ## [1.13.0] - 2026-07-19
 
 Adds the weighted `enum` and `object` pickers — draw a member or a whole object

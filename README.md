@@ -1,16 +1,18 @@
 # @przeslijmi/real-fake-data-playwright
 
-Playwright fixtures for [Real Fake Data](https://github.com/przeslijmi/rfd) — **304 generators** of realistic, synthetic test data, one typed method per record:
+Playwright fixtures for [Real Fake Data](https://github.com/przeslijmi/rfd) — **327 generators** of realistic, synthetic test data, one typed method per record:
 
-- **Person & company names and email addresses across 27 EU countries** — `dePersonName`, `itCompanyName`, `plEmail`, … in the local script and inflection (names romanised to ASCII for emails, with free, regional, and company-derived domains), plus multi-country `personName`/`companyName`/`email` that draw from any mix of countries.
+- **Person & company names and email addresses across 29 countries** (the 27 EU member states plus the US and Canada) — `dePersonName`, `itCompanyName`, `usPersonName`, `caCompanyName`, `plEmail`, … in the local script and inflection (names romanised to ASCII for emails, with free, regional, and company-derived domains), plus multi-country `personName`/`companyName`/`email` that draw from any mix of countries.
 - **National identifiers and VAT / company numbers for every EU member state** — French `frNir`/`frSiren`, Italian `itCodiceFiscale`, Spanish `esDni`/`esNie`, Danish `dkCpr`, Swedish `sePersonnummer`, Dutch `nlBsn`, German `deSteuerId`/`deUstIdnr`, and 60+ more — each with correct checksums and the same `invalid`/`edge`/`extreme` triggers.
 - **One-call whole people and companies for every EU country** — `dkPerson`, `frPerson`, … return a consistent name + national number; `dkCompany`, `deCompany`, `nlCompany`, … return a consistent trading name, legal form, and the country's register / tax / VAT numbers, all from one seed.
-- **Vehicle registration plates for all 27 EU countries** — `deVehicleRegistration`, `frVehicleRegistration`, `itVehicleRegistration`, … produce realistic plates with each country's own plate kinds (standard, custom/vanity, motorcycle, diplomatic, military, historic, electric, …), region/district codes, era formats, and the shared `edge`/`extreme` triggers.
+- **Vehicle registration plates for all 29 countries** — `deVehicleRegistration`, `frVehicleRegistration`, `itVehicleRegistration`, plus `usVehicleRegistration` (all 51 US jurisdictions) and `caVehicleRegistration` (all 13 provinces and territories) — produce realistic plates with each country's own plate kinds (standard, custom/vanity, motorcycle, diplomatic, military, historic, electric, …), region/district codes, era formats, and the shared `edge`/`extreme` triggers. Plus multi-country `vehicleRegistration`, whose `type` speaks a **shared** category vocabulary rather than any one country's names — `{ type: 'historic' }` reaches Hungary's `oldtimer`, Ireland's `vintage` and Finland's `museum` alike.
 - **IBANs for all 27 EU countries** — `deIban`, `frIban`, `itIban`, … return a valid IBAN with correct mod-97 check digits (and, where the national account number has its own internal check digit, that too — Italy's CIN, Spain's DC, France's clé RIB, and the rest), embedding a **real** bank code you can pin by `bankCode` or `bankName`. The shared `invalid` / `edge` / `extreme` triggers apply.
-- **Product & service offerings for all 27 EU countries** — `deOffering`, `frOffering`, … return a localized product/service with a plausible EUR price, unit, and its NACE industry; plus multi-country `offering` that draws from any mix. Filter by `industry`, `type`, or full-text `offeringName`/`industryName`, with the shared `edge`/`extreme`/`invalid` triggers.
+- **Product & service offerings for all 29 countries** — `deOffering`, `frOffering`, `usOffering`, `caOffering`, … return a localized product/service with a plausible price, unit, and its NACE industry; plus multi-country `offering` that draws from any mix. Prices are EUR for the EU members, **USD for the US and CAD for Canada** (not rate-converted), so an unpinned multi-country batch mixes currencies — each record reports its own `currency`. Filter by `industry`, `type`, or full-text `offeringName`/`industryName`, with the shared `edge`/`extreme`/`invalid` triggers.
+- **United States** — `usSsn`, `usEin`, `usRoutingNumber`, `usBankAccount`, `usVehicleRegistration`, `usPerson`, `usCompany`, plus `usPersonName`/`usCompanyName`/`usEmail`/`usOffering`. Three differ from their EU counterparts by nature: `usSsn` takes no `sex`/age options (an SSN encodes neither), `usPerson` accepts them but *draws* the birth date rather than decoding it, and `usBankAccount` pairs a checksum-valid ABA routing number with a synthetic account number — the US has no national account-number standard to validate against. `usRoutingNumber({ realBank: true })` returns a genuine published routing number. `usVehicleRegistration` covers all 51 jurisdictions in each state's own format and reports `state` (a US plate doesn't encode it), with Wyoming also reporting its `county`.
+- **Canada** — `caSin`, `caBusinessNumber`, `caTransitNumber`, `caBankAccount`, `caVehicleRegistration`, `caPerson`, `caCompany`, plus `caPersonName`/`caCompanyName`/`caEmail`/`caOffering`. Where the US identifiers lack checksums, Canada's have them: the SIN and Business Number are both Luhn-checked, so `invalid` breaks real arithmetic. `caTransitNumber` returns both renderings — `XXXXX-YYY` on a cheque and `0YYYXXXXX` for EFT, whose **field order reverses** — and `caBankAccount` follows CPA Standard 006 (7 or 12 digits), making it *better* standardised than its US counterpart. Names and company forms are bilingual (`Tremblay`, `Ltée`), and jurisdictions resolve in either language: `QC`, `Quebec`, `Québec`.
 - **The full Polish national set** — valid PESELs (correct checksums), NIPs, REGONs, IBANs, KRS and land-register numbers, ID cards, passports, driving licences, and addresses drawn from real cities and streets.
 - **Synthetic IDs** — `uuid` (v4/v7), `ulid`, `nanoId`, `objectId`, and auto-increment `sequence`: the technical primary keys every record needs, deterministic from the seed (so a seeded UUID is reproducible).
-- **Locale-agnostic** — lorem ipsum, `customRegex` (a random string matching any regex you supply; Pro plan and above), and the weighted `enum` / `object` pickers (draw a member or object from a distribution you supply).
+- **Locale-agnostic** — lorem ipsum, `customRegex` (a random string matching any regex you supply; needs a free account), and the weighted `enum` / `object` pickers (draw a member or object from a distribution you supply).
 
 Output _looks_ real but is fake — safe for staging, demos, and seed data.
 
@@ -102,7 +104,7 @@ Set options with `test.use({ realFakeData: { … } })`, at any scope (file, `des
 | --------- | ------------------------ | ------------------------------------------------------------------------------------------------------- |
 | `baseUrl` | `string`                 | Base URL of the Real Fake Data API. Omit to use the public hosted API (`https://api.real-fake-data.com`); set it for a self-hosted or staging instance. |
 | `seed`    | `number`                 | Base seed for the test. Omit (the default) for fresh random data on every run; set it to pin the test to a fixed, reproducible dataset. |
-| `headers` | `Record<string, string>` | Extra headers sent with every request (e.g. an API key once your plan requires one).                    |
+| `headers` | `Record<string, string>` | Extra headers sent with every request (e.g. an API key, to draw on your account's tokens instead of the shared anonymous lane).                    |
 
 ### Random by default, reproducible on demand
 
@@ -114,24 +116,49 @@ test.use({ realFakeData: { baseUrl, seed: 42 } }); // pin this file to a fixed d
 
 With a base seed in play, the **Nth call within a test uses `seed + N`** — so the calls stay distinct from one another, yet the whole sequence reproduces identically on the next run. So three back-to-back `plPerson()` calls still return three *different* people; re-running with the same seed returns those same three. The same holds for the singleton and `createFakeData` instances. Pass `seed` on any individual call to override just that one draw.
 
+## Seed a whole dataset — `compose()`
+
+The generator methods return one record each. `compose()` fills a whole nested dataset in a single call — users with their orders, orders with their line items, foreign keys that line up. You send a `shape` skeleton whose slots are marked with `$`-sources; everything else is a literal.
+
+```ts
+const order = await fakeData.compose<{
+  id: string;
+  customer: string;
+  items: { sku: string }[];
+}>({
+  shape: {
+    id: '$generator.any.uuid.value',
+    customer: '$generator.pl.person.name',
+    items: {
+      $count: [1, 3],
+      sku: '$generator.any.nanoid.value',
+    },
+  },
+});
+```
+
+`compose()` returns the filled document (the `data`, unwrapped). The result type is caller-defined — pass a type argument to type it, or leave it `unknown`. It respects the instance's seed the same way generator calls do: an unseeded fixture returns fresh data each run, a seeded one is reproducible, and a per-call `seed` in the request pins that draw.
+
+`compose()` is available on every tier, including without an API key. The full request grammar — `$count`, `$generators`/`shared` for consistency, `$date`/`$anchor` for related dates — is documented at [real-fake-data.com/seed-a-database](https://real-fake-data.com/seed-a-database).
+
 ## Generators
 
 Each generator exposes a **singular** method returning one record and a **plural** taking `count` as its first argument and returning an array of that many. Method names are locale-prefixed (`plPesel`, `dePersonName`, `plEmail`, …) so generators for different countries never collide; the locale-agnostic `lorem` and the multi-country aggregates (`personName`, `companyName`, `email`) carry no prefix.
 
 Every method accepts optional constraints. Pass `seed` on any call to pin just that draw (overriding the instance's seed sequence when one is set).
 
-**Triggers.** Beyond each generator's own knobs, three cross-cutting flags shape *what kind* of data you get. Every generator that lists `edge` below also accepts all three:
+**Triggers.** Beyond each generator's own knobs, three cross-cutting flags shape *what kind* of data you get. **Every** generator accepts all three, whether or not its row below lists them; what each does for a given generator is in its description at [real-fake-data.com/docs](https://real-fake-data.com/docs):
 
 - **`edge: true`** — restrict output to rarely-exercised but still-valid corners (leap-day PESELs, punctuation-heavy company names, boundary serials).
-- **`invalid: true`** — deliberately corrupt the check digit so the value **fails** validation (checksum-bearing generators only); the rest of the record stays correct.
-- **`extreme: true`** — return **correct** data in a deliberately hostile *encoding*: untrimmed whitespace (incl. non-breaking spaces), invisible/zero-width characters and a leading BOM, homoglyph lookalikes, or a bidi override / stacked combining marks — one class per value, so a plural call rotates across them. Only the human-facing string is mangled and it stays recoverable after normalisation: identifiers keep their digits ASCII (homoglyphs excluded) and still checksum; names/companies/people mangle the name only, leaving `initials`, `legalForm`, birth dates, and national identifiers clean. `lorem` and `customRegex` don't take it (it would break their length / regex-match contracts). Use it to test that your pipeline trims, normalises, and compares values safely.
+- **`invalid: true`** — return a value that **fails** validation: a deliberately wrong check digit where the value has a checksum, a deliberately malformed value elsewhere; the rest of the record stays correct.
+- **`extreme: true`** — return **correct** data in a deliberately hostile *encoding*: untrimmed whitespace (incl. non-breaking spaces), invisible/zero-width characters and a leading BOM, homoglyph lookalikes, or a bidi override / stacked combining marks — one class per value, so a plural call rotates across them. Only the human-facing string is mangled and it stays recoverable after normalisation: identifiers keep their digits ASCII (homoglyphs excluded) and still checksum; names/companies/people mangle the name only, leaving `initials`, `legalForm`, birth dates, and national identifiers clean. For `lorem` and `customRegex` homoglyphs are excluded, so the value stays machine-parseable. Use it to test that your pipeline trims, normalises, and compares values safely.
 
 ```ts
 const messy = await fakeData.plPesel({ extreme: true });   // e.g. "  53022100027\n" — trims back to a valid PESEL
 const spoof = await fakeData.dePersonName({ extreme: true }); // Cyrillic-lookalike letters; initials stay clean
 ```
 
-#### Names across 27 EU countries
+#### Names across 29 countries
 
 Every country listed below exposes `<cc>PersonName`/`<cc>PersonNames`, `<cc>CompanyName`/`<cc>CompanyNames`, `<cc>Company`/`<cc>Companies`, `<cc>Email`/`<cc>Emails`, and `<cc>Offering`/`<cc>Offerings`, where `<cc>` is its ISO 3166 code: `at`, `be`, `bg`, `cy`, `cz`, `de`, `dk`, `ee`, `es`, `fi`, `fr`, `gr`, `hr`, `hu`, `ie`, `it`, `lt`, `lu`, `lv`, `mt`, `nl`, `pl`, `pt`, `ro`, `se`, `si`, `sk`.
 
@@ -146,6 +173,7 @@ Every country listed below exposes `<cc>PersonName`/`<cc>PersonNames`, `<cc>Comp
 | `companyName(opts?)`    | `companyNames(count, opts?)`    | `{ value, legalForm, strategy, country }`   | `strategy`, `edge`, `countries`        |
 | `email(opts?)`          | `emails(count, opts?)`          | `{ value, localPart, domain, pattern, domainCategory, company, plusTag, country }` | `domain`, `domainCategory`, `pattern`, `plusTag`, `exotic`, `edge`, `countries` |
 | `offering(opts?)`       | `offerings(count, opts?)`       | `{ value, offeringName, kind, unit, price, currency, industryCode, industryName, language, country }` | `industry`, `type`, `industryName`, `offeringName`, `language`, `edge`, `extreme`, `invalid`, `countries` |
+| `vehicleRegistration(opts?)` | `vehicleRegistrations(count, opts?)` | `{ country, value, type, category, region? }` | `type` (a shared category), `edge`, `extreme`, `invalid`, `countries` |
 
 ```ts
 const ceo = await fakeData.dePersonName({ sex: 'f' });        // German given name + surname
@@ -158,15 +186,15 @@ const cart = await fakeData.offering({ countries: ['pl', 'it'], industry: '56.11
 
 An **offering** is a product or service a business sells: a localized `value`/`offeringName`, a `kind` (`product`/`service`), a `unit` (`pc`, `month`, `kg`, …), a `price` in **EUR minor units (cents)** with `currency`, and the `industryCode` + localized `industryName` it belongs to. Pin an `industry` by NACE code, restrict to `type`, or full-text filter with `offeringName`/`industryName`; `language` pins the name language (multilingual countries otherwise blend theirs). `edge`/`extreme`/`invalid` apply as elsewhere (`invalid` cannot combine with `edge`/`extreme`).
 
-`countries` (on the prefix-less `personName`/`companyName`/`email`/`offering` only) is an array of ISO codes; each record is generated by one country picked from the list. Omit it to draw from all 27. The per-country `legalForm` values differ by country (e.g. `GmbH`, `S.r.l.`, `S.A.`), so they are typed as `string`; pass `'any'` for a weighted-random one or `'none'` to omit it. For email, `domainCategory: 'corporate'` builds the address on a company-derived domain and reports the brand in `company`; non-Latin names (Cyrillic, Greek) are romanised to ASCII.
+`countries` (on the prefix-less `personName`/`companyName`/`email`/`offering`/`vehicleRegistration` only) is an array of ISO codes; each record is generated by one country picked from the list. Omit it to draw from all 29 — the 27 EU member states plus the US and Canada. The per-country `legalForm` values differ by country (e.g. `GmbH`, `S.r.l.`, `S.A.`), so they are typed as `string`; pass `'any'` for a weighted-random one or `'none'` to omit it. For email, `domainCategory: 'corporate'` builds the address on a company-derived domain and reports the brand in `company`; non-Latin names (Cyrillic, Greek) are romanised to ASCII.
 
 #### Polish national generators
 
 | Singular                       | Plural                                 | Returns (singular)                                          | Common options                                                        |
 | ------------------------------ | -------------------------------------- | ---------------------------------------------------------- | --------------------------------------------------------------------- |
-| `plPesel(opts?)`               | `plPesels(count, opts?)`               | `{ value, birthDate, sex }`                                | `sex`, `atAge`, `olderThan`, `youngerThan`, `bornOn/Before/After`, `invalid` |
-| `plPerson(opts?)`              | `plPeople(count, opts?)`               | `{ name, surname, initials, birthDate, pesel }`            | same as `plPesel`                                                     |
-| `plAddress(opts?)`             | `plAddresses(count, opts?)`            | `{ buildingNumber, postalCode, cityName, …, terytCodes }` | `teryt` (1–7 digit prefix)                                            |
+| `plPesel(opts?)`               | `plPesels(count, opts?)`               | `{ value, birthDate, sex }`                                | `sex`, `atAge`, `olderThan`, `youngerThan`, `bornOn/Before/After`, `edge`, `extreme`, `invalid` |
+| `plPerson(opts?)`              | `plPeople(count, opts?)`               | `{ name, surname, initials, birthDate, pesel }`            | same as `plPesel`, plus `caseStrict`                                  |
+| `plAddress(opts?)`             | `plAddresses(count, opts?)`            | `{ buildingNumber, postalCode, cityName, …, terytCodes }` | `teryt` (1–7 digit prefix), `live` (full current register; default draws the frozen catalogue, so a seed reproduces) |
 | `plNip(opts?)`                 | `plNips(count, opts?)`                 | `{ value, digits }`                                        | `format`, `invalid`                                                   |
 | `plIban(opts?)`                | `plIbans(count, opts?)`                | `{ value, electronicFormat, bankCode, bankName }`         | `format`, `bankCode`, `bankName`, `invalid`                          |
 | `plRegon(opts?)`               | `plRegons(count, opts?)`               | `{ value, variant }`                                       | `variant` (`short`/`long`/`any`), `invalid`                          |
@@ -179,9 +207,9 @@ An **offering** is a product or service a business sells: a localized `value`/`o
 | `plDrivingLicense(opts?)`      | `plDrivingLicenses(count, opts?)`      | `{ value, serial, year, suffix }`                          | `format`, `year`                                                     |
 | `plVehicleRegistration(opts?)` | `plVehicleRegistrations(count, opts?)` | `{ value, prefix, individualPart, type, … }`              | `type`, `voivodeship`, `county`, `format`, `edge`, `extreme`        |
 
-The Polish plate is also part of the all-27-country vehicle-registration family below.
+The Polish plate is also part of the all-29-country vehicle-registration family below.
 
-A Polish person name on its own (no PESEL/birth date) is `plPersonName` — part of the 27-country table above.
+A Polish person name on its own (no PESEL/birth date) is `plPersonName` — part of the 29-country table above.
 
 #### EU national identifiers
 
@@ -443,6 +471,17 @@ Every EU member state exposes `<cc>VehicleRegistration(opts?)` / `<cc>VehicleReg
 | Slovenia (`si`) | `siVehicleRegistration` | standard, custom, motorcycle, military, diplomatic, police, export | `region`, `format` |
 | Slovakia (`sk`) | `skVehicleRegistration` | standard, motorcycle, military, diplomatic, consular, trailer, historic, electric, dealer, custom | `era`, `district`, `region`, `format` |
 
+**All 29 at once** — `vehicleRegistration(opts?)` / `vehicleRegistrations(count, opts?)` draw a country per record and return `{ country, value, type, category, region? }`. Because the 29 `type` unions above share no vocabulary — `standard` in Italy is `passenger` in the US, `oldtimer` in Hungary is `vintage` in Ireland is `museum` in Finland — the cross-country `type` takes a **shared category** instead: `standard`, `custom`, `motorcycle`, `moped`, `military`, `police`, `diplomatic`, `government`, `commercial`, `taxi`, `trailer`, `historic`, `electric`, `temporary`, `export`, `dealer`, `other`. Each record reports both — `category` is what you asked for, `type` is what that country calls it.
+
+A `type` narrows the pool to the countries that issue it (`{ type: 'taxi' }` draws from the seven that do), and combining it with a `countries` pool that issues nothing of the kind is a 400 rather than a silent substitution. `format`, `era`, `script` and the region filters stay on the per-country methods, where their vocabularies are exact.
+
+```ts
+const plates = await fakeData.vehicleRegistrations(3, { type: 'historic' });
+// [{ country: 'ie', value: 'ZV 4861', type: 'vintage',  category: 'historic' },
+//  { country: 'hr', value: 'GN-PV-842', type: 'historic', category: 'historic' },
+//  { country: 'pl', value: 'SRB 5S', type: 'historic', category: 'historic', region: 'śląskie' }]
+```
+
 #### IBANs
 
 Every EU member state exposes `<cc>Iban(opts?)` / `<cc>Ibans(count, opts?)`, all returning the same shape `{ value, electronicFormat, bankCode, bankName }`. The IBAN carries correct mod-97 check digits and, where the national account number has an internal check digit, that is reproduced too. Pin the issuing bank with `bankCode` (country-specific width) or `bankName` (case-insensitive fragment, mutually exclusive), or let it be chosen at random. Every method takes `format` (`grouped`/`compact`) and the shared `invalid` / `edge` / `extreme` triggers.
@@ -454,9 +493,9 @@ Every EU member state exposes `<cc>Iban(opts?)` / `<cc>Ibans(count, opts?)`, all
 | Singular                       | Plural                                 | Returns (singular)                                          | Common options                                                        |
 | ------------------------------ | -------------------------------------- | ---------------------------------------------------------- | --------------------------------------------------------------------- |
 | `lorem(opts?)`                 | `lorems(count, opts?)`                 | `{ value, words, chars, bytes, paragraphs, startedWithLorem }` | `bytes`, `chars`, `words`, `paragraphs`, `startWithLorem`      |
-| `customRegex(opts)`            | `customRegexes(count, opts)`           | `{ value, pattern }`                                       | `pattern` (required), `maxRepetition` — Pro plan and above            |
-| `enum(opts)`                   | `enums(count, opts)`                   | `{ value, probability }`                                   | `choices` (required — weighted map `{member:weight}` or bare array `[…]` for equal weights), `edge`, `extreme`, `invalid` |
-| `object(opts)`                 | `objects(count, opts)`                 | `{ value, probability }`                                   | `choices` (required — weighted `{object,weight}[]` or bare array of objects for equal weights), `edge`, `extreme`, `invalid` |
+| `customRegex(opts)`            | `customRegexes(count, opts)`           | `{ value, pattern }`                                       | `pattern` (required), `maxRepetition` — needs a free account            |
+| `enum(opts)`                   | `enums(count, opts)`                   | `{ value, probability }`                                   | `choices` (weighted map `{member:weight}` or bare array `[…]` for equal weights) **or** `dictionary` (name of an enum Dictionary defined in the Real-Fake-Data.com dashboard; needs the team's API key in `headers`) — exactly one; `edge`, `extreme`, `invalid` |
+| `object(opts)`                 | `objects(count, opts)`                 | `{ value, probability }`                                   | `choices` (weighted `{object,weight}[]` or bare array of objects for equal weights) **or** `dictionary` (name of an object Dictionary defined in the Real-Fake-Data.com dashboard; needs the team's API key in `headers`) — exactly one; `edge`, `extreme`, `invalid` |
 
 #### Synthetic IDs
 
@@ -474,7 +513,7 @@ For `sequence`, a plural call returns the run `start, start + step, …`; a sing
 
 ### Generating many records at once
 
-Every plural takes `count` as its first argument and returns an array. The bound (10 by default, raised by paid tiers) is enforced by the API — an out-of-range `count` throws a `RealFakeDataError` (HTTP 400), never a silent clamp. A plural is a single request, so — when a seed is in play — it consumes one slot of the seed sequence just like a singular call.
+Every plural takes `count` as its first argument and returns an array. The bound (10 by default, raised once you have credits) is enforced by the API — an out-of-range `count` throws a `RealFakeDataError` (HTTP 400), never a silent clamp. A plural is a single request, so — when a seed is in play — it consumes one slot of the seed sequence just like a singular call.
 
 ```ts
 const team = await fakeData.plPeople(5, { sex: 'f' }); // PolishPersonData[] of length 5

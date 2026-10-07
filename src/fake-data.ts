@@ -102,6 +102,8 @@ import type {
   EmailOptions,
   AnyOfferingData,
   AnyOfferingOptions,
+  AnyVehicleRegistrationData,
+  AnyVehicleRegistrationOptions,
   OfferingData,
   OfferingOptions,
   EsCifData,
@@ -328,12 +330,38 @@ import type {
   SiVehicleRegistrationOptions,
   SkVehicleRegistrationData,
   SkVehicleRegistrationOptions,
+  UsBankAccountData,
+  UsBankAccountOptions,
+  UsCompanyData,
+  UsEinData,
+  UsEinOptions,
+  UsPersonData,
+  UsPersonOptions,
+  UsRoutingNumberData,
+  UsRoutingNumberOptions,
+  UsSsnData,
+  UsSsnOptions,
+  UsVehicleRegistrationData,
+  UsVehicleRegistrationOptions,
+  CaBankAccountData,
+  CaBankAccountOptions,
+  CaBusinessNumberData,
+  CaBusinessNumberOptions,
+  CaCompanyData,
+  CaPersonData,
+  CaPersonOptions,
+  CaSinData,
+  CaSinOptions,
+  CaTransitNumberData,
+  CaTransitNumberOptions,
+  CaVehicleRegistrationData,
+  CaVehicleRegistrationOptions,
 } from './types.js';
 
 /**
  * Singular + plural method pair every country's `person-name` generator
  * contributes: `dePersonName`/`dePersonNames`, `plPersonName`/`plPersonNames`,
- * and so on for all 27 country codes.
+ * and so on for all 29 country codes.
  */
 type PersonNameMethods = {
   [Country in CountryCode as `${Country}PersonName`]: (
@@ -394,6 +422,26 @@ type OfferingMethods = {
 };
 
 /**
+ * The request document for {@link FakeData.compose} — a caller-supplied skeleton
+ * whose slots are marked with `$`-sources. Its grammar (`$count`, `$generators`,
+ * `$date`, …) is documented at real-fake-data.com/seed-a-database and validated
+ * by the API, so the fixture types it loosely: `shape` is required, the rest are
+ * optional pass-through fields.
+ */
+export interface ComposeRequest {
+  /** The document to fill; field names and nesting are yours. */
+  readonly shape: Readonly<Record<string, unknown>>;
+  /** Seed for reproducible output; omit to randomise each call. */
+  readonly seed?: number;
+  /** `{ start, formats }` anchor + date-fns formats, needed for `$date` fields. */
+  readonly time?: Readonly<Record<string, unknown>>;
+  /** Global entities drawn once per request, referenced by `$shared.<name>`. */
+  readonly shared?: Readonly<Record<string, unknown>>;
+  /** Output format; defaults to `"json"`. */
+  readonly format?: string;
+}
+
+/**
  * The typed surface tests use. Each generator exposes a singular method
  * returning one record and a plural returning an array of `count` records.
  *
@@ -405,8 +453,9 @@ type OfferingMethods = {
  * {@link RealFakeDataError} 400), so paid tiers can raise the ceiling without
  * a client change.
  *
- * Beyond the Polish national set below, every one of the 27 supported EU
- * countries adds a `<cc>PersonName` and `<cc>CompanyName` pair (see
+ * Beyond the Polish national set below, every one of the 29 supported
+ * countries — the 27 EU member states plus the US and Canada — adds a
+ * `<cc>PersonName` and `<cc>CompanyName` pair (see
  * {@link PersonNameMethods} and {@link LocaleCompanyNameMethods}).
  */
 export type FakeData = PersonNameMethods &
@@ -786,23 +835,37 @@ export type FakeData = PersonNameMethods &
       count: number,
       options?: DrivingLicenseOptions,
     ): Promise<PolishDrivingLicenseData[]>;
-    /** Multi-country person name: each record is drawn from one of `countries` (default: all 27). */
+    /** Multi-country person name: each record is drawn from one of `countries` (default: all 29). */
     personName(options?: AnyPersonNameOptions): Promise<AnyPersonNameData>;
     personNames(count: number, options?: AnyPersonNameOptions): Promise<AnyPersonNameData[]>;
-    /** Multi-country company name: each record is drawn from one of `countries` (default: all 27). */
+    /** Multi-country company name: each record is drawn from one of `countries` (default: all 29). */
     companyName(options?: AnyCompanyNameOptions): Promise<AnyCompanyNameData>;
     companyNames(count: number, options?: AnyCompanyNameOptions): Promise<AnyCompanyNameData[]>;
     email(options?: AnyEmailOptions): Promise<AnyEmailData>;
     emails(count: number, options?: AnyEmailOptions): Promise<AnyEmailData[]>;
-    /** Multi-country offering: each record is drawn from one of `countries` (default: all 27). */
+    /** Multi-country offering: each record is drawn from one of `countries` (default: all 29). */
     offering(options?: AnyOfferingOptions): Promise<AnyOfferingData>;
     offerings(count: number, options?: AnyOfferingOptions): Promise<AnyOfferingData[]>;
+    /**
+     * Multi-country registration plate: each record is drawn from one of
+     * `countries` (default: all 29), in that country's real format. `type`
+     * takes a shared plate category rather than a national name, and narrows
+     * the pool to the countries that issue it.
+     */
+    vehicleRegistration(options?: AnyVehicleRegistrationOptions): Promise<AnyVehicleRegistrationData>;
+    vehicleRegistrations(
+      count: number,
+      options?: AnyVehicleRegistrationOptions,
+    ): Promise<AnyVehicleRegistrationData[]>;
     lorem(options?: LoremOptions): Promise<LoremData>;
     lorems(count: number, options?: LoremOptions): Promise<LoremData[]>;
-    /** Random string matching a supplied regex `pattern`. Requires the Pro plan or above. */
+    /** Random string matching a supplied regex `pattern`. Requires a free account. */
     customRegex(options: CustomRegexOptions): Promise<CustomRegexData>;
     customRegexes(count: number, options: CustomRegexOptions): Promise<CustomRegexData[]>;
-    /** Draw a member from a weighted enumeration (`choices` map of member → relative weight). */
+    /**
+     * Draw a member from a weighted enumeration — `choices` (map of member →
+     * relative weight, or a bare array), or a team `dictionary` by name.
+     */
     enum(options: EnumOptions): Promise<EnumData>;
     enums(count: number, options: EnumOptions): Promise<EnumData[]>;
     /** Draw an object from a weighted list of `{ object, weight }` candidates. */
@@ -860,6 +923,57 @@ export type FakeData = PersonNameMethods &
     dkPeople(count: number, options?: DkPersonOptions): Promise<DkPersonData[]>;
     dkCvr(options?: DkCvrOptions): Promise<DkCvrData>;
     dkCvrs(count: number, options?: DkCvrOptions): Promise<DkCvrData[]>;
+
+    /* United States */
+    usSsn(options?: UsSsnOptions): Promise<UsSsnData>;
+    usSsns(count: number, options?: UsSsnOptions): Promise<UsSsnData[]>;
+    usEin(options?: UsEinOptions): Promise<UsEinData>;
+    usEins(count: number, options?: UsEinOptions): Promise<UsEinData[]>;
+    usRoutingNumber(options?: UsRoutingNumberOptions): Promise<UsRoutingNumberData>;
+    usRoutingNumbers(
+      count: number,
+      options?: UsRoutingNumberOptions,
+    ): Promise<UsRoutingNumberData[]>;
+    usBankAccount(options?: UsBankAccountOptions): Promise<UsBankAccountData>;
+    usBankAccounts(count: number, options?: UsBankAccountOptions): Promise<UsBankAccountData[]>;
+    usVehicleRegistration(
+      options?: UsVehicleRegistrationOptions,
+    ): Promise<UsVehicleRegistrationData>;
+    usVehicleRegistrations(
+      count: number,
+      options?: UsVehicleRegistrationOptions,
+    ): Promise<UsVehicleRegistrationData[]>;
+    usPerson(options?: UsPersonOptions): Promise<UsPersonData>;
+    usPeople(count: number, options?: UsPersonOptions): Promise<UsPersonData[]>;
+    usCompany(options?: LocaleCompanyOptions): Promise<UsCompanyData>;
+    usCompanies(count: number, options?: LocaleCompanyOptions): Promise<UsCompanyData[]>;
+
+    /* Canada */
+    caSin(options?: CaSinOptions): Promise<CaSinData>;
+    caSins(count: number, options?: CaSinOptions): Promise<CaSinData[]>;
+    caBusinessNumber(options?: CaBusinessNumberOptions): Promise<CaBusinessNumberData>;
+    caBusinessNumbers(
+      count: number,
+      options?: CaBusinessNumberOptions,
+    ): Promise<CaBusinessNumberData[]>;
+    caTransitNumber(options?: CaTransitNumberOptions): Promise<CaTransitNumberData>;
+    caTransitNumbers(
+      count: number,
+      options?: CaTransitNumberOptions,
+    ): Promise<CaTransitNumberData[]>;
+    caBankAccount(options?: CaBankAccountOptions): Promise<CaBankAccountData>;
+    caBankAccounts(count: number, options?: CaBankAccountOptions): Promise<CaBankAccountData[]>;
+    caVehicleRegistration(
+      options?: CaVehicleRegistrationOptions,
+    ): Promise<CaVehicleRegistrationData>;
+    caVehicleRegistrations(
+      count: number,
+      options?: CaVehicleRegistrationOptions,
+    ): Promise<CaVehicleRegistrationData[]>;
+    caPerson(options?: CaPersonOptions): Promise<CaPersonData>;
+    caPeople(count: number, options?: CaPersonOptions): Promise<CaPersonData[]>;
+    caCompany(options?: LocaleCompanyOptions): Promise<CaCompanyData>;
+    caCompanies(count: number, options?: LocaleCompanyOptions): Promise<CaCompanyData[]>;
     eeIsikukood(options?: EeIsikukoodOptions): Promise<EeIsikukoodData>;
     eeIsikukoods(count: number, options?: EeIsikukoodOptions): Promise<EeIsikukoodData[]>;
     eeRegistrikood(options?: EeRegistrikoodOptions): Promise<EeRegistrikoodData>;
@@ -960,6 +1074,23 @@ export type FakeData = PersonNameMethods &
     sePersonnummers(count: number, options?: SePersonnummerOptions): Promise<SePersonnummerData[]>;
     seOrganisationsnummer(options?: SeOrganisationsnummerOptions): Promise<SeOrganisationsnummerData>;
     seOrganisationsnummers(count: number, options?: SeOrganisationsnummerOptions): Promise<SeOrganisationsnummerData[]>;
+
+    /**
+     * Seed a whole nested dataset in one call — the compose endpoint. Fill a
+     * `shape` skeleton whose slots are marked with `$`-sources; returns the
+     * filled document. Because the shape is caller-defined, the result type is
+     * yours to specify (defaults to `unknown`):
+     *
+     * ```ts
+     * const order = await fakeData.compose<{ id: string; items: { sku: string }[] }>({
+     *   shape: { id: '$generator.any.uuid.value', items: { $count: 3, sku: '$generator.any.nanoid.value' } },
+     * });
+     * ```
+     *
+     * Requires a Pro API key. See real-fake-data.com/seed-a-database for the
+     * full request grammar.
+     */
+    compose<Data = unknown>(request: ComposeRequest): Promise<Data>;
   };
 
 export interface CreateFakeDataOptions {
@@ -976,7 +1107,11 @@ export interface CreateFakeDataOptions {
  * comma-separated string (`?countries=pl,sk,it`), so we join it here.
  */
 const toAggregateWire = (
-  aggregateOptions: AnyPersonNameOptions | AnyCompanyNameOptions | AnyOfferingOptions,
+  aggregateOptions:
+    | AnyPersonNameOptions
+    | AnyCompanyNameOptions
+    | AnyOfferingOptions
+    | AnyVehicleRegistrationOptions,
 ): RequestOptions => {
   const { countries, ...rest } = aggregateOptions;
   return {
@@ -992,12 +1127,23 @@ const toAggregateWire = (
  * / `invalid` mode flags — pass through unchanged as plain scalars.
  */
 const toWeightedWire = (
-  weightedOptions: Omit<EnumOptions, 'choices'> | Omit<ObjectOptions, 'choices'>,
-  choices: EnumOptions['choices'] | ObjectOptions['choices'],
+  weightedOptions: RequestOptions,
+  choices: NonNullable<EnumOptions['choices']> | NonNullable<ObjectOptions['choices']>,
 ): RequestOptions & { readonly choices: string } => ({
   ...weightedOptions,
   choices: JSON.stringify(choices),
 });
+
+/**
+ * The wire query for `enum`: `choices` serialized as above, or — for a team
+ * dictionary — the `dictionary` name passed through as a plain string.
+ */
+const toEnumWire = ({ choices, ...enumOptions }: EnumOptions): RequestOptions =>
+  choices === undefined ? enumOptions : toWeightedWire(enumOptions, choices);
+
+/** The wire query for `object`, the same way as {@link toEnumWire}. */
+const toObjectWire = ({ choices, ...objectOptions }: ObjectOptions): RequestOptions =>
+  choices === undefined ? objectOptions : toWeightedWire(objectOptions, choices);
 
 /**
  * Builds a {@link FakeData} facade over any {@link FakeDataProvider}. Owns the
@@ -1531,6 +1677,17 @@ export const createFakeData = (
       await run<AnyOfferingData>('offering', toAggregateWire(offeringOptions)),
     offerings: async (count, offeringOptions = {}) =>
       await runMany<AnyOfferingData>('offering', count, toAggregateWire(offeringOptions)),
+    vehicleRegistration: async (plateOptions = {}) =>
+      await run<AnyVehicleRegistrationData>(
+        'vehicle-registration',
+        toAggregateWire(plateOptions),
+      ),
+    vehicleRegistrations: async (count, plateOptions = {}) =>
+      await runMany<AnyVehicleRegistrationData>(
+        'vehicle-registration',
+        count,
+        toAggregateWire(plateOptions),
+      ),
     lorem: async (loremOptions = {}) => await run<LoremData>('lorem', loremOptions),
     lorems: async (count, loremOptions = {}) =>
       await runMany<LoremData>('lorem', count, loremOptions),
@@ -1542,14 +1699,12 @@ export const createFakeData = (
     // param; the transport serializes each value with `String(...)`, so we
     // stringify `choices` to JSON here (an object would become "[object
     // Object]" otherwise). The mode flags pass through as plain booleans.
-    enum: async ({ choices, ...enumOptions }) =>
-      await run<EnumData>('enum', toWeightedWire(enumOptions, choices)),
-    enums: async (count, { choices, ...enumOptions }) =>
-      await runMany<EnumData>('enum', count, toWeightedWire(enumOptions, choices)),
-    object: async ({ choices, ...objectOptions }) =>
-      await run<ObjectData>('object', toWeightedWire(objectOptions, choices)),
-    objects: async (count, { choices, ...objectOptions }) =>
-      await runMany<ObjectData>('object', count, toWeightedWire(objectOptions, choices)),
+    enum: async (enumOptions) => await run<EnumData>('enum', toEnumWire(enumOptions)),
+    enums: async (count, enumOptions) =>
+      await runMany<EnumData>('enum', count, toEnumWire(enumOptions)),
+    object: async (objectOptions) => await run<ObjectData>('object', toObjectWire(objectOptions)),
+    objects: async (count, objectOptions) =>
+      await runMany<ObjectData>('object', count, toObjectWire(objectOptions)),
     uuid: async (uuidOptions = {}) => await run<UuidData>('uuid', uuidOptions),
     uuids: async (count, uuidOptions = {}) => await runMany<UuidData>('uuid', count, uuidOptions),
     ulid: async (ulidOptions = {}) => await run<UlidData>('ulid', ulidOptions),
@@ -1590,6 +1745,8 @@ export const createFakeData = (
     ...personNamePair('se'),
     ...personNamePair('si'),
     ...personNamePair('sk'),
+    ...personNamePair('us'),
+    ...personNamePair('ca'),
     ...companyNamePair('at'),
     ...companyNamePair('be'),
     ...companyNamePair('bg'),
@@ -1616,6 +1773,8 @@ export const createFakeData = (
     ...companyNamePair('se'),
     ...companyNamePair('si'),
     ...companyNamePair('sk'),
+    ...companyNamePair('us'),
+    ...companyNamePair('ca'),
     ...emailPair('at'),
     ...emailPair('be'),
     ...emailPair('bg'),
@@ -1643,6 +1802,8 @@ export const createFakeData = (
     ...emailPair('se'),
     ...emailPair('si'),
     ...emailPair('sk'),
+    ...emailPair('us'),
+    ...emailPair('ca'),
     ...offeringPair('at'),
     ...offeringPair('be'),
     ...offeringPair('bg'),
@@ -1670,6 +1831,8 @@ export const createFakeData = (
     ...offeringPair('se'),
     ...offeringPair('si'),
     ...offeringPair('sk'),
+    ...offeringPair('us'),
+    ...offeringPair('ca'),
     frSiren: async (frSirenOptions = {}) => await run<FrSirenData>('fr/siren', frSirenOptions),
     frSirens: async (count, frSirenOptions = {}) =>
       await runMany<FrSirenData>('fr/siren', count, frSirenOptions),
@@ -1724,6 +1887,59 @@ export const createFakeData = (
     dkCvr: async (dkCvrOptions = {}) => await run<DkCvrData>('dk/cvr', dkCvrOptions),
     dkCvrs: async (count, dkCvrOptions = {}) =>
       await runMany<DkCvrData>('dk/cvr', count, dkCvrOptions),
+
+    usSsn: async (usSsnOptions = {}) => await run<UsSsnData>('us/ssn', usSsnOptions),
+    usSsns: async (count, usSsnOptions = {}) =>
+      await runMany<UsSsnData>('us/ssn', count, usSsnOptions),
+    usEin: async (usEinOptions = {}) => await run<UsEinData>('us/ein', usEinOptions),
+    usEins: async (count, usEinOptions = {}) =>
+      await runMany<UsEinData>('us/ein', count, usEinOptions),
+    usRoutingNumber: async (usRoutingOptions = {}) =>
+      await run<UsRoutingNumberData>('us/routing-number', usRoutingOptions),
+    usRoutingNumbers: async (count, usRoutingOptions = {}) =>
+      await runMany<UsRoutingNumberData>('us/routing-number', count, usRoutingOptions),
+    usBankAccount: async (usBankAccountOptions = {}) =>
+      await run<UsBankAccountData>('us/bank-account', usBankAccountOptions),
+    usBankAccounts: async (count, usBankAccountOptions = {}) =>
+      await runMany<UsBankAccountData>('us/bank-account', count, usBankAccountOptions),
+    usVehicleRegistration: async (usVehicleOptions = {}) =>
+      await run<UsVehicleRegistrationData>('us/vehicle-registration', usVehicleOptions),
+    usVehicleRegistrations: async (count, usVehicleOptions = {}) =>
+      await runMany<UsVehicleRegistrationData>('us/vehicle-registration', count, usVehicleOptions),
+    usPerson: async (usPersonOptions = {}) => await run<UsPersonData>('us/person', usPersonOptions),
+    usPeople: async (count, usPersonOptions = {}) =>
+      await runMany<UsPersonData>('us/person', count, usPersonOptions),
+    usCompany: async (companyOptions = {}) =>
+      await run<UsCompanyData>('us/company', companyOptions),
+    usCompanies: async (count, companyOptions = {}) =>
+      await runMany<UsCompanyData>('us/company', count, companyOptions),
+
+    caSin: async (caSinOptions = {}) => await run<CaSinData>('ca/sin', caSinOptions),
+    caSins: async (count, caSinOptions = {}) =>
+      await runMany<CaSinData>('ca/sin', count, caSinOptions),
+    caBusinessNumber: async (caBnOptions = {}) =>
+      await run<CaBusinessNumberData>('ca/business-number', caBnOptions),
+    caBusinessNumbers: async (count, caBnOptions = {}) =>
+      await runMany<CaBusinessNumberData>('ca/business-number', count, caBnOptions),
+    caTransitNumber: async (caTransitOptions = {}) =>
+      await run<CaTransitNumberData>('ca/transit-number', caTransitOptions),
+    caTransitNumbers: async (count, caTransitOptions = {}) =>
+      await runMany<CaTransitNumberData>('ca/transit-number', count, caTransitOptions),
+    caBankAccount: async (caBankAccountOptions = {}) =>
+      await run<CaBankAccountData>('ca/bank-account', caBankAccountOptions),
+    caBankAccounts: async (count, caBankAccountOptions = {}) =>
+      await runMany<CaBankAccountData>('ca/bank-account', count, caBankAccountOptions),
+    caVehicleRegistration: async (caVehicleOptions = {}) =>
+      await run<CaVehicleRegistrationData>('ca/vehicle-registration', caVehicleOptions),
+    caVehicleRegistrations: async (count, caVehicleOptions = {}) =>
+      await runMany<CaVehicleRegistrationData>('ca/vehicle-registration', count, caVehicleOptions),
+    caPerson: async (caPersonOptions = {}) => await run<CaPersonData>('ca/person', caPersonOptions),
+    caPeople: async (count, caPersonOptions = {}) =>
+      await runMany<CaPersonData>('ca/person', count, caPersonOptions),
+    caCompany: async (companyOptions = {}) =>
+      await run<CaCompanyData>('ca/company', companyOptions),
+    caCompanies: async (count, companyOptions = {}) =>
+      await runMany<CaCompanyData>('ca/company', count, companyOptions),
     eeIsikukood: async (eeIsikukoodOptions = {}) => await run<EeIsikukoodData>('ee/isikukood', eeIsikukoodOptions),
     eeIsikukoods: async (count, eeIsikukoodOptions = {}) =>
       await runMany<EeIsikukoodData>('ee/isikukood', count, eeIsikukoodOptions),
@@ -1874,5 +2090,27 @@ export const createFakeData = (
     seOrganisationsnummer: async (seOrganisationsnummerOptions = {}) => await run<SeOrganisationsnummerData>('se/organisationsnummer', seOrganisationsnummerOptions),
     seOrganisationsnummers: async (count, seOrganisationsnummerOptions = {}) =>
       await runMany<SeOrganisationsnummerData>('se/organisationsnummer', count, seOrganisationsnummerOptions),
+    compose: async <Data = unknown>(request: ComposeRequest): Promise<Data> => {
+      // Thread the fixture's seed sequence, exactly like a generator call: use
+      // the request's own seed if set, otherwise draw the next sequence seed
+      // (and omit `seed` entirely when the fixture is unseeded, so output stays
+      // random). Every other field is relayed verbatim.
+      const seed = nextSeed(request.seed);
+      const body: Record<string, unknown> = { shape: request.shape };
+      if (seed !== undefined) {
+        body['seed'] = seed;
+      }
+      if (request.time !== undefined) {
+        body['time'] = request.time;
+      }
+      if (request.shared !== undefined) {
+        body['shared'] = request.shared;
+      }
+      if (request.format !== undefined) {
+        body['format'] = request.format;
+      }
+      const response = await provider.compose<Data>(body);
+      return response.data;
+    },
   };
 };

@@ -49,10 +49,22 @@ export class CloudFakeDataProvider implements FakeDataProvider {
         url.searchParams.set(key, String(value));
       }
     }
+    return await this.#send<Data>(url, { headers: this.#headers });
+  }
 
+  public async compose<Data>(body: unknown): Promise<GeneratorResponse<Data>> {
+    const url = new URL(`${this.#baseUrl}/v1/compose`);
+    return await this.#send<Data>(url, {
+      method: 'POST',
+      headers: { ...this.#headers, 'content-type': 'application/json' },
+      body: JSON.stringify(body),
+    });
+  }
+
+  async #send<Data>(url: URL, init: RequestInit): Promise<GeneratorResponse<Data>> {
     let response: Response;
     try {
-      response = await this.#fetch(url, { headers: this.#headers });
+      response = await this.#fetch(url, init);
     } catch (error) {
       throw new RealFakeDataError(
         `Request to ${url.pathname} failed: ${error instanceof Error ? error.message : String(error)}`,

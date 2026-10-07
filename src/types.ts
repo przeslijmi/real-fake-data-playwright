@@ -8,9 +8,11 @@
 export type Sex = 'm' | 'f';
 
 /**
- * ISO 3166 alpha-2 codes of the 27 EU countries that have `person-name` and
- * `company-name` generators. Poland (`pl`) additionally has the full national
- * generator set (PESEL, NIP, addresses, …).
+ * ISO 3166 alpha-2 codes of the 29 countries that have `person-name` and
+ * `company-name` generators — the 27 EU member states plus the United States
+ * and Canada. Poland (`pl`) additionally has the full national generator set
+ * (PESEL, NIP, addresses, …). Note that the country-scoped families are not all
+ * this wide: IBANs, for instance, remain EU-only.
  */
 export type CountryCode =
   | 'at'
@@ -39,7 +41,9 @@ export type CountryCode =
   | 'ro'
   | 'se'
   | 'si'
-  | 'sk';
+  | 'sk'
+  | 'us'
+  | 'ca';
 
 /** A Polish legal form the company-name generator can append. */
 export type PolishLegalForm =
@@ -87,6 +91,20 @@ export interface RequestOptions {
   readonly seed?: number;
 }
 
+/**
+ * The three testing modes every generator accepts (the API refuses to start
+ * without them). What each means for a given generator is in its description
+ * on real-fake-data.com/docs.
+ */
+export interface ModeOptions extends RequestOptions {
+  /** Draw from the rare-but-valid corners of the domain. */
+  readonly edge?: boolean;
+  /** Keep the value but present it in a deliberately hostile encoding. */
+  readonly extreme?: boolean;
+  /** Return a deliberately invalid value. */
+  readonly invalid?: boolean;
+}
+
 /** Shared inputs of the PESEL and person generators. */
 export interface PersonConstraintOptions extends RequestOptions {
   readonly sex?: Sex;
@@ -103,15 +121,32 @@ export interface PersonConstraintOptions extends RequestOptions {
   readonly invalid?: boolean;
 }
 
-export type PeselOptions = PersonConstraintOptions;
-export type PersonOptions = PersonConstraintOptions;
+export type PeselOptions = PersonConstraintOptions & ModeOptions;
+export type PersonOptions = PersonConstraintOptions &
+  ModeOptions & {
+    /**
+     * Defaults to `true` (proper casing). Set `false` to deliberately mangle the
+     * casing of name and surname (all-lower, all-upper, or random); initials
+     * stay proper uppercase.
+     */
+    readonly caseStrict?: boolean;
+  };
 
-export interface AddressOptions extends RequestOptions {
+export interface AddressOptions extends ModeOptions {
   /** TERYT prefix, 1–7 digits, narrowing the location. */
   readonly teryt?: string;
+  /**
+   * Draw from the full, current PRG register instead of the curated catalogue.
+   *
+   * The catalogue (default) is frozen, so a pinned `seed` keeps returning the
+   * same address — which is what you want in a test. `live: true` covers every
+   * place in Poland and tracks the register, but the data moves, so a seed is
+   * not guaranteed to reproduce across releases.
+   */
+  readonly live?: boolean;
 }
 
-export interface NipOptions extends RequestOptions {
+export interface NipOptions extends ModeOptions {
   readonly format?: 'with-hyphens' | 'digits-only';
   readonly invalid?: boolean;
 }
@@ -141,12 +176,12 @@ export interface IbanData {
   readonly bankName: string;
 }
 
-export interface RegonOptions extends RequestOptions {
+export interface RegonOptions extends ModeOptions {
   readonly variant?: 'short' | 'long' | 'any';
   readonly invalid?: boolean;
 }
 
-export interface CompanyNameOptions extends RequestOptions {
+export interface CompanyNameOptions extends ModeOptions {
   readonly strategy?: CompanyNameStrategy | 'any';
   readonly legalForm?: PolishLegalForm | 'any' | 'none';
   readonly activityPrefix?: boolean;
@@ -168,7 +203,7 @@ export interface CompanyOptions extends RequestOptions {
   readonly extreme?: boolean;
 }
 
-export interface VehicleRegistrationOptions extends RequestOptions {
+export interface VehicleRegistrationOptions extends ModeOptions {
   readonly type?: VehicleRegistrationType;
   readonly voivodeship?: string;
   readonly county?: string;
@@ -179,7 +214,7 @@ export interface VehicleRegistrationOptions extends RequestOptions {
   readonly extreme?: boolean;
 }
 
-export interface AtVehicleRegistrationOptions extends RequestOptions {
+export interface AtVehicleRegistrationOptions extends ModeOptions {
   readonly type?: 'standard' | 'custom' | 'motorcycle' | 'military' | 'police' | 'diplomatic';
   readonly district?: string;
   readonly state?: string;
@@ -195,7 +230,7 @@ export interface AtVehicleRegistrationData {
   readonly state?: string;
 }
 
-export interface BeVehicleRegistrationOptions extends RequestOptions {
+export interface BeVehicleRegistrationOptions extends ModeOptions {
   readonly type?:
     | 'standard'
     | 'custom'
@@ -227,7 +262,7 @@ export interface BeVehicleRegistrationData {
     | 'trailer';
 }
 
-export interface BgVehicleRegistrationOptions extends RequestOptions {
+export interface BgVehicleRegistrationOptions extends ModeOptions {
   readonly type?:
     | 'standard'
     | 'custom'
@@ -257,7 +292,7 @@ export interface BgVehicleRegistrationData {
   readonly provinceCode?: string;
 }
 
-export interface CyVehicleRegistrationOptions extends RequestOptions {
+export interface CyVehicleRegistrationOptions extends ModeOptions {
   readonly type?: 'standard' | 'motorcycle' | 'diplomatic' | 'trailer' | 'un' | 'sba';
   readonly format?: 'with-space' | 'compact';
   readonly edge?: boolean;
@@ -269,7 +304,7 @@ export interface CyVehicleRegistrationData {
   readonly type: 'standard' | 'motorcycle' | 'diplomatic' | 'trailer' | 'un' | 'sba';
 }
 
-export interface CzVehicleRegistrationOptions extends RequestOptions {
+export interface CzVehicleRegistrationOptions extends ModeOptions {
   readonly type?:
     | 'standard'
     | 'extended'
@@ -299,7 +334,7 @@ export interface CzVehicleRegistrationData {
   readonly region?: string;
 }
 
-export interface DeVehicleRegistrationOptions extends RequestOptions {
+export interface DeVehicleRegistrationOptions extends ModeOptions {
   readonly type?:
     | 'standard'
     | 'custom'
@@ -332,7 +367,7 @@ export interface DeVehicleRegistrationData {
   readonly city?: string;
 }
 
-export interface DkVehicleRegistrationOptions extends RequestOptions {
+export interface DkVehicleRegistrationOptions extends ModeOptions {
   readonly type?: 'standard' | 'custom' | 'diplomatic' | 'trailer' | 'motorcycle' | 'export';
   readonly era?: 'current' | 'legacy' | 'both';
   readonly format?: 'with-space' | 'compact';
@@ -345,7 +380,7 @@ export interface DkVehicleRegistrationData {
   readonly type: 'standard' | 'custom' | 'diplomatic' | 'trailer' | 'motorcycle' | 'export';
 }
 
-export interface EeVehicleRegistrationOptions extends RequestOptions {
+export interface EeVehicleRegistrationOptions extends ModeOptions {
   readonly type?:
     | 'standard'
     | 'custom'
@@ -378,7 +413,7 @@ export interface EeVehicleRegistrationData {
     | 'military';
 }
 
-export interface EsVehicleRegistrationOptions extends RequestOptions {
+export interface EsVehicleRegistrationOptions extends ModeOptions {
   readonly type?:
     | 'standard'
     | 'motorcycle'
@@ -414,7 +449,7 @@ export interface EsVehicleRegistrationData {
   readonly province?: string;
 }
 
-export interface FiVehicleRegistrationOptions extends RequestOptions {
+export interface FiVehicleRegistrationOptions extends ModeOptions {
   readonly type?:
     | 'standard'
     | 'custom'
@@ -448,7 +483,7 @@ export interface FiVehicleRegistrationData {
   readonly era?: 'current' | 'legacy';
 }
 
-export interface FrVehicleRegistrationOptions extends RequestOptions {
+export interface FrVehicleRegistrationOptions extends ModeOptions {
   readonly type?: 'standard' | 'diplomatic' | 'temporary' | 'export' | 'motorcycle';
   readonly era?: 'current' | 'legacy' | 'both';
   readonly withDepartment?: boolean;
@@ -465,7 +500,7 @@ export interface FrVehicleRegistrationData {
   readonly department?: string;
 }
 
-export interface GrVehicleRegistrationOptions extends RequestOptions {
+export interface GrVehicleRegistrationOptions extends ModeOptions {
   readonly type?: 'standard' | 'motorcycle' | 'taxi' | 'diplomatic' | 'historic' | 'trailer';
   readonly script?: 'latin' | 'native';
   readonly era?: 'current' | 'legacy' | 'both';
@@ -482,7 +517,7 @@ export interface GrVehicleRegistrationData {
   readonly regionCode?: string;
 }
 
-export interface HrVehicleRegistrationOptions extends RequestOptions {
+export interface HrVehicleRegistrationOptions extends ModeOptions {
   readonly type?:
     | 'standard'
     | 'custom'
@@ -510,7 +545,7 @@ export interface HrVehicleRegistrationData {
   readonly city?: string;
 }
 
-export interface HuVehicleRegistrationOptions extends RequestOptions {
+export interface HuVehicleRegistrationOptions extends ModeOptions {
   readonly type?:
     | 'standard'
     | 'custom'
@@ -543,7 +578,7 @@ export interface HuVehicleRegistrationData {
     | 'temporary';
 }
 
-export interface IeVehicleRegistrationOptions extends RequestOptions {
+export interface IeVehicleRegistrationOptions extends ModeOptions {
   readonly type?: 'standard' | 'temporary-import' | 'vintage' | 'taxi' | 'electric';
   readonly era?: 'current' | 'legacy' | 'both';
   readonly county?: string;
@@ -560,7 +595,7 @@ export interface IeVehicleRegistrationData {
   readonly subregion?: string;
 }
 
-export interface ItVehicleRegistrationOptions extends RequestOptions {
+export interface ItVehicleRegistrationOptions extends ModeOptions {
   readonly type?: 'standard' | 'motorcycle' | 'military' | 'diplomatic' | 'trailer';
   readonly withProvince?: boolean;
   readonly province?: string;
@@ -575,7 +610,7 @@ export interface ItVehicleRegistrationData {
   readonly province?: string;
 }
 
-export interface LtVehicleRegistrationOptions extends RequestOptions {
+export interface LtVehicleRegistrationOptions extends ModeOptions {
   readonly type?:
     | 'standard'
     | 'custom'
@@ -609,7 +644,7 @@ export interface LtVehicleRegistrationData {
     | 'dealer';
 }
 
-export interface LuVehicleRegistrationOptions extends RequestOptions {
+export interface LuVehicleRegistrationOptions extends ModeOptions {
   readonly type?:
     | 'standard'
     | 'custom'
@@ -640,7 +675,7 @@ export interface LuVehicleRegistrationData {
     | 'deputies';
 }
 
-export interface LvVehicleRegistrationOptions extends RequestOptions {
+export interface LvVehicleRegistrationOptions extends ModeOptions {
   readonly type?:
     | 'standard'
     | 'custom'
@@ -672,7 +707,7 @@ export interface LvVehicleRegistrationData {
     | 'moped';
 }
 
-export interface MtVehicleRegistrationOptions extends RequestOptions {
+export interface MtVehicleRegistrationOptions extends ModeOptions {
   readonly type?:
     | 'standard'
     | 'motorcycle'
@@ -706,7 +741,7 @@ export interface MtVehicleRegistrationData {
   readonly expiryMonth?: string;
 }
 
-export interface NlVehicleRegistrationOptions extends RequestOptions {
+export interface NlVehicleRegistrationOptions extends ModeOptions {
   readonly type?:
     | 'standard'
     | 'motorcycle'
@@ -734,7 +769,7 @@ export interface NlVehicleRegistrationData {
     | 'export';
 }
 
-export interface PtVehicleRegistrationOptions extends RequestOptions {
+export interface PtVehicleRegistrationOptions extends ModeOptions {
   readonly type?: 'standard' | 'motorcycle' | 'military' | 'diplomatic' | 'police' | 'export';
   readonly era?: 'current' | 'legacy' | 'both';
   readonly format?: 'with-hyphen' | 'with-space' | 'compact';
@@ -748,7 +783,7 @@ export interface PtVehicleRegistrationData {
   readonly era?: 'current' | '2005-2020' | '1992-2005' | 'pre-1992';
 }
 
-export interface RoVehicleRegistrationOptions extends RequestOptions {
+export interface RoVehicleRegistrationOptions extends ModeOptions {
   readonly type?:
     | 'standard'
     | 'motorcycle'
@@ -777,7 +812,7 @@ export interface RoVehicleRegistrationData {
   readonly countyCode?: string;
 }
 
-export interface SeVehicleRegistrationOptions extends RequestOptions {
+export interface SeVehicleRegistrationOptions extends ModeOptions {
   readonly type?: 'standard' | 'custom' | 'diplomatic' | 'military' | 'motorcycle';
   readonly era?: 'current' | 'legacy' | 'both';
   readonly format?: 'with-space' | 'compact';
@@ -790,7 +825,7 @@ export interface SeVehicleRegistrationData {
   readonly type: 'standard' | 'custom' | 'diplomatic' | 'military' | 'motorcycle';
 }
 
-export interface SiVehicleRegistrationOptions extends RequestOptions {
+export interface SiVehicleRegistrationOptions extends ModeOptions {
   readonly type?:
     | 'standard'
     | 'custom'
@@ -818,7 +853,7 @@ export interface SiVehicleRegistrationData {
   readonly region?: string;
 }
 
-export interface SkVehicleRegistrationOptions extends RequestOptions {
+export interface SkVehicleRegistrationOptions extends ModeOptions {
   readonly type?:
     | 'standard'
     | 'motorcycle'
@@ -855,30 +890,30 @@ export interface SkVehicleRegistrationData {
   readonly district?: string;
 }
 
-export interface IdCardOptions extends RequestOptions {
+export interface IdCardOptions extends ModeOptions {
   readonly format?: 'compact' | 'with-space';
   readonly invalid?: boolean;
   /** Produce a card whose expiration date is in the past. */
   readonly expired?: boolean;
 }
 
-export interface PassportOptions extends RequestOptions {
+export interface PassportOptions extends ModeOptions {
   readonly format?: 'compact' | 'with-space';
   readonly invalid?: boolean;
 }
 
-export interface KrsOptions extends RequestOptions {
+export interface KrsOptions extends ModeOptions {
   readonly format?: 'padded' | 'plain';
 }
 
-export interface LandRegisterOptions extends RequestOptions {
+export interface LandRegisterOptions extends ModeOptions {
   readonly format?: 'with-slashes' | 'compact';
   /** Restrict to a single court, by code (e.g. `WA1M`) or name substring. */
   readonly court?: string;
   readonly invalid?: boolean;
 }
 
-export interface DrivingLicenseOptions extends RequestOptions {
+export interface DrivingLicenseOptions extends ModeOptions {
   readonly format?: 'with-slashes' | 'compact';
   /** Full 4-digit issue year, within the supported range. */
   readonly year?: number;
@@ -890,7 +925,7 @@ export interface DrivingLicenseOptions extends RequestOptions {
  * across countries; only the underlying name pools and regional/corporate
  * domains differ.
  */
-export interface EmailOptions extends RequestOptions {
+export interface EmailOptions extends ModeOptions {
   /** Pin an exact domain, e.g. `"gmail.com"`. */
   readonly domain?: string;
   /**
@@ -919,7 +954,8 @@ export interface EmailOptions extends RequestOptions {
 export interface AnyEmailOptions extends EmailOptions {
   /**
    * ISO 3166 codes to draw each record from, e.g. `['pl', 'de', 'it']`. Each
-   * record picks one country from the list at random. Omit to draw from all 27.
+   * record picks one country from the list at random. Omit to draw from all 29
+   * (the 27 EU member states plus the US and Canada).
    */
   readonly countries?: readonly CountryCode[];
 }
@@ -947,7 +983,8 @@ export interface OfferingOptions extends RequestOptions {
 export interface AnyOfferingOptions extends OfferingOptions {
   /**
    * ISO 3166 codes to draw each record from, e.g. `['pl', 'de', 'it']`. Each
-   * record picks one country from the list at random. Omit to draw from all 27.
+   * record picks one country from the list at random. Omit to draw from all 29
+   * (the 27 EU member states plus the US and Canada).
    */
   readonly countries?: readonly CountryCode[];
 }
@@ -976,7 +1013,73 @@ export interface AnyOfferingData extends OfferingData {
   readonly country: string;
 }
 
-export interface LoremOptions extends RequestOptions {
+/**
+ * The plate class in the **shared** cross-country vocabulary.
+ *
+ * The 29 countries name their own kinds differently — `passenger` in the US
+ * where Italy says `standard`, `oldtimer` in Hungary where Ireland says
+ * `vintage` and Finland says `museum` — so the multi-country endpoint filters
+ * on the category they all map onto. `other` covers the classes with no
+ * counterpart anywhere (the German seasonal plate, the Finnish Åland plate).
+ */
+export type PlateCategory =
+  | 'standard'
+  | 'custom'
+  | 'motorcycle'
+  | 'moped'
+  | 'military'
+  | 'police'
+  | 'diplomatic'
+  | 'government'
+  | 'commercial'
+  | 'taxi'
+  | 'trailer'
+  | 'historic'
+  | 'electric'
+  | 'temporary'
+  | 'export'
+  | 'dealer'
+  | 'other';
+
+export interface AnyVehicleRegistrationOptions extends ModeOptions {
+  /**
+   * ISO 3166 codes to draw each record from, e.g. `['pl', 'de', 'it']`. Each
+   * record picks one country from the list at random. Omit to draw from all 29
+   * (the 27 EU member states plus the US and Canada).
+   */
+  readonly countries?: readonly CountryCode[];
+
+  /**
+   * The plate class, in the shared vocabulary. **Narrows the pool** to the
+   * countries that issue it — `'taxi'` draws from the seven that do. Combining
+   * it with a `countries` pool that issues nothing of the kind is a 400, not a
+   * silent substitution.
+   */
+  readonly type?: PlateCategory;
+}
+
+export interface AnyVehicleRegistrationData {
+  /** ISO 3166 alpha-2 code of the country this plate was drawn from. */
+  readonly country: string;
+  /** The plate, in that country's default format, e.g. `AK 514 RH`. */
+  readonly value: string;
+  /**
+   * The plate class **as that country names it** — `passenger`, `oldtimer`,
+   * `standard`. A plain string, since the 29 national vocabularies differ;
+   * filter on {@link AnyVehicleRegistrationData.category}.
+   */
+  readonly type: string;
+  /** The same class in the shared vocabulary. */
+  readonly category: PlateCategory;
+  /**
+   * The region the plate belongs to, spelled out (`Bayern`, `Ontario`,
+   * `mazowieckie`). Absent where the country numbers nationally — and
+   * load-bearing for the US and Canada, whose plates encode no jurisdiction.
+   */
+  readonly region?: string;
+}
+
+export interface LoremOptions extends ModeOptions {
   /**
    * Size the text by a length unit. When more than one is given the most
    * precise wins, in precedence `bytes` → `chars` → `words` → `paragraphs`;
@@ -995,12 +1098,13 @@ export interface LoremOptions extends RequestOptions {
   readonly startWithLorem?: boolean;
 }
 
-export interface CustomRegexOptions extends RequestOptions {
+export interface CustomRegexOptions extends ModeOptions {
   /**
    * The regular expression (source form, no delimiters) to generate a matching
    * string for, e.g. `"[A-Z]{2}-\\d{6}"`. Required. Back-references and
    * look-around assertions are rejected, as are patterns with an over-large
-   * worst-case expansion. Requires the Pro plan or above.
+   * worst-case expansion. Requires a free account — the one feature not open to
+   * anonymous callers, for an audit trail of caller-supplied patterns.
    */
   readonly pattern: string;
   /**
@@ -1010,25 +1114,47 @@ export interface CustomRegexOptions extends RequestOptions {
   readonly maxRepetition?: number;
 }
 
-export interface EnumOptions extends RequestOptions {
-  /**
-   * The enumeration to draw from, in either shape (required):
-   * - a weighted map of member → **relative** weight, e.g. `{ gold: 1, silver:
-   *   4, bronze: 15 }` (drawn 1/20, 4/20, 15/20; weights need not sum to 1); or
-   * - a bare array of members, e.g. `['gold', 'silver', 'bronze']`, for an
-   *   **equal** distribution (each weight 1).
-   */
-  readonly choices: Readonly<Record<string, number>> | readonly string[];
+/** The `enum` options shared by both sources of members. */
+interface EnumModeOptions extends RequestOptions {
   /**
    * Invert the distribution: the least-probable member becomes the most likely
-   * (a zero-weight member rises to the top). Requires the Pro plan or above.
+   * (a zero-weight member rises to the top).
    */
   readonly edge?: boolean;
-  /** Return the drawn member wrapped in a hostile encoding. Requires the Pro plan or above. */
+  /** Return the drawn member wrapped in a hostile encoding. */
   readonly extreme?: boolean;
-  /** Return a value that is NOT in `choices` (probability 0). */
+  /** Return a value that is NOT among the members (probability 0). */
   readonly invalid?: boolean;
 }
+
+/**
+ * Options for `enum` / `enums`: the members come either from `choices` or from
+ * a team `dictionary` — exactly one of the two.
+ */
+export type EnumOptions = EnumModeOptions &
+  (
+    | {
+        /**
+         * The enumeration to draw from, in either shape:
+         * - a weighted map of member → **relative** weight, e.g. `{ gold: 1,
+         *   silver: 4, bronze: 15 }` (drawn 1/20, 4/20, 15/20; weights need not
+         *   sum to 1); or
+         * - a bare array of members, e.g. `['gold', 'silver', 'bronze']`, for
+         *   an **equal** distribution (each weight 1).
+         */
+        readonly choices: Readonly<Record<string, number>> | readonly string[];
+        readonly dictionary?: never;
+      }
+    | {
+        /**
+         * The name of an enum Dictionary defined in the Real-Fake-Data.com
+         * dashboard (letters, digits, `-` and `_`; matched regardless of case).
+         * Needs the team's API key in the fixture's `headers`.
+         */
+        readonly dictionary: string;
+        readonly choices?: never;
+      }
+  );
 
 export interface EnumData {
   /** The drawn enum member. */
@@ -1044,29 +1170,49 @@ export interface ObjectChoiceInput {
   readonly weight: number;
 }
 
-export interface ObjectOptions extends RequestOptions {
-  /**
-   * The candidates to draw from, in either shape (required):
-   * - a weighted list of `{ object, weight }` pairs (weights **relative**,
-   *   normalized by their sum); or
-   * - a bare array of candidates (any JSON values), e.g. `[{ tier: 'gold' },
-   *   { tier: 'free' }]`, for an **equal** distribution (each weight 1).
-   */
-  readonly choices: readonly ObjectChoiceInput[] | readonly unknown[];
+/** The `object` options shared by both sources of candidates. */
+interface ObjectModeOptions extends RequestOptions {
   /**
    * Invert the distribution: the least-probable candidate becomes the most
-   * likely (a zero-weight candidate rises to the top). Requires the Pro plan
-   * or above.
+   * likely (a zero-weight candidate rises to the top).
    */
   readonly edge?: boolean;
   /**
    * Return the drawn candidate with its string and number leaves wrapped in a
-   * hostile encoding. Requires the Pro plan or above.
+   * hostile encoding.
    */
   readonly extreme?: boolean;
-  /** Return a sentinel object not among `choices` (probability 0). */
+  /** Return a sentinel object not among the candidates (probability 0). */
   readonly invalid?: boolean;
 }
+
+/**
+ * Options for `object` / `objects`: the candidates come either from `choices`
+ * or from a team `dictionary` — exactly one of the two.
+ */
+export type ObjectOptions = ObjectModeOptions &
+  (
+    | {
+        /**
+         * The candidates to draw from, in either shape:
+         * - a weighted list of `{ object, weight }` pairs (weights
+         *   **relative**, normalized by their sum); or
+         * - a bare array of candidates (any JSON values), e.g. `[{ tier:
+         *   'gold' }, { tier: 'free' }]`, for an **equal** distribution.
+         */
+        readonly choices: readonly ObjectChoiceInput[] | readonly unknown[];
+        readonly dictionary?: never;
+      }
+    | {
+        /**
+         * The name of an object Dictionary defined in the Real-Fake-Data.com
+         * dashboard (letters, digits, `-` and `_`; matched regardless of case).
+         * Needs the team's API key in the fixture's `headers`.
+         */
+        readonly dictionary: string;
+        readonly choices?: never;
+      }
+  );
 
 export interface ObjectData {
   /** The drawn candidate, returned verbatim. */
@@ -1424,7 +1570,7 @@ export interface CustomRegexData {
   readonly pattern: string;
 }
 
-export interface UuidOptions extends RequestOptions {
+export interface UuidOptions extends ModeOptions {
   /**
    * UUID version: `'4'` (fully random, the default) or `'7'` (time-ordered,
    * RFC 9562). The v7 timestamp is derived from the seed, not the wall clock.
@@ -1440,14 +1586,14 @@ export interface UuidData {
 }
 
 /** ULID takes no options beyond the shared `seed`. */
-export type UlidOptions = RequestOptions;
+export type UlidOptions = ModeOptions;
 
 export interface UlidData {
   /** The 26-character Crockford-Base32 ULID. */
   readonly value: string;
 }
 
-export interface NanoIdOptions extends RequestOptions {
+export interface NanoIdOptions extends ModeOptions {
   /** Id length in characters (1–255). Defaults to 21. */
   readonly size?: number;
   /** Custom alphabet to draw from. Defaults to nanoid’s URL-safe 64-character set. */
@@ -1460,14 +1606,14 @@ export interface NanoIdData {
 }
 
 /** ObjectId takes no options beyond the shared `seed`. */
-export type ObjectIdOptions = RequestOptions;
+export type ObjectIdOptions = ModeOptions;
 
 export interface ObjectIdData {
   /** The 24-character hex MongoDB ObjectId. */
   readonly value: string;
 }
 
-export interface SequenceOptions extends RequestOptions {
+export interface SequenceOptions extends ModeOptions {
   /** First value of the sequence. Defaults to 1. */
   readonly start?: number;
   /** Increment between consecutive records. Defaults to 1; must be non-zero. */
@@ -1484,7 +1630,7 @@ export interface SequenceData {
  * `itPersonName`, `plPersonName`, …). Only the underlying name pools and
  * inflection rules differ between countries — the controls are identical.
  */
-export interface PersonNameOptions extends RequestOptions {
+export interface PersonNameOptions extends ModeOptions {
   /** Gendered form of the name (`m`/`f`). Omit for a random one. */
   readonly sex?: Sex;
   /**
@@ -1506,7 +1652,8 @@ export interface PersonNameOptions extends RequestOptions {
 export interface AnyPersonNameOptions extends PersonNameOptions {
   /**
    * ISO 3166 codes to draw each record from, e.g. `['pl', 'sk', 'it']`. Each
-   * record picks one country from the list at random. Omit to draw from all 27.
+   * record picks one country from the list at random. Omit to draw from all 29
+   * (the 27 EU member states plus the US and Canada).
    */
   readonly countries?: readonly CountryCode[];
 }
@@ -1531,7 +1678,7 @@ export interface AnyPersonNameData extends PersonNameData {
  * Polish `legalForm`). `legalForm` values are country-specific, so they are
  * typed loosely as `string` here — the API validates them per country.
  */
-export interface LocaleCompanyNameOptions extends RequestOptions {
+export interface LocaleCompanyNameOptions extends ModeOptions {
   readonly strategy?: CompanyNameStrategy | 'any';
   /** Country-specific legal form, `'any'` for weighted-random, or `'none'` to omit. */
   readonly legalForm?: string;
@@ -1542,14 +1689,14 @@ export interface LocaleCompanyNameOptions extends RequestOptions {
 }
 
 /** Options for the multi-country `companyName` generator (no `legalForm` — it is country-specific). */
-export interface AnyCompanyNameOptions extends RequestOptions {
+export interface AnyCompanyNameOptions extends ModeOptions {
   readonly strategy?: CompanyNameStrategy | 'any';
   readonly edge?: boolean;
   /** Present the company name in a hostile-but-recoverable encoding (untrimmed whitespace, invisible/zero-width chars, BOM, homoglyphs, or bidi/combining marks); legal form and identifiers stay clean. */
   readonly extreme?: boolean;
   /**
    * ISO 3166 codes to draw each record from, e.g. `['de', 'fr', 'it']`. Omit to
-   * draw from all 27.
+   * draw from all 29 (the 27 EU member states plus the US and Canada).
    */
   readonly countries?: readonly CountryCode[];
 }
@@ -1658,7 +1805,7 @@ export interface AtFirmenbuchnummerData {
   readonly letter: string;
 }
 
-export interface AtSteuernummerOptions extends RequestOptions {
+export interface AtSteuernummerOptions extends ModeOptions {
   readonly edge?: boolean;
   /** Present the value in a hostile-but-recoverable encoding (untrimmed whitespace, invisible/zero-width chars, BOM, or bidi/combining marks); homoglyphs excluded so it stays machine-parseable. */
   readonly extreme?: boolean;
@@ -1975,7 +2122,7 @@ export interface DeUstIdnrData {
   readonly digits: string;
 }
 
-export interface DeHandelsregisternummerOptions extends RequestOptions {
+export interface DeHandelsregisternummerOptions extends ModeOptions {
   readonly division?: 'HRA' | 'HRB';
   readonly edge?: boolean;
   /** Present the value in a hostile-but-recoverable encoding (untrimmed whitespace, invisible/zero-width chars, BOM, or bidi/combining marks); homoglyphs excluded so it stays machine-parseable. */
@@ -2117,7 +2264,7 @@ export interface HuAdoszamData {
   readonly digits: string;
 }
 
-export interface HuCegjegyzekszamOptions extends RequestOptions {
+export interface HuCegjegyzekszamOptions extends ModeOptions {
   readonly edge?: boolean;
   /** Present the value in a hostile-but-recoverable encoding (untrimmed whitespace, invisible/zero-width chars, BOM, or bidi/combining marks); homoglyphs excluded so it stays machine-parseable. */
   readonly extreme?: boolean;
@@ -2160,7 +2307,7 @@ export interface IeVatData {
   readonly digits: string;
 }
 
-export interface IeCroOptions extends RequestOptions {
+export interface IeCroOptions extends ModeOptions {
   readonly edge?: boolean;
   /** Present the value in a hostile-but-recoverable encoding (untrimmed whitespace, invisible/zero-width chars, BOM, or bidi/combining marks); homoglyphs excluded so it stays machine-parseable. */
   readonly extreme?: boolean;
@@ -2320,7 +2467,7 @@ export interface LuTvaData {
   readonly digits: string;
 }
 
-export interface MtIdCardOptions extends RequestOptions {
+export interface MtIdCardOptions extends ModeOptions {
   readonly category?: 'M' | 'G' | 'A' | 'P' | 'L' | 'H' | 'B' | 'Z';
   readonly edge?: boolean;
   /** Present the value in a hostile-but-recoverable encoding (untrimmed whitespace, invisible/zero-width chars, BOM, or bidi/combining marks); homoglyphs excluded so it stays machine-parseable. */
@@ -2657,7 +2804,7 @@ export interface NlBtwIdData {
   readonly standard: 'legacy' | 'modern';
 }
 
-export interface NlKvkOptions extends RequestOptions {
+export interface NlKvkOptions extends ModeOptions {
   readonly edge?: boolean;
   /** Present the value in a hostile-but-recoverable encoding (untrimmed whitespace, invisible/zero-width chars, BOM, or bidi/combining marks); homoglyphs excluded so it stays machine-parseable. */
   readonly extreme?: boolean;
@@ -2886,4 +3033,342 @@ export interface SeOrganisationsnummerOptions extends RequestOptions {
 export interface SeOrganisationsnummerData {
   readonly value: string;
   readonly digits: string;
+}
+
+/* ------------------------------------------------------------------ */
+/* United States                                                       */
+/* ------------------------------------------------------------------ */
+
+export interface UsSsnOptions extends RequestOptions {
+  readonly format?: 'plain' | 'with-hyphens';
+  readonly invalid?: boolean;
+  readonly edge?: boolean;
+  /** Present the value in a hostile-but-recoverable encoding (untrimmed whitespace, invisible/zero-width chars, BOM, or bidi/combining marks); homoglyphs excluded so it stays machine-parseable. */
+  readonly extreme?: boolean;
+}
+
+/**
+ * A US Social Security Number. Note there is no `sex` or `birthDate` here, and
+ * no option to constrain them: unlike a CPR or PESEL, an SSN encodes nothing —
+ * not sex, not birth date, and since 2011 not even a state of issue.
+ */
+export interface UsSsnData {
+  readonly value: string;
+  readonly digits: string;
+  readonly areaNumber: string;
+  readonly groupNumber: string;
+  readonly serialNumber: string;
+}
+
+export interface UsEinOptions extends RequestOptions {
+  readonly format?: 'plain' | 'with-hyphen';
+  /** Pin the two-digit IRS campus prefix. An unissued prefix is rejected. */
+  readonly prefix?: string;
+  readonly invalid?: boolean;
+  readonly edge?: boolean;
+  /** Present the value in a hostile-but-recoverable encoding (untrimmed whitespace, invisible/zero-width chars, BOM, or bidi/combining marks); homoglyphs excluded so it stays machine-parseable. */
+  readonly extreme?: boolean;
+}
+
+export interface UsEinData {
+  readonly value: string;
+  readonly digits: string;
+  readonly prefix: string;
+  readonly serialNumber: string;
+  /** The IRS campus or programme issuing this prefix, e.g. `Ogden`, `Internet`. */
+  readonly campus: string;
+}
+
+export interface UsRoutingNumberOptions extends RequestOptions {
+  /** Draw a real, published routing number from the bundled registry. */
+  readonly realBank?: boolean;
+  /** Pin the institution by name. Implies `realBank`. */
+  readonly bankName?: string;
+  /** Pin the two-digit Federal Reserve prefix (01-12, 21-32, 61-72, or 80). */
+  readonly prefix?: string;
+  readonly invalid?: boolean;
+  readonly edge?: boolean;
+  /** Present the value in a hostile-but-recoverable encoding (untrimmed whitespace, invisible/zero-width chars, BOM, or bidi/combining marks); homoglyphs excluded so it stays machine-parseable. */
+  readonly extreme?: boolean;
+}
+
+export interface UsRoutingNumberData {
+  readonly value: string;
+  readonly digits: string;
+  readonly prefix: string;
+  readonly checkDigit: string;
+  readonly federalReserveCity?: string;
+  readonly bankName?: string;
+}
+
+export interface UsBankAccountOptions extends RequestOptions {
+  readonly realBank?: boolean;
+  readonly bankName?: string;
+  /** Digits in the account number, 4-17 — the span US institutions issue. */
+  readonly accountNumberLength?: number;
+  readonly accountType?: 'checking' | 'savings';
+  readonly invalid?: boolean;
+  readonly edge?: boolean;
+  /** Present the value in a hostile-but-recoverable encoding (untrimmed whitespace, invisible/zero-width chars, BOM, or bidi/combining marks); homoglyphs excluded so it stays machine-parseable. */
+  readonly extreme?: boolean;
+}
+
+/**
+ * A US routing/account pair. The routing number is checksum-valid; the account
+ * number is synthetic by necessity — the US has no national account-number
+ * standard, so no checksum or registry exists to validate one against.
+ */
+export interface UsBankAccountData {
+  readonly accountNumber: string;
+  readonly routingNumber: string;
+  readonly bankName?: string;
+  readonly federalReserveCity?: string;
+  readonly accountNumberLength: number;
+  readonly accountType: 'checking' | 'savings';
+}
+
+export type UsPlateType =
+  | 'passenger'
+  | 'vanity'
+  | 'commercial'
+  | 'motorcycle'
+  | 'trailer'
+  | 'temporary'
+  | 'government';
+
+export interface UsVehicleRegistrationOptions extends RequestOptions {
+  /** Issuing jurisdiction: a USPS code (`TX`) or full name (`Texas`); DC is `DC`. */
+  readonly state?: string;
+  readonly type?: UsPlateType;
+  readonly format?: 'with-separator' | 'compact';
+  readonly invalid?: boolean;
+  readonly edge?: boolean;
+  /** Present the value in a hostile-but-recoverable encoding (untrimmed whitespace, invisible/zero-width chars, BOM, or bidi/combining marks); homoglyphs excluded so it stays machine-parseable. */
+  readonly extreme?: boolean;
+}
+
+/**
+ * A US plate. `state` is reported rather than derivable: a US plate does not
+ * encode its jurisdiction in the characters the way a European plate does.
+ */
+export interface UsVehicleRegistrationData {
+  readonly value: string;
+  readonly state: string;
+  readonly stateName: string;
+  readonly type: UsPlateType;
+  readonly format: string;
+  /** The county the leading number identifies (Wyoming only). */
+  readonly county?: string;
+}
+
+export interface UsPersonOptions extends RequestOptions {
+  readonly sex?: Sex;
+  readonly olderThan?: number;
+  readonly youngerThan?: number;
+  readonly atAge?: number;
+  readonly bornOn?: string;
+  readonly bornBefore?: string;
+  readonly bornAfter?: string;
+  readonly format?: 'plain' | 'with-hyphens';
+  /** Mangle the casing of `name`/`surname` for testing. Defaults to `true`. */
+  readonly caseStrict?: boolean;
+  readonly invalid?: boolean;
+  readonly edge?: boolean;
+  /** Present the value in a hostile-but-recoverable encoding (untrimmed whitespace, invisible/zero-width chars, BOM, or bidi/combining marks); homoglyphs excluded so it stays machine-parseable. */
+  readonly extreme?: boolean;
+}
+
+/**
+ * A US person. The age and `sex` filters work as they do elsewhere, but here
+ * they shape the drawn `birthDate` and name directly rather than being decoded
+ * from the identifier — the SSN encodes neither.
+ */
+export interface UsPersonData {
+  readonly name: string;
+  readonly surname: string;
+  readonly initials: string;
+  readonly birthDate: string;
+  readonly sex: Sex;
+  readonly ssn: string;
+}
+
+/**
+ * A US company. Only an EIN: US incorporation is a state matter with no federal
+ * registry, so unlike the European countries there is no national company
+ * number to pair with the tax number.
+ */
+export interface UsCompanyData {
+  readonly name: string;
+  readonly legalForm: string | null;
+  readonly ein: string;
+}
+
+/* ------------------------------------------------------------------ */
+/* Canada                                                              */
+/* ------------------------------------------------------------------ */
+
+export interface CaSinOptions extends RequestOptions {
+  readonly format?: 'plain' | 'with-spaces' | 'with-hyphens';
+  /** Region of registration: 1-7 or 9. `0` and `8` are never issued. */
+  readonly firstDigit?: number;
+  /** Emit a temporary-resident SIN (first digit 9); such numbers expire. */
+  readonly temporaryResident?: boolean;
+  readonly invalid?: boolean;
+  readonly edge?: boolean;
+  /** Present the value in a hostile-but-recoverable encoding (untrimmed whitespace, invisible/zero-width chars, BOM, or bidi/combining marks); homoglyphs excluded so it stays machine-parseable. */
+  readonly extreme?: boolean;
+}
+
+/**
+ * A Canadian SIN. Unlike the US SSN it carries a real Luhn checksum, so it is
+ * genuinely verifiable — and its first digit records the province of
+ * registration, the one fact the number does encode.
+ */
+export interface CaSinData {
+  readonly value: string;
+  readonly digits: string;
+  readonly checkDigit: string;
+  readonly registrationRegion: string;
+  readonly temporaryResident: boolean;
+}
+
+export interface CaBusinessNumberOptions extends RequestOptions {
+  /**
+   * Append a CRA program account: `true` for a random one, or a code
+   * (`RC`, `RT`, `RP`, `RM`, `RR`, `RZ`). Omitted returns the bare BN.
+   */
+  readonly programAccount?: boolean | 'RC' | 'RT' | 'RP' | 'RM' | 'RR' | 'RZ';
+  /** The four-digit reference distinguishing accounts within one program. */
+  readonly programReference?: string;
+  readonly invalid?: boolean;
+  readonly edge?: boolean;
+  /** Present the value in a hostile-but-recoverable encoding (untrimmed whitespace, invisible/zero-width chars, BOM, or bidi/combining marks); homoglyphs excluded so it stays machine-parseable. */
+  readonly extreme?: boolean;
+}
+
+/**
+ * A Canadian Business Number. `businessNumber` is the business's identity; a
+ * program account identifies one of its dealings with the CRA, so two results
+ * sharing a `businessNumber` are the same company.
+ */
+export interface CaBusinessNumberData {
+  readonly value: string;
+  readonly businessNumber: string;
+  readonly checkDigit: string;
+  readonly programCode: string | null;
+  readonly programDescription: string | null;
+  readonly programReference: string | null;
+}
+
+export interface CaTransitNumberOptions extends RequestOptions {
+  /** `cheque` (`XXXXX-YYY`) or `electronic` (`0YYYXXXXX`) — field order reverses. */
+  readonly format?: 'cheque' | 'electronic';
+  /** Pin the bank by name or three-digit institution number. */
+  readonly institution?: string;
+  readonly invalid?: boolean;
+  readonly edge?: boolean;
+  /** Present the value in a hostile-but-recoverable encoding (untrimmed whitespace, invisible/zero-width chars, BOM, or bidi/combining marks); homoglyphs excluded so it stays machine-parseable. */
+  readonly extreme?: boolean;
+}
+
+export interface CaTransitNumberData {
+  readonly value: string;
+  readonly transitNumber: string;
+  readonly institutionNumber: string;
+  readonly institutionName: string;
+  readonly institutionKind: 'bank' | 'credit-union' | 'trust' | 'government';
+  /** The `0YYYXXXXX` EFT form — note the field order reverses from the cheque form. */
+  readonly electronicFormat: string;
+}
+
+export interface CaBankAccountOptions extends RequestOptions {
+  readonly institution?: string;
+  /** 7 or 12 — the only lengths CPA Standard 006 permits. */
+  readonly accountNumberLength?: 7 | 12;
+  readonly accountType?: 'chequing' | 'savings';
+  readonly invalid?: boolean;
+  readonly edge?: boolean;
+  /** Present the value in a hostile-but-recoverable encoding (untrimmed whitespace, invisible/zero-width chars, BOM, or bidi/combining marks); homoglyphs excluded so it stays machine-parseable. */
+  readonly extreme?: boolean;
+}
+
+/**
+ * A Canadian bank account. Better standardised than its US counterpart: CPA
+ * Standard 006 fixes the account number at 7 or 12 digits, where no US
+ * authority defines a length at all. What Canada lacks is a checksum.
+ */
+export interface CaBankAccountData {
+  readonly accountNumber: string;
+  readonly transitNumber: string;
+  readonly institutionNumber: string;
+  readonly institutionName: string;
+  readonly accountNumberLength: number;
+  readonly accountType: 'chequing' | 'savings';
+  readonly electronicFormat: string;
+}
+
+export interface CaVehicleRegistrationOptions extends RequestOptions {
+  /** Two-letter code (`ON`), English name (`Ontario`), or French name (`Québec`). */
+  readonly province?: string;
+  readonly type?: UsPlateType;
+  readonly format?: 'with-separator' | 'compact';
+  readonly invalid?: boolean;
+  readonly edge?: boolean;
+  /** Present the value in a hostile-but-recoverable encoding (untrimmed whitespace, invisible/zero-width chars, BOM, or bidi/combining marks); homoglyphs excluded so it stays machine-parseable. */
+  readonly extreme?: boolean;
+}
+
+/**
+ * A Canadian plate. `province` is reported rather than derivable: like a US
+ * plate, a Canadian one does not encode its jurisdiction in the characters.
+ */
+export interface CaVehicleRegistrationData {
+  readonly value: string;
+  readonly province: string;
+  readonly provinceName: string;
+  readonly provinceNameFrench: string;
+  readonly jurisdictionKind: 'province' | 'territory';
+  readonly type: UsPlateType;
+  readonly format: string;
+}
+
+export interface CaPersonOptions extends RequestOptions {
+  readonly sex?: Sex;
+  readonly olderThan?: number;
+  readonly youngerThan?: number;
+  readonly atAge?: number;
+  readonly bornOn?: string;
+  readonly bornBefore?: string;
+  readonly bornAfter?: string;
+  readonly format?: 'plain' | 'with-spaces' | 'with-hyphens';
+  readonly firstDigit?: number;
+  readonly temporaryResident?: boolean;
+  /** Mangle the casing of `name`/`surname` for testing. Defaults to `true`. */
+  readonly caseStrict?: boolean;
+  readonly invalid?: boolean;
+  readonly edge?: boolean;
+  /** Present the value in a hostile-but-recoverable encoding (untrimmed whitespace, invisible/zero-width chars, BOM, or bidi/combining marks); homoglyphs excluded so it stays machine-parseable. */
+  readonly extreme?: boolean;
+}
+
+/**
+ * A Canadian person. As with the US, the age and `sex` options shape the drawn
+ * `birthDate` rather than being decoded from the identifier — but unlike the
+ * US, the SIN does encode the province of registration.
+ */
+export interface CaPersonData {
+  readonly name: string;
+  readonly surname: string;
+  readonly initials: string;
+  readonly birthDate: string;
+  readonly sex: Sex;
+  readonly sin: string;
+  readonly registrationRegion: string;
+}
+
+/** A Canadian company, carrying the bare nine-digit Business Number. */
+export interface CaCompanyData {
+  readonly name: string;
+  readonly legalForm: string | null;
+  readonly businessNumber: string;
 }

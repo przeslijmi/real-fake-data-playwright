@@ -2,7 +2,7 @@ export { test, expect } from './fixture.js';
 export type { RealFakeDataConfig, RealFakeDataFixtures } from './fixture.js';
 
 export { createFakeData } from './fake-data.js';
-export type { CreateFakeDataOptions, FakeData } from './fake-data.js';
+export type { ComposeRequest, CreateFakeDataOptions, FakeData } from './fake-data.js';
 
 export { fakeData } from './singleton.js';
 
